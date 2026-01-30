@@ -6,7 +6,6 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.*;
 
@@ -18,11 +17,11 @@ import java.util.*;
 @NoArgsConstructor
 @Builder
 /*
-ALTER TABLE users
-  MODIFY facebook_account_id VARCHAR(255),
-  MODIFY google_account_id VARCHAR(255);
-* */
-public class User extends BaseEntity implements UserDetails, OAuth2User {
+ * ALTER TABLE users
+ * MODIFY facebook_account_id VARCHAR(255),
+ * MODIFY google_account_id VARCHAR(255);
+ */
+public class User extends BaseEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,7 +39,7 @@ public class User extends BaseEntity implements UserDetails, OAuth2User {
     @Column(name = "address", length = 200)
     private String address;
 
-    //ALTER TABLE users ADD COLUMN profile_image VARCHAR(255) DEFAULT '';
+    // ALTER TABLE users ADD COLUMN profile_image VARCHAR(255) DEFAULT '';
     @Column(name = "profile_image", length = 255)
     private String profileImage;
 
@@ -66,11 +65,12 @@ public class User extends BaseEntity implements UserDetails, OAuth2User {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
-        authorityList.add(new SimpleGrantedAuthority("ROLE_"+getRole().getName().toUpperCase()));
-        //authorityList.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        authorityList.add(new SimpleGrantedAuthority("ROLE_" + getRole().getName().toUpperCase()));
+        // authorityList.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 
         return authorityList;
     }
+
     @Override
     public String getUsername() {
         if (phoneNumber != null && !phoneNumber.isEmpty()) {
@@ -80,7 +80,6 @@ public class User extends BaseEntity implements UserDetails, OAuth2User {
         }
         return "";
     }
-
 
     @Override
     public boolean isAccountNonExpired() {
@@ -102,18 +101,8 @@ public class User extends BaseEntity implements UserDetails, OAuth2User {
         return true;
     }
 
-    //Login facebook
-    @Override
-    public Map<String, Object> getAttributes() {
-        return new HashMap<String, Object>();
-    }
-    @Override
-    public String getName() {
-        return getAttribute("name");
-    }
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 
     @JsonManagedReference
     private List<Comment> comments = new ArrayList<>();
 }
-

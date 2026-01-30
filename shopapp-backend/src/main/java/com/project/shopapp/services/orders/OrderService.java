@@ -21,7 +21,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class OrderService implements IOrderService{
+public class OrderService implements IOrderService {
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
@@ -33,12 +33,12 @@ public class OrderService implements IOrderService{
     @Override
     @Transactional
     public Order createOrder(OrderDTO orderDTO) throws Exception {
-        //tìm xem user'id có tồn tại ko
+        // tìm xem user'id có tồn tại ko
         User user = userRepository
                 .findById(orderDTO.getUserId())
-                .orElseThrow(() -> new DataNotFoundException("Cannot find user with id: "+orderDTO.getUserId()));
-        //convert orderDTO => Order
-        //dùng thư viện Model Mapper
+                .orElseThrow(() -> new DataNotFoundException("Cannot find user with id: " + orderDTO.getUserId()));
+        // convert orderDTO => Order
+        // dùng thư viện Model Mapper
         // Tạo một luồng bảng ánh xạ riêng để kiểm soát việc ánh xạ
         modelMapper.typeMap(OrderDTO.class, Order.class)
                 .addMappings(mapper -> mapper.skip(Order::setId));
@@ -46,23 +46,20 @@ public class OrderService implements IOrderService{
         Order order = new Order();
         modelMapper.map(orderDTO, order);
         order.setUser(user);
-        order.setOrderDate(LocalDateTime.now());//lấy thời điểm hiện tại
+        order.setOrderDate(LocalDateTime.now());// lấy thời điểm hiện tại
         order.setStatus(OrderStatus.PENDING);
-        //Kiểm tra shipping date phải >= ngày hôm nay
+        // Kiểm tra shipping date phải >= ngày hôm nay
         LocalDate shippingDate = orderDTO.getShippingDate() == null
-                ? LocalDate.now() : orderDTO.getShippingDate();
+                ? LocalDate.now()
+                : orderDTO.getShippingDate();
         if (shippingDate.isBefore(LocalDate.now())) {
             throw new DataNotFoundException("Date must be at least today !");
         }
         order.setShippingDate(shippingDate);
-        order.setActive(true);//đoạn này nên set sẵn trong sql
-        //EAV-Entity-Attribute-Value model
+        order.setActive(true);// đoạn này nên set sẵn trong sql
+        // EAV-Entity-Attribute-Value model
         order.setTotalMoney(orderDTO.getTotalMoney());
-        // Lưu vnpTxnRef nếu có
-        if (orderDTO.getVnpTxnRef() != null) {
-            order.setVnpTxnRef(orderDTO.getVnpTxnRef());
-        }
-        if(orderDTO.getShippingAddress() == null) {
+        if (orderDTO.getShippingAddress() == null) {
             order.setShippingAddress(orderDTO.getAddress());
         }
         // Tạo danh sách các đối tượng OrderDetail từ cartItems
@@ -90,7 +87,7 @@ public class OrderService implements IOrderService{
             orderDetails.add(orderDetail);
         }
 
-        //coupon
+        // coupon
         String couponCode = orderDTO.getCouponCode();
         if (!couponCode.isEmpty()) {
             Coupon coupon = couponRepository.findByCode(couponCode)
@@ -109,6 +106,7 @@ public class OrderService implements IOrderService{
         orderRepository.save(order);
         return order;
     }
+
     @Transactional
     public Order updateOrderWithDetails(OrderWithDetailsDTO orderWithDetailsDTO) {
         modelMapper.typeMap(OrderWithDetailsDTO.class, Order.class)
@@ -119,7 +117,7 @@ public class OrderService implements IOrderService{
 
         // Set the order for each order detail
         for (OrderDetailDTO orderDetailDTO : orderWithDetailsDTO.getOrderDetailDTOS()) {
-            //orderDetail.setOrder(OrderDetail);
+            // orderDetail.setOrder(OrderDetail);
         }
 
         // Save or update the order details
@@ -130,15 +128,10 @@ public class OrderService implements IOrderService{
 
         return savedOrder;
     }
+
     @Override
     public Order getOrderById(Long orderId) {
-        // Tìm theo ID
-        Order order = orderRepository.findById(orderId).orElse(null);
-        if (order == null) {
-            // Nếu không tìm thấy theo ID, tìm theo vnpTxnRef
-            order = orderRepository.findByVnpTxnRef(orderId.toString()).orElse(null);
-        }
-        return order;
+        return orderRepository.findById(orderId).orElse(null);
     }
 
     @Override
@@ -147,12 +140,11 @@ public class OrderService implements IOrderService{
             throws DataNotFoundException {
         Order order = getOrderById(id);
         User existingUser = userRepository.findById(
-                orderDTO.getUserId()).orElseThrow(() ->
-                new DataNotFoundException("Cannot find user with id: " + id));
+                orderDTO.getUserId()).orElseThrow(() -> new DataNotFoundException("Cannot find user with id: " + id));
         /*
-        modelMapper.typeMap(OrderDTO.class, Order.class)
-                .addMappings(mapper -> mapper.skip(Order::setId));
-        modelMapper.map(orderDTO, order);
+         * modelMapper.typeMap(OrderDTO.class, Order.class)
+         * .addMappings(mapper -> mapper.skip(Order::setId));
+         * modelMapper.map(orderDTO, order);
          */
         // Setting user
         if (orderDTO.getUserId() != null) {
@@ -213,12 +205,13 @@ public class OrderService implements IOrderService{
     @Transactional
     public void deleteOrder(Long orderId) {
         Order order = getOrderById(orderId);
-        //no hard-delete, => please soft-delete
-        if(order != null) {
+        // no hard-delete, => please soft-delete
+        if (order != null) {
             order.setActive(false);
             orderRepository.save(order);
         }
     }
+
     @Override
     public List<OrderResponse> findByUserId(Long userId) {
         List<Order> orders = orderRepository.findByUserId(userId);
@@ -229,11 +222,11 @@ public class OrderService implements IOrderService{
     public Page<Order> getOrdersByKeyword(String keyword, Pageable pageable) {
         return orderRepository.findByKeyword(keyword, pageable);
     }
+
     @Override
     @Transactional
     public Order updateOrderStatus(Long id, String status) throws DataNotFoundException, IllegalArgumentException {
-        // Tìm đơn hàng theo ID
-        Order order = getOrderById(id); // Sẽ tìm theo ID trước, sau đó tìm theo vnpTxnRef
+        Order order = getOrderById(id);
 
         // Kiểm tra trạng thái hợp lệ
         if (status == null || status.trim().isEmpty()) {

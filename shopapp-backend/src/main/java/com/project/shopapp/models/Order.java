@@ -32,7 +32,7 @@ public class Order {
     @Column(name = "email", length = 100)
     private String email;
 
-    @Column(name = "phone_number",nullable = false, length = 100)
+    @Column(name = "phone_number", nullable = false, length = 100)
     private String phoneNumber;
 
     @Column(name = "address", length = 100)
@@ -41,7 +41,7 @@ public class Order {
     @Column(name = "note", length = 100)
     private String note;
 
-    @Column(name="order_date")
+    @Column(name = "order_date")
     private LocalDateTime orderDate;
 
     @Column(name = "status")
@@ -66,10 +66,7 @@ public class Order {
     private String paymentMethod = "";
 
     @Column(name = "active")
-    private Boolean active;//thuộc về admin
-
-    @Column(name = "vnp_txn_ref", nullable = true)
-    private String vnpTxnRef; // Order ID của VNPay trả về
+    private Boolean active;// thuộc về admin
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
@@ -79,6 +76,5 @@ public class Order {
     @JoinColumn(name = "coupon_id", nullable = true)
     @JsonBackReference
     private Coupon coupon = null;
-
 
 }

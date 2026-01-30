@@ -26,10 +26,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.client.authentication.OAuth2LoginAuthenticationProvider;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +37,7 @@ import static com.project.shopapp.utils.ValidationUtils.isValidEmail;
 
 @RequiredArgsConstructor
 @Service
-public class UserService implements IUserService{
+public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final TokenRepository tokenRepository;
@@ -53,22 +49,21 @@ public class UserService implements IUserService{
     @Override
     @Transactional
     public User createUser(UserDTO userDTO) throws Exception {
-        //register user
+        // register user
         if (!userDTO.getPhoneNumber().isBlank() && userRepository.existsByPhoneNumber(userDTO.getPhoneNumber())) {
             throw new DataIntegrityViolationException("Phone number already exists");
         }
         if (!userDTO.getEmail().isBlank() && userRepository.existsByEmail(userDTO.getEmail())) {
             throw new DataIntegrityViolationException("Email already exists");
         }
-        Role role =roleRepository.findById(userDTO.getRoleId())
+        Role role = roleRepository.findById(userDTO.getRoleId())
                 .orElseThrow(() -> new DataNotFoundException(
                         localizationUtils.getLocalizedMessage(MessageKeys.ROLE_DOES_NOT_EXISTS)));
-
 
         if (role.getName().equalsIgnoreCase(Role.ADMIN)) {
             throw new PermissionDenyException("Registering admin accounts is not allowed");
         }
-        //convert from userDTO => user
+        // convert from userDTO => user
         User newUser = User.builder()
                 .fullName(userDTO.getFullName())
                 .phoneNumber(userDTO.getPhoneNumber())
@@ -90,7 +85,6 @@ public class UserService implements IUserService{
         }
         return userRepository.save(newUser);
     }
-
 
     @Override
     public String login(UserLoginDTO userLoginDTO) throws Exception {
@@ -121,7 +115,6 @@ public class UserService implements IUserService{
         // Tạo JWT token cho người dùng
         return jwtTokenUtil.generateToken(existingUser);
     }
-
 
     @Override
     public String loginSocial(UserLoginDTO userLoginDTO) throws Exception {
@@ -193,23 +186,24 @@ public class UserService implements IUserService{
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new DataNotFoundException("User not found"));
 
-        // Check if the phone number is being changed and if it already exists for another user
+        // Check if the phone number is being changed and if it already exists for
+        // another user
         /*
-        String newPhoneNumber = updatedUserDTO.getPhoneNumber();
-        if (!existingUser.getPhoneNumber().equals(newPhoneNumber) &&
-                userRepository.existsByPhoneNumber(newPhoneNumber)) {
-            throw new DataIntegrityViolationException("Phone number already exists");
-        }
-       */
+         * String newPhoneNumber = updatedUserDTO.getPhoneNumber();
+         * if (!existingUser.getPhoneNumber().equals(newPhoneNumber) &&
+         * userRepository.existsByPhoneNumber(newPhoneNumber)) {
+         * throw new DataIntegrityViolationException("Phone number already exists");
+         * }
+         */
         // Update user information based on the DTO
         if (updatedUserDTO.getFullName() != null) {
             existingUser.setFullName(updatedUserDTO.getFullName());
         }
         /*
-        if (newPhoneNumber != null) {
-            existingUser.setPhoneNumber(newPhoneNumber);
-        }
-        */
+         * if (newPhoneNumber != null) {
+         * existingUser.setPhoneNumber(newPhoneNumber);
+         * }
+         */
         if (updatedUserDTO.getAddress() != null) {
             existingUser.setAddress(updatedUserDTO.getAddress());
         }
@@ -223,25 +217,24 @@ public class UserService implements IUserService{
             existingUser.setGoogleAccountId(updatedUserDTO.getGoogleAccountId());
         }
 
-
         // Update the password if it is provided in the DTO
         if (updatedUserDTO.getPassword() != null
                 && !updatedUserDTO.getPassword().isEmpty()) {
-            if(!updatedUserDTO.getPassword().equals(updatedUserDTO.getRetypePassword())) {
+            if (!updatedUserDTO.getPassword().equals(updatedUserDTO.getRetypePassword())) {
                 throw new DataNotFoundException("Password and retype password not the same");
             }
             String newPassword = updatedUserDTO.getPassword();
             String encodedPassword = passwordEncoder.encode(newPassword);
             existingUser.setPassword(encodedPassword);
         }
-        //existingUser.setRole(updatedRole);
+        // existingUser.setRole(updatedRole);
         // Save the updated user
         return userRepository.save(existingUser);
     }
 
     @Override
     public User getUserDetailsFromToken(String token) throws Exception {
-        if(jwtTokenUtil.isTokenExpired(token)) {
+        if (jwtTokenUtil.isTokenExpired(token)) {
             throw new ExpiredTokenException("Token is expired");
         }
         String subject = jwtTokenUtil.getSubject(token);
@@ -252,6 +245,7 @@ public class UserService implements IUserService{
         }
         return user.orElseThrow(() -> new Exception("User not found"));
     }
+
     @Override
     public User getUserDetailsFromRefreshToken(String refreshToken) throws Exception {
         Token existingToken = tokenRepository.findByRefreshToken(refreshToken);
@@ -272,7 +266,7 @@ public class UserService implements IUserService{
         String encodedPassword = passwordEncoder.encode(newPassword);
         existingUser.setPassword(encodedPassword);
         userRepository.save(existingUser);
-        //reset password => clear token
+        // reset password => clear token
         List<Token> tokens = tokenRepository.findByUser(existingUser);
         for (Token token : tokens) {
             tokenRepository.delete(token);
@@ -297,11 +291,3 @@ public class UserService implements IUserService{
         userRepository.save(existingUser);
     }
 }
-
-
-
-
-
-
-
-
