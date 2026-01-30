@@ -42,7 +42,7 @@ public class WebSecurityConfig {
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
                                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
-                                .cors(Customizer.withDefaults())
+                                // .cors(Customizer.withDefaults())
                                 .exceptionHandling(customizer -> customizer.authenticationEntryPoint(
                                                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
