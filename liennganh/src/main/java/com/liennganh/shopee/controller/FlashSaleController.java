@@ -27,4 +27,9 @@ public class FlashSaleController {
     public ApiResponse<FlashSale> createFlashSale(@RequestBody FlashSale flashSale) {
         return ApiResponse.success(flashSaleService.createFlashSale(flashSale), "Flash sale created successfully");
     }
+
+    @PutMapping("/{id}")
+    public ApiResponse<FlashSale> updateFlashSale(@PathVariable Long id, @RequestBody FlashSale flashSale) {
+        return ApiResponse.success(flashSaleService.updateFlashSale(id, flashSale), "Flash sale updated successfully");
+    }
 }

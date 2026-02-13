@@ -9,6 +9,7 @@ import com.liennganh.shopee.model.User;
 import com.liennganh.shopee.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,9 +105,10 @@ public class AuthService {
         return UserResponse.fromUser(user);
     }
 
-    public UserResponse getCurrentUser(Long userId) {
+    public UserResponse getUserResponseById(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         return UserResponse.fromUser(user);
     }
+
 }

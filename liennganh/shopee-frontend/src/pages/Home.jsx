@@ -219,17 +219,26 @@ const Home = () => {
                             {(flashSales.length > 0 ? flashSales : products.slice(0, 12)).map((item, idx) => {
                                 const product = item.product || item;
                                 if (!product) return null;
+
+                                const isFlashSaleItem = !!item.discountedPrice;
                                 const originalPrice = product.price || 0;
-                                const salePrice = item.salePrice || Math.round(originalPrice * (1 - (Math.random() * 0.4 + 0.1)));
+                                const salePrice = item.discountedPrice || originalPrice;
                                 const discountPercent = originalPrice > 0 ? Math.round((1 - salePrice / originalPrice) * 100) : 0;
-                                const soldPercent = Math.floor(Math.random() * 70 + 20);
-                                const soldCount = Math.floor(Math.random() * 500 + 50);
+
+                                // Flash Sale specific metrics
+                                const soldCount = item.soldQuantity || 0;
+                                const stockTotal = (item.stockQuantity || 0) + soldCount;
+                                const soldPercent = isFlashSaleItem && stockTotal > 0
+                                    ? Math.min(100, Math.round((soldCount / stockTotal) * 100))
+                                    : Math.floor(Math.random() * 50 + 10); // Fallback for random suggestion
+
+                                const displaySoldCount = isFlashSaleItem ? soldCount : Math.floor(Math.random() * 500 + 50);
 
                                 return (
                                     <Link
                                         to={`/product/${product.id}`}
                                         key={item.id || product.id || idx}
-                                        className="min-w-[160px] max-w-[160px] flex-shrink-0 border border-gray-100 hover:border-orange-400 rounded-lg overflow-hidden cursor-pointer block transition-all hover:shadow-md group"
+                                        className="min-w-[160px] max-w-[160px] flex-shrink-0 border border-gray-100 hover:border-orange-400 rounded-lg overflow-hidden cursor-pointer block transition-all hover:shadow-md group bg-white"
                                     >
                                         {/* Product Image */}
                                         <div className="relative aspect-square bg-gray-50">
@@ -245,12 +254,14 @@ const Home = () => {
                                                 </div>
                                             )}
                                             {/* Discount Badge */}
-                                            <div className="absolute top-0 right-0">
-                                                <div className="bg-gradient-to-b from-yellow-400 to-orange-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">
-                                                    <div className="text-[10px] leading-tight">GIẢM</div>
-                                                    <div className="text-sm font-black leading-tight">{discountPercent}%</div>
+                                            {discountPercent > 0 && (
+                                                <div className="absolute top-0 right-0">
+                                                    <div className="bg-gradient-to-b from-yellow-400 to-orange-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">
+                                                        <div className="text-[10px] leading-tight">GIẢM</div>
+                                                        <div className="text-sm font-black leading-tight">{discountPercent}%</div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            )}
                                         </div>
 
                                         {/* Price & Progress */}
@@ -268,10 +279,10 @@ const Home = () => {
                                             <div className="relative w-full h-[18px] bg-orange-100 rounded-full mt-2 overflow-hidden">
                                                 <div
                                                     className="absolute top-0 left-0 h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full"
-                                                    style={{ width: `${soldPercent}%` }}
+                                                    style={{ width: `${Math.max(5, soldPercent)}%` }}
                                                 ></div>
-                                                <span className="absolute inset-0 flex items-center justify-center text-[11px] text-gray-800 font-bold uppercase">
-                                                    Đã bán {soldCount}
+                                                <span className="absolute inset-0 flex items-center justify-center text-[10px] text-white font-bold uppercase drop-shadow-sm">
+                                                    Đã bán {displaySoldCount}
                                                 </span>
                                             </div>
                                         </div>

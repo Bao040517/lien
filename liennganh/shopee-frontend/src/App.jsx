@@ -9,6 +9,7 @@ import SellerRegister from './pages/SellerRegister';
 import SellerDashboard from './pages/Seller/SellerDashboard';
 import AddProduct from './pages/Seller/AddProduct';
 import SellerProducts from './pages/Seller/SellerProducts';
+import SellerVouchers from './pages/Seller/SellerVouchers';
 import EditProduct from './pages/Seller/EditProduct';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import AdminUsers from './pages/Admin/AdminUsers';
@@ -23,6 +24,7 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import SearchResults from './pages/SearchResults';
 import OrderHistory from './pages/OrderHistory';
+import ShopProfile from './pages/ShopProfile';
 import { useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 
@@ -40,7 +42,9 @@ const App = () => {
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="register-seller" element={<SellerRegister />} />
+          <Route path="register-seller" element={<SellerRegister />} />
           <Route path="product/:id" element={<ProductDetail />} />
+          <Route path="shop/:id" element={<ShopProfile />} />
           <Route path="cart" element={<Cart />} />
           <Route path="checkout" element={<Checkout />} />
           <Route path="search" element={<SearchResults />} />
@@ -63,6 +67,7 @@ const App = () => {
         <Route path="/seller" element={<SellerLayout />}>
           <Route index element={<SellerDashboard />} />
           <Route path="products" element={<SellerProducts />} />
+          <Route path="vouchers" element={<SellerVouchers />} />
           <Route path="edit-product/:id" element={<EditProduct />} />
           <Route path="add-product" element={<AddProduct />} />
           <Route path="orders" element={<SellerDashboard />} />

@@ -37,6 +37,9 @@ public class Product {
     @Column(name = "image_url")
     private String imageUrl;
 
+    private boolean isBanned = false;
+    private String violationReason;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("product")
     @BatchSize(size = 50)

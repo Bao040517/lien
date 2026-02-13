@@ -99,16 +99,22 @@ const SellerProducts = () => {
                                     <tr key={product.id} className="hover:bg-orange-50/30 transition">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-14 h-14 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                                                <div className="w-14 h-14 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 relative">
                                                     {product.imageUrl ? (
-                                                        <img src={product.imageUrl} alt="" className="w-full h-full object-cover" />
+                                                        <img src={product.imageUrl} alt="" className={`w-full h-full object-cover ${product.banned ? 'grayscale opacity-75' : ''}`} />
                                                     ) : (
                                                         <Package className="w-6 h-6 text-gray-300 m-auto mt-4" />
                                                     )}
                                                 </div>
                                                 <div className="min-w-0">
-                                                    <p className="font-medium text-gray-900 truncate max-w-xs">{product.name}</p>
+                                                    <p className={`font-medium truncate max-w-xs ${product.banned ? 'text-red-700' : 'text-gray-900'}`}>{product.name}</p>
                                                     <p className="text-xs text-gray-400 mt-0.5">ID: {product.id}</p>
+                                                    {product.banned && (
+                                                        <div className="mt-1 text-xs text-red-600 bg-red-100 px-2 py-0.5 rounded border border-red-200 inline-block">
+                                                            <span className="font-bold flex items-center gap-1">⚠ BỊ KHÓA</span>
+                                                            <span className="block italic mt-0.5 max-w-[200px] truncate" title={product.violationReason}>{product.violationReason}</span>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </td>
@@ -117,10 +123,10 @@ const SellerProducts = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${product.stockQuantity > 10
-                                                    ? 'bg-green-50 text-green-700'
-                                                    : product.stockQuantity > 0
-                                                        ? 'bg-yellow-50 text-yellow-700'
-                                                        : 'bg-red-50 text-red-700'
+                                                ? 'bg-green-50 text-green-700'
+                                                : product.stockQuantity > 0
+                                                    ? 'bg-yellow-50 text-yellow-700'
+                                                    : 'bg-red-50 text-red-700'
                                                 }`}>
                                                 {product.stockQuantity}
                                             </span>

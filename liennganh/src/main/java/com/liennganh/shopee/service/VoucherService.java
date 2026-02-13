@@ -43,6 +43,31 @@ public class VoucherService {
         }
     }
 
+    public Voucher createShopVoucher(Voucher voucher, com.liennganh.shopee.model.User owner) {
+        if (owner.getShop() == null) {
+            throw new RuntimeException("User does not have a shop");
+        }
+        voucher.setShop(owner.getShop());
+        return voucherRepository.save(voucher);
+    }
+
+    public java.util.List<Voucher> getShopVouchers(com.liennganh.shopee.model.User owner) {
+        if (owner.getShop() == null) {
+            return java.util.Collections.emptyList();
+        }
+        return voucherRepository.findByShopId(owner.getShop().getId());
+    }
+
+    public void deleteShopVoucher(Long id, com.liennganh.shopee.model.User owner) {
+        Voucher voucher = voucherRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Voucher not found"));
+
+        if (owner.getShop() == null || !voucher.getShop().getId().equals(owner.getShop().getId())) {
+            throw new RuntimeException("Unauthorized access to voucher");
+        }
+        voucherRepository.delete(voucher);
+    }
+
     public BigDecimal applyVoucher(String code, BigDecimal orderValue) {
         Optional<Voucher> voucherOpt = voucherRepository.findByCode(code);
         if (voucherOpt.isEmpty()) {
@@ -59,6 +84,7 @@ public class VoucherService {
         }
 
         BigDecimal discountAmount = BigDecimal.ZERO;
+
         if (voucher.getDiscountType() == Voucher.DiscountType.FIXED) {
             discountAmount = voucher.getDiscountValue();
         } else {
@@ -71,5 +97,12 @@ public class VoucherService {
         }
 
         return discountAmount;
+    }
+
+    public java.util.List<Voucher> getShopVouchersByShopId(Long shopId) {
+        // Only return valid vouchers for public view if needed, but for now return all
+        // Or filter by active status if required.
+        // Let's return all for now as user requested "all vouchers"
+        return voucherRepository.findByShopId(shopId);
     }
 }

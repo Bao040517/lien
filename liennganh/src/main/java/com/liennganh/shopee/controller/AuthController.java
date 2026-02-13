@@ -36,7 +36,7 @@ public class AuthController {
     @GetMapping("/me")
     public ApiResponse<UserResponse> getCurrentUser(@RequestParam Long userId) {
         // TODO: Get userId from session/token instead of request param
-        UserResponse user = authService.getCurrentUser(userId);
+        UserResponse user = authService.getUserResponseById(userId);
         return ApiResponse.success(user, "Lấy thông tin người dùng thành công");
     }
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../api';
-import { Package, Search, Trash2, Eye, ExternalLink } from 'lucide-react';
+import { Package, Search, Trash2, Eye, ExternalLink, ShieldAlert, ShieldCheck } from 'lucide-react';
 
 const AdminProducts = () => {
     const [products, setProducts] = useState([]);
@@ -10,6 +10,10 @@ const AdminProducts = () => {
     const [catFilter, setCatFilter] = useState('ALL');
 
     useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = () => {
         Promise.all([
             api.get('/products'),
             api.get('/categories')
@@ -18,7 +22,7 @@ const AdminProducts = () => {
             setCategories(cRes.data.data || []);
         }).catch(e => console.error(e))
             .finally(() => setLoading(false));
-    }, []);
+    };
 
     const handleDelete = async (id, name) => {
         if (!window.confirm(`Xoá sản phẩm "${name}"? Hành động này không thể hoàn tác.`)) return;
@@ -26,6 +30,29 @@ const AdminProducts = () => {
             await api.delete(`/products/${id}`);
             setProducts(prev => prev.filter(p => p.id !== id));
         } catch { alert('Xoá thất bại!'); }
+    };
+
+    const handleBan = async (id, name) => {
+        const reason = window.prompt(`Nhập lý do khóa sản phẩm "${name}":`, "Vi phạm tiêu chuẩn cộng đồng");
+        if (!reason) return;
+        try {
+            await api.put(`/products/${id}/ban`, null, { params: { reason } });
+            alert('Đã khóa sản phẩm');
+            fetchData();
+        } catch (e) {
+            alert('Khóa thất bại: ' + (e.response?.data?.message || e.message));
+        }
+    };
+
+    const handleUnban = async (id, name) => {
+        if (!window.confirm(`Mở khóa cho sản phẩm "${name}"?`)) return;
+        try {
+            await api.put(`/products/${id}/unban`);
+            alert('Đã mở khóa sản phẩm');
+            fetchData();
+        } catch (e) {
+            alert('Mở khóa thất bại: ' + (e.response?.data?.message || e.message));
+        }
     };
 
     const formatPrice = (p) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p);
@@ -77,58 +104,89 @@ const AdminProducts = () => {
                                     <th className="px-6 py-3">Sản phẩm</th>
                                     <th className="px-6 py-3">Giá</th>
                                     <th className="px-6 py-3">Kho</th>
-                                    <th className="px-6 py-3">Danh mục</th>
-                                    <th className="px-6 py-3">Shop</th>
+                                    <th className="px-6 py-3">Trạng thái</th>
+                                    <th className="px-6 py-3">Danh mục / Shop</th>
                                     <th className="px-6 py-3 text-center">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
-                                {filtered.map(product => (
-                                    <tr key={product.id} className="hover:bg-gray-50/50">
-                                        <td className="px-6 py-3">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                                                    {product.imageUrl ? (
-                                                        <img src={product.imageUrl} alt="" className="w-full h-full object-cover" />
-                                                    ) : (
-                                                        <Package className="w-5 h-5 text-gray-300 m-auto mt-3.5" />
-                                                    )}
+                                {filtered.map(product => {
+                                    const isBanned = product.banned || product.isBanned; // Check both possibilities
+                                    return (
+                                        <tr key={product.id} className={`hover:bg-gray-50/50 transition-colors ${isBanned ? 'bg-red-100 border-l-4 border-red-500' : ''}`}>
+                                            <td className="px-6 py-3">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 relative">
+                                                        {product.imageUrl ? (
+                                                            <img src={product.imageUrl} alt="" className={`w-full h-full object-cover ${isBanned ? 'grayscale' : ''}`} />
+                                                        ) : (
+                                                            <Package className="w-5 h-5 text-gray-300 m-auto mt-3.5" />
+                                                        )}
+                                                        {isBanned && (
+                                                            <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center">
+                                                                <ShieldAlert className="w-6 h-6 text-red-600 drop-shadow-sm" />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <p className={`text-sm font-medium truncate max-w-xs ${isBanned ? 'text-red-800' : 'text-gray-800'}`}>{product.name}</p>
+                                                        <p className="text-xs text-gray-400">ID: {product.id}</p>
+                                                    </div>
                                                 </div>
-                                                <div className="min-w-0">
-                                                    <p className="text-sm font-medium text-gray-800 truncate max-w-xs">{product.name}</p>
-                                                    <p className="text-xs text-gray-400">ID: {product.id}</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-3">
-                                            <span className="text-sm font-bold text-blue-600">{formatPrice(product.price)}</span>
-                                        </td>
-                                        <td className="px-6 py-3">
-                                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${product.stockQuantity > 10 ? 'bg-green-50 text-green-700'
+                                            </td>
+                                            <td className="px-6 py-3">
+                                                <span className="text-sm font-bold text-blue-600">{formatPrice(product.price)}</span>
+                                            </td>
+                                            <td className="px-6 py-3">
+                                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${product.stockQuantity > 10 ? 'bg-green-50 text-green-700'
                                                     : product.stockQuantity > 0 ? 'bg-yellow-50 text-yellow-700'
                                                         : 'bg-red-50 text-red-700'
-                                                }`}>{product.stockQuantity}</span>
-                                        </td>
-                                        <td className="px-6 py-3">
-                                            <span className="text-sm text-gray-500">{product.category?.name || '—'}</span>
-                                        </td>
-                                        <td className="px-6 py-3">
-                                            <span className="text-sm text-gray-500">{product.shop?.name || '—'}</span>
-                                        </td>
-                                        <td className="px-6 py-3">
-                                            <div className="flex items-center justify-center gap-1">
-                                                <a href={`/product/${product.id}`} target="_blank" rel="noreferrer"
-                                                    className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition" title="Xem">
-                                                    <ExternalLink className="w-4 h-4" />
-                                                </a>
-                                                <button onClick={() => handleDelete(product.id, product.name)}
-                                                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition" title="Xoá">
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
+                                                    }`}>{product.stockQuantity}</span>
+                                            </td>
+                                            <td className="px-6 py-3">
+                                                {isBanned ? (
+                                                    <div className="text-xs text-red-700 bg-red-100 px-2 py-1 rounded border border-red-200 inline-block">
+                                                        <span className="font-bold block flex items-center gap-1"><ShieldAlert className="w-3 h-3" /> BỊ KHÓA</span>
+                                                        <span className="italic max-w-[150px] truncate block mt-0.5" title={product.violationReason}>{product.violationReason}</span>
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded border border-green-200">Đang bán</span>
+                                                )}
+                                            </td>
+                                            <td className="px-6 py-3">
+                                                <div className="flex flex-col">
+                                                    <span className="text-sm text-gray-800">{product.category?.name || '—'}</span>
+                                                    <span className="text-xs text-gray-500">{product.shop?.name || '—'}</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-3">
+                                                <div className="flex items-center justify-center gap-1">
+                                                    <a href={`/product/${product.id}`} target="_blank" rel="noreferrer"
+                                                        className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition" title="Xem">
+                                                        <ExternalLink className="w-4 h-4" />
+                                                    </a>
+
+                                                    {isBanned ? (
+                                                        <button onClick={() => handleUnban(product.id, product.name)}
+                                                            className="p-2 text-white bg-green-500 hover:bg-green-600 rounded-lg transition shadow-sm" title="Gỡ khóa">
+                                                            <ShieldCheck className="w-4 h-4" />
+                                                        </button>
+                                                    ) : (
+                                                        <button onClick={() => handleBan(product.id, product.name)}
+                                                            className="p-2 text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition shadow-sm" title="Khóa / Cảnh báo">
+                                                            <ShieldAlert className="w-4 h-4" />
+                                                        </button>
+                                                    )}
+
+                                                    <button onClick={() => handleDelete(product.id, product.name)}
+                                                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition" title="Xoá vĩnh viễn">
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )
+                                })}
                             </tbody>
                         </table>
                         {filtered.length === 0 && (

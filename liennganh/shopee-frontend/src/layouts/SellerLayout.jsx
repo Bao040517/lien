@@ -1,10 +1,12 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, Package, ShoppingBag, BarChart3, Settings, LogOut, Store, ImagePlus } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingBag, BarChart3, Settings, LogOut, Store, ImagePlus, Bell, Ticket } from 'lucide-react';
 
 const menuItems = [
     { path: '/seller', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/seller/products', label: 'Sản phẩm', icon: Package },
+    { path: '/seller/notifications', label: 'Thông báo', icon: Bell },
+    { path: '/seller/vouchers', label: 'Mã giảm giá', icon: Ticket }, // New item
     { path: '/seller/add-product', label: 'Thêm sản phẩm', icon: ImagePlus },
     { path: '/seller/orders', label: 'Đơn hàng', icon: ShoppingBag },
     { path: '/seller/revenue', label: 'Doanh thu', icon: BarChart3 },
@@ -100,8 +102,8 @@ const SellerLayout = () => {
                                 key={item.path}
                                 to={item.path}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all duration-200 ${isActive
-                                        ? 'bg-orange-50 text-orange-600 font-medium border-l-4 border-orange-500'
-                                        : 'text-gray-600 hover:bg-gray-50 hover:text-orange-500'
+                                    ? 'bg-orange-50 text-orange-600 font-medium border-l-4 border-orange-500'
+                                    : 'text-gray-600 hover:bg-gray-50 hover:text-orange-500'
                                     }`}
                             >
                                 <Icon className="w-5 h-5" />

@@ -35,4 +35,9 @@ public class ShopController {
                         com.liennganh.shopee.exception.ErrorCode.SHOP_NOT_FOUND));
         return ApiResponse.success(shop, "Shop retrieved successfully");
     }
+
+    @GetMapping("/{id}")
+    public ApiResponse<Shop> getShopById(@PathVariable Long id) {
+        return ApiResponse.success(shopService.getShopById(id), "Shop retrieved successfully");
+    }
 }

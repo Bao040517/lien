@@ -35,6 +35,9 @@ public class User {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @OneToOne(mappedBy = "owner")
+    private Shop shop;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

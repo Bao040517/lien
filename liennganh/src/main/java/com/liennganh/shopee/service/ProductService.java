@@ -26,7 +26,7 @@ public class ProductService {
     }
 
     public List<Product> getProductsByCategory(Long categoryId) {
-        return productRepository.findByCategoryId(categoryId);
+        return productRepository.findByCategoryIdAndIsBannedFalse(categoryId);
     }
 
     @org.springframework.transaction.annotation.Transactional
@@ -39,14 +39,15 @@ public class ProductService {
     }
 
     public List<Product> searchProducts(String keyword) {
-        return productRepository.findByNameContainingIgnoreCase(keyword);
+        return productRepository.findByNameContainingIgnoreCaseAndIsBannedFalse(keyword);
     }
 
     public List<Product> filterProducts(String keyword, Long categoryId, BigDecimal minPrice, BigDecimal maxPrice,
             String sortBy) {
         Specification<Product> spec = Specification.where(ProductSpecification.nameContains(keyword))
                 .and(ProductSpecification.hasCategory(categoryId))
-                .and(ProductSpecification.hasPriceBetween(minPrice, maxPrice));
+                .and(ProductSpecification.hasPriceBetween(minPrice, maxPrice))
+                .and(ProductSpecification.isNotBanned());
 
         Sort sort = Sort.unsorted();
         if ("price_asc".equals(sortBy)) {
@@ -60,6 +61,45 @@ public class ProductService {
         return productRepository.findAll(spec, sort);
     }
 
+    @Autowired
+    private NotificationService notificationService;
+
+    public Product banProduct(Long id, String reason) {
+        Product product = getProductById(id);
+        product.setBanned(true);
+        product.setViolationReason(reason);
+        Product savedProduct = productRepository.save(product);
+
+        // Notify Seller
+        if (product.getShop() != null && product.getShop().getOwner() != null) {
+            notificationService.createNotification(
+                    product.getShop().getOwner(),
+                    "Sản phẩm bị khóa: " + product.getName(),
+                    "Sản phẩm của bạn đã bị khóa vì lý do: " + reason,
+                    "PRODUCT_BAN",
+                    "/seller/products");
+        }
+        return savedProduct;
+    }
+
+    public Product unbanProduct(Long id) {
+        Product product = getProductById(id);
+        product.setBanned(false);
+        product.setViolationReason(null);
+        Product savedProduct = productRepository.save(product);
+
+        // Notify Seller
+        if (product.getShop() != null && product.getShop().getOwner() != null) {
+            notificationService.createNotification(
+                    product.getShop().getOwner(),
+                    "Sản phẩm được khôi phục: " + product.getName(),
+                    "Sản phẩm của bạn đã được mở khóa. Bạn có thể bán lại bình thường.",
+                    "PRODUCT_UNBAN",
+                    "/seller/products");
+        }
+        return savedProduct;
+    }
+
     public List<Product> getProductsByOwner(com.liennganh.shopee.model.User owner) {
         com.liennganh.shopee.repository.ShopRepository shopRepository = context
                 .getBean(com.liennganh.shopee.repository.ShopRepository.class);
@@ -71,5 +111,11 @@ public class ProductService {
     public void deleteProduct(Long id) {
         Product product = getProductById(id);
         productRepository.delete(product);
+    }
+
+    public List<Product> getProductsByShopId(Long shopId) {
+        com.liennganh.shopee.model.Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new AppException(ErrorCode.SHOP_NOT_FOUND));
+        return productRepository.findByShopAndIsBannedFalse(shop);
     }
 }

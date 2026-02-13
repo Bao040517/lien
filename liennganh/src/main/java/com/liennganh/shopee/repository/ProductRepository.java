@@ -8,13 +8,13 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
-    List<Product> findByCategoryId(Long categoryId);
+    List<Product> findByCategoryIdAndIsBannedFalse(Long categoryId);
 
-    List<Product> findByShopId(Long shopId);
-
-    List<Product> findByNameContainingIgnoreCase(String name);
+    List<Product> findByNameContainingIgnoreCaseAndIsBannedFalse(String name);
 
     List<Product> findByShop(Shop shop);
 
     Long countByShop(Shop shop);
+
+    List<Product> findByShopAndIsBannedFalse(Shop shop);
 }

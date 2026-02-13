@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -295,9 +295,9 @@ const ProductDetail = () => {
                             <button className="px-3 py-1 border border-orange-500 text-orange-500 text-sm bg-orange-50 rounded-sm flex items-center gap-1">
                                 <MessageSquare className="w-3 h-3" /> Chat Ngay
                             </button>
-                            <button className="px-3 py-1 border border-gray-300 text-gray-500 text-sm rounded-sm flex items-center gap-1 hover:bg-gray-50">
+                            <Link to={`/shop/${product.shop?.id}`} className="px-3 py-1 border border-gray-300 text-gray-500 text-sm rounded-sm flex items-center gap-1 hover:bg-gray-50">
                                 <Store className="w-3 h-3" /> Xem Shop
-                            </button>
+                            </Link>
                         </div>
                     </div>
                 </div>

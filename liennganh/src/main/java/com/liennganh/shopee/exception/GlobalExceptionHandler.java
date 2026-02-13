@@ -30,8 +30,8 @@ public class GlobalExceptionHandler {
         ApiResponse<Object> apiResponse = new ApiResponse<>();
         apiResponse.setSuccess(false);
         apiResponse.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
-        apiResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
-        apiResponse.setData(exception.getMessage());
+        apiResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage() + ": " + exception.toString());
+        apiResponse.setData(java.util.Arrays.toString(exception.getStackTrace()));
         return ResponseEntity.status(ErrorCode.UNCATEGORIZED_EXCEPTION.getStatusCode()).body(apiResponse);
     }
 
@@ -61,7 +61,8 @@ public class GlobalExceptionHandler {
         ApiResponse<Object> apiResponse = new ApiResponse<>();
         apiResponse.setSuccess(false);
         apiResponse.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
-        apiResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
+        apiResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage() + ": " + exception.getMessage());
+        apiResponse.setData(exception.toString());
         return ResponseEntity.status(ErrorCode.UNCATEGORIZED_EXCEPTION.getStatusCode()).body(apiResponse);
     }
 }

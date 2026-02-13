@@ -24,6 +24,6 @@ public class FlashSale {
     @Column(name = "is_active")
     private boolean isActive = true;
 
-    @OneToMany(mappedBy = "flashSale", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "flashSale", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FlashSaleItem> items;
 }

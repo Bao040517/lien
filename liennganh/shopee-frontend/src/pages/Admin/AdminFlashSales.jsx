@@ -7,15 +7,14 @@ const AdminFlashSales = () => {
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [products, setProducts] = useState([]);
-
-    // Form state
     const [form, setForm] = useState({
         startDate: '',
         endDate: '',
         productIds: []
     });
-
     const [selectedSale, setSelectedSale] = useState(null);
+    const [editingId, setEditingId] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         fetchFlashSales();
@@ -43,6 +42,10 @@ const AdminFlashSales = () => {
         }
     };
 
+    const filteredProducts = products.filter(p =>
+        p.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     const formatDateForBackend = (dateString) => {
         const date = new Date(dateString);
         const year = date.getFullYear();
@@ -62,31 +65,56 @@ const AdminFlashSales = () => {
                 return;
             }
 
-            // Create Flash Sale Payload
             const payload = {
-                name: `Flash Sale ${new Date(form.startDate).toLocaleDateString()}`, // Add a name
+                name: `Flash Sale ${new Date(form.startDate).toLocaleDateString()}`,
                 startTime: formatDateForBackend(form.startDate),
                 endTime: formatDateForBackend(form.endDate),
                 items: form.productIds.map(id => {
                     const product = products.find(p => p.id === id);
                     return {
                         product: { id: id },
-                        discountedPrice: product ? product.price * 0.9 : 0, // Default 10% off
-                        stockQuantity: 10 // Default stock 10
+                        discountedPrice: product ? product.price * 0.9 : 0,
+                        stockQuantity: 10
                     };
-                })
+                }),
+                isActive: true
             };
 
-            const res = await api.post('/flash-sales', payload);
-            alert('Tạo Flash Sale thành công!');
+            if (editingId) {
+                await api.put(`/flash-sales/${editingId}`, payload);
+                alert('Cập nhật Flash Sale thành công!');
+            } else {
+                await api.post('/flash-sales', payload);
+                alert('Tạo Flash Sale thành công!');
+            }
+
             fetchFlashSales();
             setShowModal(false);
             setForm({ startDate: '', endDate: '', productIds: [] });
+            setEditingId(null);
+            setSearchTerm('');
 
         } catch (error) {
             console.error(error);
-            alert('Tạo Flash Sale thất bại: ' + (error.response?.data?.message || 'Lỗi không xác định'));
+            alert('Thất bại: ' + (error.response?.data?.message || 'Lỗi không xác định'));
         }
+    };
+
+    const handleEditClick = (sale, e) => {
+        if (e && e.stopPropagation) e.stopPropagation();
+        setEditingId(sale.id);
+
+        const formatLocal = (d) => {
+            const pad = (n) => String(n).padStart(2, '0');
+            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
+        };
+
+        setForm({
+            startDate: formatLocal(new Date(sale.startTime)),
+            endDate: formatLocal(new Date(sale.endTime)),
+            productIds: sale.items ? sale.items.map(i => i.product.id) : []
+        });
+        setShowModal(true);
     };
 
     const toggleProductSelection = (id) => {
@@ -99,23 +127,15 @@ const AdminFlashSales = () => {
 
     const handleRandomSelect = () => {
         if (products.length === 0) return;
-
-        // Shuffle array
         const shuffled = [...products].sort(() => 0.5 - Math.random());
-        // Select first 20 (or less if not enough products)
         const selected = shuffled.slice(0, 20).map(p => p.id);
-
-        setForm(prev => ({
-            ...prev,
-            productIds: selected
-        }));
+        setForm(prev => ({ ...prev, productIds: selected }));
     };
 
     const getStatus = (start, end) => {
         const now = new Date();
         const startTime = new Date(start);
         const endTime = new Date(end);
-
         if (now >= startTime && now <= endTime) return 'ACTIVE';
         if (now < startTime) return 'UPCOMING';
         return 'ENDED';
@@ -128,7 +148,11 @@ const AdminFlashSales = () => {
     };
 
     const renderSaleItem = (sale) => (
-        <div key={sale.id} className="p-4 flex items-center justify-between hover:bg-gray-50 border-b last:border-0 border-gray-100">
+        <div
+            key={sale.id}
+            onClick={() => setSelectedSale(sale)}
+            className="p-4 flex items-center justify-between hover:bg-gray-50 border-b last:border-0 border-gray-100 cursor-pointer group"
+        >
             <div>
                 <div className="flex items-center gap-2 mb-1">
                     <span className="font-bold text-gray-800">{sale.name || `Flash Sale #${sale.id}`}</span>
@@ -148,14 +172,23 @@ const AdminFlashSales = () => {
                     <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {new Date(sale.endTime).toLocaleString('vi-VN')}</span>
                 </div>
             </div>
-            <div className="text-sm text-gray-600">
-                {sale.items?.length || sale.products?.length || 0} sản phẩm
+            <div className="flex items-center gap-4">
+                <div className="text-sm text-gray-600">
+                    {sale.items?.length || sale.products?.length || 0} sản phẩm
+                </div>
+                <button
+                    onClick={(e) => handleEditClick(sale, e)}
+                    className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition"
+                    title="Chỉnh sửa (thêm/bớt sản phẩm)"
+                >
+                    <Zap className="w-4 h-4" />
+                </button>
             </div>
         </div>
     );
 
     const handleCreateClick = () => {
-        // Calculate next full hour
+        setEditingId(null);
         const now = new Date();
         now.setMinutes(0);
         now.setSeconds(0);
@@ -166,7 +199,6 @@ const AdminFlashSales = () => {
         const oneHourLater = new Date(nextHour);
         oneHourLater.setHours(oneHourLater.getHours() + 1);
 
-        // Format for datetime-local input: YYYY-MM-DDTHH:mm
         const formatLocal = (d) => {
             const pad = (n) => String(n).padStart(2, '0');
             return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
@@ -177,6 +209,7 @@ const AdminFlashSales = () => {
             endDate: formatLocal(oneHourLater),
             productIds: []
         });
+        setSearchTerm('');
         setShowModal(true);
     };
 
@@ -193,7 +226,6 @@ const AdminFlashSales = () => {
             </div>
 
             <div className="space-y-6">
-                {/* Active Section */}
                 {groupedSales.ACTIVE.length > 0 && (
                     <div className="bg-white rounded-xl shadow-sm border border-green-200 overflow-hidden">
                         <div className="p-4 border-b border-green-100 bg-green-50">
@@ -202,33 +234,11 @@ const AdminFlashSales = () => {
                             </h3>
                         </div>
                         <div>
-                            {groupedSales.ACTIVE.map((sale) => (
-                                <div
-                                    key={sale.id}
-                                    onClick={() => setSelectedSale(sale)}
-                                    className="p-4 flex items-center justify-between hover:bg-gray-50 border-b last:border-0 border-gray-100 cursor-pointer"
-                                >
-                                    <div>
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <span className="font-bold text-gray-800">{sale.name || `Flash Sale #${sale.id}`}</span>
-                                            <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full animate-pulse">Đang diễn ra</span>
-                                        </div>
-                                        <div className="text-sm text-gray-500 flex items-center gap-3">
-                                            <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {new Date(sale.startTime).toLocaleString('vi-VN')}</span>
-                                            <span>→</span>
-                                            <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {new Date(sale.endTime).toLocaleString('vi-VN')}</span>
-                                        </div>
-                                    </div>
-                                    <div className="text-sm text-gray-600">
-                                        {sale.items?.length || sale.products?.length || 0} sản phẩm
-                                    </div>
-                                </div>
-                            ))}
+                            {groupedSales.ACTIVE.map(renderSaleItem)}
                         </div>
                     </div>
                 )}
 
-                {/* Upcoming Section */}
                 <div className="bg-white rounded-xl shadow-sm border border-blue-100 overflow-hidden">
                     <div className="p-4 border-b border-blue-50 bg-blue-50">
                         <h3 className="font-bold text-blue-800 flex items-center gap-2">
@@ -239,33 +249,11 @@ const AdminFlashSales = () => {
                         <div className="p-8 text-center text-gray-500 text-sm">Chưa có chương trình nào sắp tới.</div>
                     ) : (
                         <div>
-                            {groupedSales.UPCOMING.map((sale) => (
-                                <div
-                                    key={sale.id}
-                                    onClick={() => setSelectedSale(sale)}
-                                    className="p-4 flex items-center justify-between hover:bg-gray-50 border-b last:border-0 border-gray-100 cursor-pointer"
-                                >
-                                    <div>
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <span className="font-bold text-gray-800">{sale.name || `Flash Sale #${sale.id}`}</span>
-                                            <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full">Sắp diễn ra</span>
-                                        </div>
-                                        <div className="text-sm text-gray-500 flex items-center gap-3">
-                                            <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {new Date(sale.startTime).toLocaleString('vi-VN')}</span>
-                                            <span>→</span>
-                                            <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {new Date(sale.endTime).toLocaleString('vi-VN')}</span>
-                                        </div>
-                                    </div>
-                                    <div className="text-sm text-gray-600">
-                                        {sale.items?.length || sale.products?.length || 0} sản phẩm
-                                    </div>
-                                </div>
-                            ))}
+                            {groupedSales.UPCOMING.map(renderSaleItem)}
                         </div>
                     )}
                 </div>
 
-                {/* Ended Section */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                     <div className="p-4 border-b border-gray-100 bg-gray-50">
                         <h3 className="font-bold text-gray-700 flex items-center gap-2">
@@ -276,44 +264,21 @@ const AdminFlashSales = () => {
                         <div className="p-8 text-center text-gray-500 text-sm">Chưa có lịch sử chương trình nào.</div>
                     ) : (
                         <div>
-                            {groupedSales.ENDED.map((sale) => (
-                                <div
-                                    key={sale.id}
-                                    onClick={() => setSelectedSale(sale)}
-                                    className="p-4 flex items-center justify-between hover:bg-gray-50 border-b last:border-0 border-gray-100 cursor-pointer"
-                                >
-                                    <div>
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <span className="font-bold text-gray-800">{sale.name || `Flash Sale #${sale.id}`}</span>
-                                            <span className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">Đã kết thúc</span>
-                                        </div>
-                                        <div className="text-sm text-gray-500 flex items-center gap-3">
-                                            <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {new Date(sale.startTime).toLocaleString('vi-VN')}</span>
-                                            <span>→</span>
-                                            <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {new Date(sale.endTime).toLocaleString('vi-VN')}</span>
-                                        </div>
-                                    </div>
-                                    <div className="text-sm text-gray-600">
-                                        {sale.items?.length || sale.products?.length || 0} sản phẩm
-                                    </div>
-                                </div>
-                            ))}
+                            {groupedSales.ENDED.map(renderSaleItem)}
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* Create Modal */}
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                     <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 p-6 animate-[fadeIn_0.2s_ease-out] max-h-[90vh] flex flex-col">
                         <h2 className="text-xl font-bold mb-4 flex items-center gap-2 flex-shrink-0">
-                            <Zap className="w-5 h-5 text-orange-500" /> Tạo Flash Sale Mới
+                            <Zap className="w-5 h-5 text-orange-500" /> {editingId ? 'Chỉnh Sửa Flash Sale' : 'Tạo Flash Sale Mới'}
                         </h2>
 
                         <div className="overflow-y-auto flex-1 pr-2">
                             <form id="flash-sale-form" onSubmit={handleSubmit} className="space-y-4">
-                                {/* ... date inputs ... */}
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Bắt đầu</label>
@@ -339,31 +304,76 @@ const AdminFlashSales = () => {
 
                                 <div>
                                     <div className="flex justify-between items-center mb-2">
-                                        <label className="block text-sm font-medium text-gray-700">Chọn sản phẩm tham gia</label>
-                                        <button
-                                            type="button"
-                                            onClick={handleRandomSelect}
-                                            className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded hover:bg-blue-100 transition flex items-center gap-1"
-                                            title="Chọn ngẫu nhiên 20 sản phẩm"
-                                        >
-                                            <Zap className="w-3 h-3" /> Random 20
-                                        </button>
+                                        <label className="block text-sm font-medium text-gray-700">Sản phẩm tham gia</label>
+                                        <div className="flex gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={() => setForm(prev => ({ ...prev, productIds: [] }))}
+                                                className="text-xs bg-red-50 text-red-600 px-2 py-1 rounded hover:bg-red-100 transition"
+                                            >
+                                                Xóa tất cả
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={handleRandomSelect}
+                                                className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded hover:bg-blue-100 transition flex items-center gap-1"
+                                                title="Chọn ngẫu nhiên 20 sản phẩm"
+                                            >
+                                                <Zap className="w-3 h-3" /> Random 20
+                                            </button>
+                                        </div>
                                     </div>
+
+                                    {/* Selected Items Preview */}
+                                    {form.productIds.length > 0 && (
+                                        <div className="mb-4 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                                            <div className="text-xs font-semibold text-gray-500 mb-2 uppercase">Đã chọn ({form.productIds.length})</div>
+                                            <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                                                {form.productIds.map(id => {
+                                                    const p = products.find(prod => prod.id === id);
+                                                    if (!p) return null;
+                                                    return (
+                                                        <div key={id} className="flex items-center gap-1 bg-white border border-orange-200 rounded-full pl-1 pr-2 py-1 shadow-sm">
+                                                            <img src={p.imageUrl} alt="" className="w-5 h-5 rounded-full object-cover" />
+                                                            <span className="text-xs font-medium max-w-[120px] truncate">{p.name}</span>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => toggleProductSelection(id)}
+                                                                className="ml-1 text-gray-400 hover:text-red-500 rounded-full p-0.5 hover:bg-red-50"
+                                                            >
+                                                                <Trash2 className="w-3 h-3" />
+                                                            </button>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Search and List */}
+                                    <input
+                                        type="text"
+                                        placeholder="Tìm kiếm sản phẩm để thêm..."
+                                        value={searchTerm}
+                                        onChange={e => setSearchTerm(e.target.value)}
+                                        className="w-full border border-gray-300 rounded-lg p-2 mb-2 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                                    />
+
                                     <div className="border border-gray-200 rounded-lg max-h-60 overflow-y-auto p-2 space-y-1">
-                                        {products.map(p => (
+                                        {filteredProducts.map(p => (
                                             <div
                                                 key={p.id}
                                                 onClick={() => toggleProductSelection(p.id)}
                                                 className={`flex items-center gap-3 p-2 rounded cursor-pointer transition ${form.productIds.includes(p.id) ? 'bg-orange-50 border-orange-200 ring-1 ring-orange-200' : 'hover:bg-gray-50'
                                                     }`}
                                             >
-                                                <div className={`w-4 h-4 rounded border flex items-center justify-center ${form.productIds.includes(p.id) ? 'bg-orange-500 border-orange-500' : 'border-gray-300'
+                                                <div className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${form.productIds.includes(p.id) ? 'bg-orange-500 border-orange-500' : 'border-gray-300'
                                                     }`}>
                                                     {form.productIds.includes(p.id) && <div className="w-2 h-2 bg-white rounded-full" />}
                                                 </div>
-                                                <img src={p.imageUrl} alt="" className="w-8 h-8 rounded object-cover bg-gray-100" />
+                                                <img src={p.imageUrl} alt="" className="w-8 h-8 rounded object-cover bg-gray-100 flex-shrink-0" />
                                                 <div className="flex-1 text-sm truncate">{p.name}</div>
-                                                <div className="text-xs font-medium text-orange-600">
+                                                <div className="text-xs font-medium text-orange-600 flex-shrink-0">
                                                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p.price)}
                                                 </div>
                                             </div>
@@ -377,20 +387,19 @@ const AdminFlashSales = () => {
                         <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 mt-4 flex-shrink-0">
                             <button
                                 type="button"
-                                onClick={() => setShowModal(false)}
+                                onClick={() => { setShowModal(false); setEditingId(null); setSearchTerm(''); }}
                                 className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded"
                             >Hủy</button>
                             <button
                                 type="submit"
                                 form="flash-sale-form"
                                 className="px-6 py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
-                            >Tạo Flash Sale</button>
+                            >{editingId ? 'Cập Nhật' : 'Tạo Flash Sale'}</button>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* Details Modal */}
             {selectedSale && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                     <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 p-6 animate-[fadeIn_0.2s_ease-out] max-h-[90vh] flex flex-col">
@@ -433,7 +442,16 @@ const AdminFlashSales = () => {
                             </div>
                         </div>
 
-                        <div className="flex justify-end pt-4 border-t border-gray-100 mt-4">
+                        <div className="flex justify-end pt-4 border-t border-gray-100 mt-4 gap-2">
+                            <button
+                                onClick={(e) => {
+                                    setSelectedSale(null);
+                                    handleEditClick(selectedSale, e);
+                                }}
+                                className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 flex items-center gap-2"
+                            >
+                                <Zap className="w-4 h-4" /> Chỉnh sửa
+                            </button>
                             <button
                                 onClick={() => setSelectedSale(null)}
                                 className="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"

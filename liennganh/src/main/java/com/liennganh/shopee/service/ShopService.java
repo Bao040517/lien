@@ -14,4 +14,10 @@ public class ShopService {
     public List<Shop> getAllShops() {
         return shopRepository.findAll();
     }
+
+    public Shop getShopById(Long id) {
+        return shopRepository.findById(id)
+                .orElseThrow(() -> new com.liennganh.shopee.exception.AppException(
+                        com.liennganh.shopee.exception.ErrorCode.SHOP_NOT_FOUND));
+    }
 }

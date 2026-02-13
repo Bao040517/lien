@@ -26,9 +26,11 @@ public class Voucher {
     @Column(name = "min_order_value")
     private BigDecimal minOrderValue;
 
+    @com.fasterxml.jackson.annotation.JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Column(name = "start_date", nullable = false)
     private LocalDateTime startDate;
 
+    @com.fasterxml.jackson.annotation.JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Column(name = "end_date", nullable = false)
     private LocalDateTime endDate;
 

@@ -43,6 +43,11 @@ public class ProductController {
         return ApiResponse.success(productService.getProductById(id), "Product retrieved successfully");
     }
 
+    @GetMapping("/shop/{shopId}")
+    public ApiResponse<List<Product>> getProductsByShop(@PathVariable Long shopId) {
+        return ApiResponse.success(productService.getProductsByShopId(shopId), "Shop products retrieved successfully");
+    }
+
     @GetMapping("/category/{categoryId}")
     public ApiResponse<List<Product>> getProductsByCategory(@PathVariable Long categoryId) {
         return ApiResponse.success(productService.getProductsByCategory(categoryId), "Products retrieved successfully");
@@ -130,6 +135,16 @@ public class ProductController {
     public ApiResponse<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ApiResponse.success(null, "Product deleted successfully");
+    }
+
+    @PutMapping("/{id}/ban")
+    public ApiResponse<Product> banProduct(@PathVariable Long id, @RequestParam String reason) {
+        return ApiResponse.success(productService.banProduct(id, reason), "Product banned successfully");
+    }
+
+    @PutMapping("/{id}/unban")
+    public ApiResponse<Product> unbanProduct(@PathVariable Long id) {
+        return ApiResponse.success(productService.unbanProduct(id), "Product unbanned successfully");
     }
 
     @PutMapping("/{id}")

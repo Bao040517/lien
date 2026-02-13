@@ -27,4 +27,8 @@ public class ProductSpecification {
         return (root, query, criteriaBuilder) -> keyword == null ? null
                 : criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + keyword.toLowerCase() + "%");
     }
+
+    public static Specification<Product> isNotBanned() {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.isFalse(root.get("isBanned"));
+    }
 }
