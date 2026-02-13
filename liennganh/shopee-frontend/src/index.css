@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #f53d2d;
+  /* Shopee orange */
+}
+
+/* Custom Utilities if needed */
