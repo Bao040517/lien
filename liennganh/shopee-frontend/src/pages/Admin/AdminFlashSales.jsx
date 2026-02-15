@@ -176,13 +176,15 @@ const AdminFlashSales = () => {
                 <div className="text-sm text-gray-600">
                     {sale.items?.length || sale.products?.length || 0} sản phẩm
                 </div>
-                <button
-                    onClick={(e) => handleEditClick(sale, e)}
-                    className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition"
-                    title="Chỉnh sửa (thêm/bớt sản phẩm)"
-                >
-                    <Zap className="w-4 h-4" />
-                </button>
+                {getStatus(sale.startTime, sale.endTime) !== 'ENDED' && (
+                    <button
+                        onClick={(e) => handleEditClick(sale, e)}
+                        className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition"
+                        title="Chỉnh sửa (thêm/bớt sản phẩm)"
+                    >
+                        <Zap className="w-4 h-4" />
+                    </button>
+                )}
             </div>
         </div>
     );
@@ -443,15 +445,17 @@ const AdminFlashSales = () => {
                         </div>
 
                         <div className="flex justify-end pt-4 border-t border-gray-100 mt-4 gap-2">
-                            <button
-                                onClick={(e) => {
-                                    setSelectedSale(null);
-                                    handleEditClick(selectedSale, e);
-                                }}
-                                className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 flex items-center gap-2"
-                            >
-                                <Zap className="w-4 h-4" /> Chỉnh sửa
-                            </button>
+                            {getStatus(selectedSale.startTime, selectedSale.endTime) !== 'ENDED' && (
+                                <button
+                                    onClick={(e) => {
+                                        setSelectedSale(null);
+                                        handleEditClick(selectedSale, e);
+                                    }}
+                                    className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 flex items-center gap-2"
+                                >
+                                    <Zap className="w-4 h-4" /> Chỉnh sửa
+                                </button>
+                            )}
                             <button
                                 onClick={() => setSelectedSale(null)}
                                 className="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"

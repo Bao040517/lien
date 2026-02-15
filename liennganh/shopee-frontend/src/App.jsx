@@ -23,6 +23,7 @@ import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import SearchResults from './pages/SearchResults';
+import CategoryProducts from './pages/CategoryProducts';
 import OrderHistory from './pages/OrderHistory';
 import ShopProfile from './pages/ShopProfile';
 import { useAuth } from './context/AuthContext';
@@ -48,6 +49,7 @@ const App = () => {
           <Route path="cart" element={<Cart />} />
           <Route path="checkout" element={<Checkout />} />
           <Route path="search" element={<SearchResults />} />
+          <Route path="category/:id" element={<CategoryProducts />} />
           <Route path="purchase" element={<OrderHistory />} />
         </Route>
 

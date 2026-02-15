@@ -106,16 +106,66 @@ public class OrderService {
             }
         }
 
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+
+        // Remove from cart
+        List<Long> productIds = items.stream().map(item -> item.getProduct().getId()).toList();
+        cartService.removeProducts(userId, productIds);
+
+        return savedOrder;
     }
 
+    @Autowired
+    private CartService cartService;
+
+    @Autowired
+    private ReviewRepository reviewRepository;
+
+    @Transactional(readOnly = true)
     public Order getOrderById(Long orderId) {
-        return orderRepository.findById(orderId)
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        // Populate isReviewed
+        Long userId = order.getUser().getId();
+        List<Review> reviews = reviewRepository.findByUserId(userId);
+        java.util.Set<String> reviewedKeys = new java.util.HashSet<>();
+        for (Review r : reviews) {
+            String key = r.getOrder().getId() + "_" + r.getProduct().getId();
+            reviewedKeys.add(key);
+        }
+
+        for (OrderItem item : order.getOrderItems()) {
+            String itemKey = order.getId() + "_" + item.getProduct().getId();
+            if (reviewedKeys.contains(itemKey)) {
+                item.setReviewed(true);
+            }
+        }
+
+        return order;
     }
 
+    @Transactional(readOnly = true)
     public List<Order> getOrdersByUser(Long userId) {
-        return orderRepository.findByUserId(userId);
+        List<Order> orders = orderRepository.findByUserId(userId);
+
+        // Populate isReviewed
+        List<Review> reviews = reviewRepository.findByUserId(userId);
+        java.util.Set<String> reviewedKeys = new java.util.HashSet<>();
+        for (Review r : reviews) {
+            String key = r.getOrder().getId() + "_" + r.getProduct().getId();
+            reviewedKeys.add(key);
+        }
+
+        for (Order order : orders) {
+            for (OrderItem item : order.getOrderItems()) {
+                String itemKey = order.getId() + "_" + item.getProduct().getId();
+                if (reviewedKeys.contains(itemKey)) {
+                    item.setReviewed(true);
+                }
+            }
+        }
+        return orders;
     }
 
     public Order updateStatus(Long orderId, Order.OrderStatus status) {

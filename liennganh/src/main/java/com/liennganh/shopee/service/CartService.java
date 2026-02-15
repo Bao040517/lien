@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,6 +27,16 @@ public class CartService {
             cart.setUser(user);
             return cartRepository.save(cart);
         });
+    }
+
+    @Transactional
+    public void removeProducts(Long userId, List<Long> productIds) {
+        Cart cart = getCartByUser(userId);
+        boolean removed = cart.getItems().removeIf(item -> productIds.contains(item.getProduct().getId()));
+        if (removed) {
+            updateCartTotal(cart);
+            cartRepository.save(cart);
+        }
     }
 
     @Transactional

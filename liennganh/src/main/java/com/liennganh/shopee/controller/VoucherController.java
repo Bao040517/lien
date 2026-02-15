@@ -24,9 +24,15 @@ public class VoucherController {
 
     @PostMapping("/apply")
     public ApiResponse<java.math.BigDecimal> applyVoucher(@RequestParam String code,
-            @RequestParam java.math.BigDecimal orderValue) {
+            @RequestParam java.math.BigDecimal orderValue,
+            @RequestParam(required = false) Long shopId) {
         try {
-            return ApiResponse.success(voucherService.applyVoucher(code, orderValue), "Voucher applied successfully");
+            java.math.BigDecimal discount = voucherService.applyVoucher(code, orderValue, shopId);
+            com.liennganh.shopee.model.Voucher voucher = voucherService.getVoucherByCode(code)
+                    .orElseThrow(() -> new RuntimeException("Voucher not found"));
+            return ApiResponse.success(discount,
+                    "Success: Disc=" + discount + ", Ord=" + orderValue + ", Rate=" + voucher.getDiscountValue()
+                            + ", Type=" + voucher.getDiscountType());
         } catch (RuntimeException e) {
             return ApiResponse.error(400, e.getMessage());
         }
@@ -35,6 +41,7 @@ public class VoucherController {
     @Autowired
     private com.liennganh.shopee.repository.UserRepository userRepository;
 
+    @GetMapping("/my-shop")
     public ApiResponse<java.util.List<Voucher>> getMyShopVouchers(@RequestParam Long userId) {
         com.liennganh.shopee.model.User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));

@@ -172,8 +172,9 @@ const OrderHistory = () => {
                                 {/* Order Items */}
                                 <div className="px-5 py-3">
                                     {order.orderItems && order.orderItems.map((item, idx) => {
-                                        const imageUrl = item.product?.imageUrl
-                                            ? (item.product.imageUrl.startsWith('http') ? item.product.imageUrl : `http://localhost:8080${item.product.imageUrl}`)
+                                        const productImg = item.variant?.imageUrl || item.product?.imageUrl;
+                                        const imageUrl = productImg
+                                            ? (productImg.startsWith('http') ? productImg : `http://localhost:8080${productImg}`)
                                             : null;
 
                                         return (
@@ -196,15 +197,24 @@ const OrderHistory = () => {
                                                         {formatPrice(item.price * item.quantity)}
                                                     </div>
                                                     {isDelivered && (
-                                                        <button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleOpenReview(order.id, { ...item, product: { ...item.product, imageUrl } });
-                                                            }}
-                                                            className="mt-2 text-xs border border-orange-500 text-orange-500 px-3 py-1 rounded hover:bg-orange-50 transition"
-                                                        >
-                                                            Đánh giá
-                                                        </button>
+                                                        item.isReviewed ? (
+                                                            <button
+                                                                disabled
+                                                                className="mt-2 text-xs border border-gray-300 text-gray-400 px-3 py-1 rounded bg-gray-50 cursor-not-allowed"
+                                                            >
+                                                                Đã đánh giá
+                                                            </button>
+                                                        ) : (
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleOpenReview(order.id, { ...item, product: { ...item.product, imageUrl } });
+                                                                }}
+                                                                className="mt-2 text-xs border border-orange-500 text-orange-500 px-3 py-1 rounded hover:bg-orange-50 transition"
+                                                            >
+                                                                Đánh giá
+                                                            </button>
+                                                        )
                                                     )}
                                                 </div>
                                             </div>

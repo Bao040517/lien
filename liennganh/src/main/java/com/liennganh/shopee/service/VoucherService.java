@@ -68,16 +68,37 @@ public class VoucherService {
         voucherRepository.delete(voucher);
     }
 
-    public BigDecimal applyVoucher(String code, BigDecimal orderValue) {
+    public BigDecimal applyVoucher(String code, BigDecimal orderValue, Long shopId) {
         Optional<Voucher> voucherOpt = voucherRepository.findByCode(code);
         if (voucherOpt.isEmpty()) {
             throw new RuntimeException("Voucher not found");
         }
         Voucher voucher = voucherOpt.get();
 
-        if (!isValid(voucher)) {
-            throw new RuntimeException("Voucher is not valid or expired");
+        LocalDateTime now = LocalDateTime.now();
+        if (voucher.getStartDate().isAfter(now)) {
+            throw new RuntimeException("Voucher not started. Start: " + voucher.getStartDate() + " Now: " + now);
         }
+        if (voucher.getEndDate().isBefore(now)) {
+            throw new RuntimeException("Voucher expired. End: " + voucher.getEndDate() + " Now: " + now);
+        }
+        if (voucher.getUsageLimit() != null && voucher.getUsageLimit() <= 0) {
+            throw new RuntimeException("Voucher run out of usage. Limit: " + voucher.getUsageLimit());
+        }
+
+        // Validate Shop Scope
+        if (voucher.getShop() != null) {
+            if (shopId == null || !voucher.getShop().getId().equals(shopId)) {
+                throw new RuntimeException("Voucher is only valid for shop: " + voucher.getShop().getName());
+            }
+        }
+
+        // NEW: If voucher is system-wide (shop is null), it can apply to any shop's
+        // order
+        // However, if we want system vouchers to apply to the TOTAL cart value across
+        // all shops,
+        // that requires a different architecture (parent order).
+        // For now, assuming system vouchers can apply to any sub-order (shop order).
 
         if (voucher.getMinOrderValue() != null && orderValue.compareTo(voucher.getMinOrderValue()) < 0) {
             throw new RuntimeException("Order value does not meet minimum requirement: " + voucher.getMinOrderValue());
@@ -88,7 +109,8 @@ public class VoucherService {
         if (voucher.getDiscountType() == Voucher.DiscountType.FIXED) {
             discountAmount = voucher.getDiscountValue();
         } else {
-            discountAmount = orderValue.multiply(voucher.getDiscountValue()).divide(BigDecimal.valueOf(100));
+            discountAmount = orderValue.multiply(voucher.getDiscountValue()).divide(BigDecimal.valueOf(100), 0,
+                    java.math.RoundingMode.HALF_UP);
         }
 
         // Ensure discount doesn't exceed order value

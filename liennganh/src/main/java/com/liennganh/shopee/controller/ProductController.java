@@ -161,6 +161,54 @@ public class ProductController {
         return ApiResponse.success(productService.createProduct(product), "Product updated successfully");
     }
 
+    @PutMapping(value = "/{id}/with-image", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<Product> updateProductWithImage(
+            @PathVariable Long id,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) BigDecimal price,
+            @RequestParam(required = false) Integer stockQuantity,
+            @RequestParam(value = "image", required = false) MultipartFile imageFile) {
+        try {
+            Product product = productService.getProductById(id);
+            if (name != null)
+                product.setName(name);
+            if (description != null)
+                product.setDescription(description);
+            if (price != null)
+                product.setPrice(price);
+            if (stockQuantity != null)
+                product.setStockQuantity(stockQuantity);
+
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String fileName = fileStorageService.storeFile(imageFile);
+                String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                        .path("/api/files/")
+                        .path(fileName)
+                        .toUriString();
+                product.setImageUrl(imageUrl);
+
+                // Sync image to all variants
+                List<ProductVariant> variants = variantRepository.findByProductId(id);
+                for (ProductVariant v : variants) {
+                    v.setImageUrl(imageUrl);
+                    variantRepository.save(v);
+                }
+            } else {
+                // Even if no new image, ensure variants match current product image
+                List<ProductVariant> variants = variantRepository.findByProductId(id);
+                for (ProductVariant v : variants) {
+                    v.setImageUrl(product.getImageUrl());
+                    variantRepository.save(v);
+                }
+            }
+
+            return ApiResponse.success(productService.createProduct(product), "Product updated successfully");
+        } catch (Exception e) {
+            return ApiResponse.error(500, "Failed to update product: " + e.getMessage());
+        }
+    }
+
     // ========== PRODUCT ATTRIBUTES (Seller tự tạo thuộc tính) ==========
 
     @GetMapping("/{productId}/attributes")

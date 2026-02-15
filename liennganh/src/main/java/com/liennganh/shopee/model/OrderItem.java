@@ -27,4 +27,15 @@ public class OrderItem {
 
     @Column(nullable = false)
     private BigDecimal price;
+
+    @Transient
+    private boolean isReviewed;
+
+    public boolean isReviewed() {
+        return isReviewed;
+    }
+
+    public void setReviewed(boolean reviewed) {
+        isReviewed = reviewed;
+    }
 }

@@ -160,7 +160,12 @@ const Home = () => {
                             const iconFile = iconMap[cat.name] || 'cat_thoi_trang_nam.jpg'; // Fallback
 
                             return (
-                                <div key={cat.id} className="flex flex-col items-center group cursor-pointer hover:shadow-md border border-transparent hover:border-gray-200 p-2 rounded transition">
+                                <Link
+                                    to={`/category/${cat.id}`}
+                                    state={{ categoryName: cat.name }}
+                                    key={cat.id}
+                                    className="flex flex-col items-center group cursor-pointer hover:shadow-md border border-transparent hover:border-gray-200 p-2 rounded transition"
+                                >
                                     <div className="w-20 h-20 mb-2 flex items-center justify-center overflow-hidden transition-transform group-hover:-translate-y-1 rounded-full border border-gray-100 bg-gray-50">
                                         <img
                                             src={`http://localhost:8080/api/files/${iconFile}`}
@@ -173,7 +178,7 @@ const Home = () => {
                                         />
                                     </div>
                                     <span className="text-xs text-center text-gray-800 group-hover:text-orange-500 line-clamp-2">{cat.name}</span>
-                                </div>
+                                </Link>
                             );
                         })}
                     </div>

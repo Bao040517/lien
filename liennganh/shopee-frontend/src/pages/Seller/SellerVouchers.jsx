@@ -64,12 +64,25 @@ const SellerVouchers = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!user) return;
+
+        // Validations
+        if (!formData.code || !formData.discountValue || !formData.startDate || !formData.endDate) {
+            alert("Vui lòng điền đầy đủ thông tin bắt buộc");
+            return;
+        }
+
+        const payload = {
+            ...formData,
+            discountValue: parseFloat(formData.discountValue),
+            minOrderValue: formData.minOrderValue ? parseFloat(formData.minOrderValue) : null,
+            usageLimit: formData.usageLimit ? parseInt(formData.usageLimit) : null,
+            // Ensure we send the local time string as is (appending seconds), rather than converting to UTC
+            startDate: formData.startDate.length === 16 ? formData.startDate + ':00' : formData.startDate,
+            endDate: formData.endDate.length === 16 ? formData.endDate + ':00' : formData.endDate
+        };
+
         try {
-            await api.post('/vouchers/my-shop', {
-                ...formData,
-                startDate: new Date(formData.startDate).toISOString().slice(0, 19),
-                endDate: new Date(formData.endDate).toISOString().slice(0, 19)
-            }, {
+            await api.post('/vouchers/my-shop', payload, {
                 params: { userId: user.id }
             });
             setShowModal(false);
@@ -85,7 +98,7 @@ const SellerVouchers = () => {
             });
         } catch (error) {
             console.error('Failed to create voucher:', error);
-            alert('Tạo mã giảm giá thất bại. Mã có thể đã tồn tại.');
+            alert(error.response?.data?.message || 'Tạo mã giảm giá thất bại. Kiểm tra lại thông tin.');
         }
     };
 

@@ -45,6 +45,10 @@ public class FlashSaleService {
         FlashSale existingSale = flashSaleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Flash Sale not found"));
 
+        if (existingSale.getEndTime().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Flash Sale đã kết thúc, không thể chỉnh sửa!");
+        }
+
         if (flashSaleRepository.existsOverlappingExcluding(flashSaleDetails.getStartTime(),
                 flashSaleDetails.getEndTime(), id)) {
             throw new RuntimeException("Khoảng thời gian này đã có Flash Sale khác diễn ra!");

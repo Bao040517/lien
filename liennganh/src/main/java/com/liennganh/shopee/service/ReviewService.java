@@ -48,27 +48,34 @@ public class ReviewService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-        // 2. Verify Order exists and belongs to User
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        Order order;
 
-        if (!order.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Unauthorized order access");
-        }
+        if (orderId != null) {
+            // 2a. Verify specific Order
+            order = orderRepository.findById(orderId)
+                    .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
-        // 3. Verify Order is completed (Only allow review for completed orders)
-        // Ideally we check if status is DELIVERED/COMPLETED. For now let's assume if
-        // it's not PENDING/CANCELLED
-        if (order.getStatus() == Order.OrderStatus.PENDING || order.getStatus() == Order.OrderStatus.CANCELLED) {
-            throw new AppException(ErrorCode.INVALID_ORDER_STATUS);
-        }
+            if (order.getUser() == null || !order.getUser().getId().equals(userId)) {
+                throw new RuntimeException("Unauthorized order access");
+            }
 
-        // 4. Verify Product is in the Order
-        boolean productInOrder = order.getOrderItems().stream()
-                .anyMatch(item -> item.getProduct().getId().equals(productId));
+            // 3a. Verify Order status (Must be DELIVERED)
+            if (order.getStatus() != Order.OrderStatus.DELIVERED) {
+                throw new RuntimeException("Bạn chỉ có thể đánh giá khi đơn hàng đã giao thành công (DELIVERED)!");
+            }
 
-        if (!productInOrder) {
-            throw new AppException(ErrorCode.INVALID_ORDER_STATUS);
+            // 4a. Verify Product is in the Order
+            boolean productInOrder = order.getOrderItems().stream()
+                    .anyMatch(item -> item.getProduct() != null && item.getProduct().getId().equals(productId));
+
+            if (!productInOrder) {
+                throw new RuntimeException("Sản phẩm không có trong đơn hàng này!");
+            }
+        } else {
+            // 2b. Automatically find latest valid order
+            order = orderRepository.findFirstByUserIdAndOrderItemsProductIdAndStatusOrderByCreatedAtDesc(
+                    userId, productId, Order.OrderStatus.DELIVERED)
+                    .orElseThrow(() -> new RuntimeException("Bạn chưa mua sản phẩm này hoặc chưa nhận được hàng!"));
         }
 
         Product product = productRepository.findById(productId)
