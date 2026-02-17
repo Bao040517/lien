@@ -8,21 +8,49 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Check if user is stored in localStorage on load
-        const savedUser = localStorage.getItem('user');
-        if (savedUser) {
-            setUser(JSON.parse(savedUser));
-        }
-        setLoading(false);
+        const initAuth = async () => {
+            const savedUser = localStorage.getItem('user');
+            if (savedUser) {
+                try {
+                    const parsedUser = JSON.parse(savedUser);
+                    setUser(parsedUser);
+
+                    // Validate session with backend
+                    try {
+                        await api.get(`/users/${parsedUser.id}`);
+                    } catch (error) {
+                        console.warn("Session invalid, logging out...", error);
+                        localStorage.removeItem('user');
+                        setUser(null);
+                    }
+                } catch (e) {
+                    console.error("Error parsing user from local storage", e);
+                    localStorage.removeItem('user');
+                    setUser(null);
+                }
+            }
+            setLoading(false);
+        };
+        initAuth();
     }, []);
 
     const login = async (username, password) => {
         try {
             const response = await api.post('/auth/login', { username, password });
-            const userData = response.data.data;
-            setUser(userData);
-            localStorage.setItem('user', JSON.stringify(userData));
-            return { success: true, user: userData };
+            const loginResponse = response.data.data;
+            // LoginResponse contains { user: {...}, token: "..." }
+            // We need to extract the user object
+            const userObj = loginResponse.user;
+
+            setUser(userObj);
+            localStorage.setItem('user', JSON.stringify(userObj));
+
+            // Optionally store token if we want to use it later
+            if (loginResponse.token) {
+                localStorage.setItem('token', loginResponse.token);
+            }
+
+            return { success: true, user: userObj };
         } catch (error) {
             return {
                 success: false,
@@ -76,6 +104,7 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         setUser(null);
         localStorage.removeItem('user');
+        localStorage.removeItem('token');
     };
 
     return (

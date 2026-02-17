@@ -8,6 +8,10 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 
+/**
+ * Cấu hình CORS (Cross-Origin Resource Sharing)
+ * Cho phép frontend (React/Vue/Angular) gọi API từ domain khác
+ */
 @Configuration
 public class CorsConfig {
 
@@ -15,22 +19,22 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // Allow frontend origin
+        // Cho phép các nguồn (origins) truy cập
         config.setAllowedOrigins(Arrays.asList(
-                "http://localhost:5173", // Vite default port
+                "http://localhost:5173", // Vite default port (React/Vue)
                 "http://localhost:3000", // React default port (backup)
                 "http://127.0.0.1:5173"));
 
-        // Allow all HTTP methods
+        // Cho phép tất cả các HTTP methods (GET, POST, PUT, DELETE...)
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 
-        // Allow all headers
+        // Cho phép tất cả các headers
         config.setAllowedHeaders(Arrays.asList("*"));
 
-        // Allow credentials (cookies, authorization headers)
+        // Cho phép gửi credentials (cookies, authorization headers)
         config.setAllowCredentials(true);
 
-        // Max age for preflight requests
+        // Thời gian cache preflight request (giây)
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

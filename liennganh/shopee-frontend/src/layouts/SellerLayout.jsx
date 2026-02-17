@@ -1,5 +1,7 @@
+import { useState, useEffect, useRef } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import api from '../api';
 import { LayoutDashboard, Package, ShoppingBag, BarChart3, Settings, LogOut, Store, ImagePlus, Bell, Ticket } from 'lucide-react';
 
 const menuItems = [
@@ -20,6 +22,67 @@ const SellerLayout = () => {
     const handleLogout = () => {
         logout();
         navigate('/login');
+    };
+
+    // Notification Logic
+    const [notifications, setNotifications] = useState([]);
+    const [unreadCount, setUnreadCount] = useState(0);
+    const [showNotifications, setShowNotifications] = useState(false);
+    const notificationRef = useRef(null);
+
+    useEffect(() => {
+        if (user) {
+            fetchUnreadCount();
+            const interval = setInterval(fetchUnreadCount, 30000); // Poll every 30s
+            return () => clearInterval(interval);
+        }
+    }, [user]);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+                setShowNotifications(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const fetchUnreadCount = async () => {
+        try {
+            const res = await api.get('/notifications/unread-count', { params: { userId: user.id } });
+            setUnreadCount(res.data.data);
+        } catch (e) { console.error("Error fetching unread count", e); }
+    };
+
+    const handleToggleNotifications = async () => {
+        if (!showNotifications) {
+            try {
+                const res = await api.get('/notifications', { params: { userId: user.id } });
+                setNotifications(res.data.data);
+            } catch (e) { console.error("Error fetching notifications", e); }
+        }
+        setShowNotifications(!showNotifications);
+    };
+
+    const handleMarkRead = async (notif) => {
+        if (!notif.read) {
+            try {
+                await api.put(`/notifications/${notif.id}/read`);
+                setUnreadCount(prev => Math.max(0, prev - 1));
+                setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, read: true } : n));
+            } catch (e) { console.error("Error marking read", e); }
+        }
+        setShowNotifications(false);
+
+        // Navigate logic
+        if (notif.type === 'Product' || notif.type === 'PRODUCT_BAN' || notif.type === 'PRODUCT_UNBAN') {
+            navigate('/seller/products');
+        } else if (notif.type === 'Review' || notif.type === 'REVIEW') {
+            navigate('/seller/reviews'); // Assuming reviews page exists, or products
+        } else if (notif.type === 'Order' || notif.type === 'ORDER') {
+            navigate('/seller/orders');
+        }
     };
 
     if (!user || user.role !== 'SELLER') {
@@ -147,6 +210,60 @@ const SellerLayout = () => {
                         <h2 className="text-lg font-semibold text-gray-800">
                             {menuItems.find(item => item.path === location.pathname)?.label || 'Seller Center'}
                         </h2>
+
+                        {/* Notification Bell */}
+                        <div className="relative" ref={notificationRef}>
+                            <button
+                                onClick={handleToggleNotifications}
+                                className="relative p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors"
+                            >
+                                <Bell className="w-6 h-6" />
+                                {unreadCount > 0 && (
+                                    <span className="absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full border-2 border-white transform translate-x-1/4 -translate-y-1/4">
+                                        {unreadCount > 9 ? '9+' : unreadCount}
+                                    </span>
+                                )}
+                            </button>
+
+                            {/* Dropdown */}
+                            {showNotifications && (
+                                <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden z-50">
+                                    <div className="px-4 py-3 border-b bg-gray-50 flex justify-between items-center">
+                                        <h3 className="text-sm font-semibold text-gray-700">Thông báo</h3>
+                                        <button onClick={() => { }} className="text-xs text-blue-500 hover:underline">Đã đọc tất cả</button>
+                                    </div>
+                                    <div className="max-h-96 overflow-y-auto">
+                                        {notifications.length === 0 ? (
+                                            <div className="p-8 text-center text-gray-400 text-sm">Chưa có thông báo nào</div>
+                                        ) : (
+                                            notifications.map(notif => (
+                                                <div
+                                                    key={notif.id}
+                                                    onClick={() => handleMarkRead(notif)}
+                                                    className={`px-4 py-3 border-b hover:bg-gray-50 cursor-pointer transition-colors ${!notif.read ? 'bg-blue-50/50' : ''}`}
+                                                >
+                                                    <div className="flex gap-3">
+                                                        <div className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${!notif.read ? 'bg-blue-500' : 'bg-transparent'}`}></div>
+                                                        <div>
+                                                            <p className="text-sm font-medium text-gray-800 line-clamp-1">{notif.title}</p>
+                                                            <p className="text-xs text-gray-500 mt-1 line-clamp-2">{notif.message}</p>
+                                                            <p className="text-[10px] text-gray-400 mt-2">
+                                                                {new Date(notif.createdAt).toLocaleString('vi-VN')}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                    <div className="p-2 border-t text-center bg-gray-50">
+                                        <Link to="/seller/notifications" className="text-xs text-blue-500 hover:underline font-medium">
+                                            Xem tất cả
+                                        </Link>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </header>
 

@@ -9,7 +9,9 @@ import SellerRegister from './pages/SellerRegister';
 import SellerDashboard from './pages/Seller/SellerDashboard';
 import AddProduct from './pages/Seller/AddProduct';
 import SellerProducts from './pages/Seller/SellerProducts';
+
 import SellerVouchers from './pages/Seller/SellerVouchers';
+import SellerNotifications from './pages/Seller/SellerNotifications';
 import EditProduct from './pages/Seller/EditProduct';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import AdminUsers from './pages/Admin/AdminUsers';
@@ -69,6 +71,7 @@ const App = () => {
         <Route path="/seller" element={<SellerLayout />}>
           <Route index element={<SellerDashboard />} />
           <Route path="products" element={<SellerProducts />} />
+          <Route path="notifications" element={<SellerNotifications />} />
           <Route path="vouchers" element={<SellerVouchers />} />
           <Route path="edit-product/:id" element={<EditProduct />} />
           <Route path="add-product" element={<AddProduct />} />

@@ -136,29 +136,6 @@ const Home = () => {
                     <h2 className="text-gray-500 uppercase font-medium mb-4 text-sm">Danh Mục</h2>
                     <div className="grid grid-cols-10 gap-4">
                         {categories.slice(0, 20).map(cat => {
-                            // Map category name to icon file
-                            const iconMap = {
-                                'Thời trang nam': 'cat_thoi_trang_nam.jpg',
-                                'Thời trang nữ': 'cat_thoi_trang_nu.jpg',
-                                'Điện thoại & Phụ kiện': 'cat_dien_thoai.jpg',
-                                'Máy tính & Laptop': 'cat_laptop.jpg',
-                                'Thiết bị điện tử': 'cat_electronics.jpg',
-                                'Nhà cửa & Đời sống': 'cat_home.jpg',
-                                'Sức khỏe & Làm đẹp': 'cat_beauty.jpg',
-                                'Mẹ & Bé': 'cat_baby.jpg',
-                                'Thể thao & Du lịch': 'cat_sports.jpg',
-                                'Giày dép nam': 'cat_shoes_men.jpg',
-                                'Giày dép nữ': 'cat_shoes_women.jpg',
-                                'Túi ví nữ': 'cat_bag.jpg',
-                                'Phụ kiện & Trang sức': 'cat_jewelry.jpg',
-                                'Đồng hồ': 'cat_watch.jpg',
-                                'Bách hóa online': 'cat_grocery.jpg',
-                                'Ô tô & Xe máy': 'cat_auto.jpg',
-                                'Nhà sách online': 'cat_book.jpg',
-                                'Thú cưng': 'cat_pet.jpg',
-                            };
-                            const iconFile = iconMap[cat.name] || 'cat_thoi_trang_nam.jpg'; // Fallback
-
                             return (
                                 <Link
                                     to={`/category/${cat.id}`}
@@ -167,15 +144,21 @@ const Home = () => {
                                     className="flex flex-col items-center group cursor-pointer hover:shadow-md border border-transparent hover:border-gray-200 p-2 rounded transition"
                                 >
                                     <div className="w-20 h-20 mb-2 flex items-center justify-center overflow-hidden transition-transform group-hover:-translate-y-1 rounded-full border border-gray-100 bg-gray-50">
-                                        <img
-                                            src={`http://localhost:8080/api/files/${iconFile}`}
-                                            alt={cat.name}
-                                            className="w-full h-full object-cover"
-                                            onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = 'https://placehold.co/80x80?text=IMG';
-                                            }}
-                                        />
+                                        {cat.imageUrl ? (
+                                            <img
+                                                src={cat.imageUrl}
+                                                alt={cat.name}
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => {
+                                                    e.target.onerror = null;
+                                                    e.target.src = 'https://placehold.co/80x80?text=IMG';
+                                                }}
+                                            />
+                                        ) : (
+                                            <span className="text-2xl text-gray-400 font-bold">
+                                                {cat.name?.charAt(0)}
+                                            </span>
+                                        )}
                                     </div>
                                     <span className="text-xs text-center text-gray-800 group-hover:text-orange-500 line-clamp-2">{cat.name}</span>
                                 </Link>

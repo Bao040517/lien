@@ -4,14 +4,13 @@ import { ShoppingCart, Search, Clock, Package, Truck, CheckCircle, XCircle, Aler
 
 const statusConfig = {
     PENDING: { label: 'Chờ xác nhận', icon: Clock, color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
-    PAYMENT_PENDING: { label: 'Chờ thanh toán', icon: AlertCircle, color: 'bg-orange-50 text-orange-700 border-orange-200' },
-    PROCESSING: { label: 'Đang xử lý', icon: Package, color: 'bg-blue-50 text-blue-700 border-blue-200' },
-    SHIPPED: { label: 'Đang giao', icon: Truck, color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
+    SHIPPING: { label: 'Đang vận chuyển', icon: Package, color: 'bg-blue-50 text-blue-700 border-blue-200' },
+    DELIVERING: { label: 'Đang giao hàng', icon: Truck, color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
     DELIVERED: { label: 'Đã giao', icon: CheckCircle, color: 'bg-green-50 text-green-700 border-green-200' },
     CANCELLED: { label: 'Đã huỷ', icon: XCircle, color: 'bg-red-50 text-red-700 border-red-200' }
 };
 
-const allStatuses = ['PENDING', 'PAYMENT_PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
+const allStatuses = ['PENDING', 'SHIPPING', 'DELIVERING', 'DELIVERED', 'CANCELLED'];
 
 const AdminOrders = () => {
     const [orders, setOrders] = useState([]);

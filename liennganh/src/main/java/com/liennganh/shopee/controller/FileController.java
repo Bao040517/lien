@@ -1,21 +1,21 @@
 package com.liennganh.shopee.controller;
 
 import com.liennganh.shopee.dto.response.ApiResponse;
-import com.liennganh.shopee.service.FileStorageService;
+import com.liennganh.shopee.service.common.FileStorageService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Path;
 
+/**
+ * Controller quản lý File và Ảnh
+ * Cho phép upload và xem/download file
+ */
 @RestController
 @RequestMapping("/api/files")
 public class FileController {
@@ -23,50 +23,61 @@ public class FileController {
     @Autowired
     private FileStorageService fileStorageService;
 
+    /**
+     * Upload một file duy nhất
+     * Quyền hạn: USER, SELLER, ADMIN
+     * 
+     */
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('USER', 'SELLER', 'ADMIN')")
     @PostMapping("/upload")
     public ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file) {
-        try {
-            String fileName = fileStorageService.storeFile(file);
-
-            // Build the download URL
-            String fileUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/api/files/")
-                    .path(fileName)
-                    .toUriString();
-
-            return ApiResponse.success(fileUrl, "File uploaded successfully");
-        } catch (IOException e) {
-            return ApiResponse.error(500, "Could not upload file: " + e.getMessage());
-        }
+        String fileName = fileStorageService.storeFile(file);
+        return ApiResponse.success(fileName, "Upload file thành công");
     }
 
-    @GetMapping("/{fileName:.+}")
-    public ResponseEntity<Resource> getFile(@PathVariable String fileName) {
-        try {
-            Path filePath = fileStorageService.getFilePath(fileName);
-            Resource resource = new UrlResource(filePath.toUri());
-
-            if (resource.exists() && resource.isReadable()) {
-                // Determine content type
-                String contentType = "application/octet-stream";
-                if (fileName.endsWith(".png"))
-                    contentType = "image/png";
-                else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg"))
-                    contentType = "image/jpeg";
-                else if (fileName.endsWith(".gif"))
-                    contentType = "image/gif";
-                else if (fileName.endsWith(".webp"))
-                    contentType = "image/webp";
-
-                return ResponseEntity.ok()
-                        .contentType(MediaType.parseMediaType(contentType))
-                        .header(HttpHeaders.CACHE_CONTROL, "max-age=86400")
-                        .body(resource);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (MalformedURLException e) {
-            return ResponseEntity.badRequest().build();
+    /**
+     * Upload nhiều file cùng lúc (tối đa 5 file)
+     * Quyền hạn: USER, SELLER, ADMIN
+     * 
+     */
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('USER', 'SELLER', 'ADMIN')")
+    @PostMapping("/uploads")
+    public ApiResponse<java.util.List<String>> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
+        if (files.length > 5) {
+            throw new IllegalArgumentException("Không thể upload quá 5 file cùng lúc");
         }
+        java.util.List<String> fileNames = java.util.Arrays.stream(files)
+                .map(fileStorageService::storeFile)
+                .collect(java.util.stream.Collectors.toList());
+        return ApiResponse.success(fileNames, "Upload nhiều file thành công");
+    }
+
+    /**
+     * Xem hoặc tải xuống file
+     * Quyền hạn: Public
+     * 
+     */
+    @GetMapping("/{fileName:.+}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
+        // Tải file dưới dạng Resource
+        Resource resource = fileStorageService.loadFileAsResource(fileName);
+
+        // Cố gắng xác định content type
+        String contentType = null;
+        try {
+            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        } catch (IOException ex) {
+            // logger.info("Could not determine file type.");
+        }
+
+        // Nếu không xác định được, dùng mặc định
+        if (contentType == null) {
+            contentType = "application/octet-stream";
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
     }
 }

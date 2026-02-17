@@ -1,10 +1,9 @@
 package com.liennganh.shopee.controller;
 
 import com.liennganh.shopee.dto.response.ApiResponse;
-import com.liennganh.shopee.model.*;
-import com.liennganh.shopee.service.ProductService;
-import com.liennganh.shopee.service.FileStorageService;
-import com.liennganh.shopee.repository.*;
+import com.liennganh.shopee.entity.*;
+import com.liennganh.shopee.service.product.ProductService;
+import com.liennganh.shopee.service.common.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,51 +12,77 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controller quản lý sản phẩm
+ * GET endpoints: Public (không cần đăng nhập)
+ * POST/PUT/DELETE endpoints: SELLER (chủ shop) hoặc ADMIN
+ */
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
     @Autowired
     private ProductService productService;
     @Autowired
-    private com.liennganh.shopee.repository.UserRepository userRepository;
-    @Autowired
     private FileStorageService fileStorageService;
-    @Autowired
-    private ShopRepository shopRepository;
-    @Autowired
-    private CategoryRepository categoryRepository;
-    @Autowired
-    private ProductAttributeRepository attributeRepository;
-    @Autowired
-    private ProductAttributeOptionRepository optionRepository;
-    @Autowired
-    private ProductVariantRepository variantRepository;
 
+    /**
+     * Lấy danh sách tất cả sản phẩm
+     * Quyền hạn: Public
+     * 
+     */
     @GetMapping
     public ApiResponse<List<Product>> getAllProducts() {
-        return ApiResponse.success(productService.getAllProducts(), "Products retrieved successfully");
+        return ApiResponse.success(productService.getAllProducts(), "Lấy danh sách sản phẩm thành công");
     }
 
+    /**
+     * Xem chi tiết sản phẩm theo ID
+     * Quyền hạn: Public
+     * 
+     */
     @GetMapping("/{id}")
     public ApiResponse<Product> getProductById(@PathVariable Long id) {
-        return ApiResponse.success(productService.getProductById(id), "Product retrieved successfully");
+        return ApiResponse.success(productService.getProductById(id), "Lấy thông tin sản phẩm thành công");
     }
 
+    /**
+     * Lấy danh sách sản phẩm của một shop cụ thể
+     * Quyền hạn: Public
+     * 
+     */
     @GetMapping("/shop/{shopId}")
     public ApiResponse<List<Product>> getProductsByShop(@PathVariable Long shopId) {
-        return ApiResponse.success(productService.getProductsByShopId(shopId), "Shop products retrieved successfully");
+        return ApiResponse.success(productService.getProductsByShopId(shopId),
+                "Lấy danh sách sản phẩm của shop thành công");
     }
 
+    /**
+     * Lấy danh sách sản phẩm theo danh mục
+     * Quyền hạn: Public
+     * 
+     */
     @GetMapping("/category/{categoryId}")
     public ApiResponse<List<Product>> getProductsByCategory(@PathVariable Long categoryId) {
-        return ApiResponse.success(productService.getProductsByCategory(categoryId), "Products retrieved successfully");
+        return ApiResponse.success(productService.getProductsByCategory(categoryId),
+                "Lấy danh sách sản phẩm theo danh mục thành công");
     }
 
+    /**
+     * Tìm kiếm sản phẩm theo tên
+     * Quyền hạn: Public
+     * 
+     */
     @GetMapping("/search")
     public ApiResponse<List<Product>> searchProducts(@RequestParam String keyword) {
-        return ApiResponse.success(productService.searchProducts(keyword), "Products retrieved successfully");
+        return ApiResponse.success(productService.searchProducts(keyword), "Tìm kiếm sản phẩm thành công");
     }
 
+    /**
+     * Lọc và sắp xếp sản phẩm nâng cao
+     * Quyền hạn: Public
+     * 
+     *                   rating_desc, best_selling)
+     */
     @GetMapping("/filter")
     public ApiResponse<List<Product>> filterProducts(
             @RequestParam(required = false) String keyword,
@@ -66,25 +91,26 @@ public class ProductController {
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) String sortBy) {
         return ApiResponse.success(productService.filterProducts(keyword, categoryId, minPrice, maxPrice, sortBy),
-                "Products filtered successfully");
+                "Lọc sản phẩm thành công");
     }
 
+    /**
+     * Tạo sản phẩm mới (chỉ thông tin, không kèm ảnh)
+     * Quyền hạn: SELLER, ADMIN
+     * 
+     */
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
     @PostMapping
     public ApiResponse<Product> createProduct(@RequestBody Product product) {
-        if (product.getShop() != null && product.getShop().getId() != null) {
-            Shop shop = shopRepository.findById(product.getShop().getId())
-                    .orElseThrow(() -> new com.liennganh.shopee.exception.AppException(
-                            com.liennganh.shopee.exception.ErrorCode.SHOP_NOT_FOUND));
-            product.setShop(shop);
-        }
-        if (product.getCategory() != null && product.getCategory().getId() != null) {
-            Category category = categoryRepository.findById(product.getCategory().getId())
-                    .orElseThrow(() -> new RuntimeException("Category not found"));
-            product.setCategory(category);
-        }
-        return ApiResponse.success(productService.createProduct(product), "Product created successfully");
+        return ApiResponse.success(productService.createProduct(product), "Tạo sản phẩm thành công");
     }
 
+    /**
+     * Tạo sản phẩm mới kèm upload ảnh
+     * Quyền hạn: SELLER, ADMIN
+     * 
+     */
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
     @PostMapping("/with-image")
     public ApiResponse<Product> createProductWithImage(
             @RequestParam Long shopId,
@@ -101,15 +127,11 @@ public class ProductController {
                     .path(fileName)
                     .toUriString();
 
-            Shop shop = shopRepository.findById(shopId)
-                    .orElseThrow(() -> new com.liennganh.shopee.exception.AppException(
-                            com.liennganh.shopee.exception.ErrorCode.SHOP_NOT_FOUND));
-            Category category = categoryRepository.findById(categoryId)
-                    .orElseThrow(() -> new RuntimeException("Category not found"));
-
             Product product = new Product();
-            product.setShop(shop);
-            product.setCategory(category);
+            product.setShop(new Shop());
+            product.getShop().setId(shopId);
+            product.setCategory(new Category());
+            product.getCategory().setId(categoryId);
             product.setName(name);
             product.setDescription(description);
             product.setPrice(price);
@@ -117,50 +139,78 @@ public class ProductController {
             product.setImageUrl(imageUrl);
 
             return ApiResponse.success(productService.createProduct(product),
-                    "Product created with image successfully");
+                    "Tạo sản phẩm kèm ảnh thành công");
         } catch (Exception e) {
-            return ApiResponse.error(500, "Failed to create product: " + e.getMessage());
+            return ApiResponse.error(500, "Lỗi khi tạo sản phẩm: " + e.getMessage());
         }
     }
 
+    /**
+     * Lấy danh sách sản phẩm của shop do user hiện tại quản lý
+     * Quyền hạn: SELLER, ADMIN
+     * 
+     */
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
     @GetMapping("/my-shop")
     public ApiResponse<List<Product>> getProductsByOwner(@RequestParam Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new com.liennganh.shopee.exception.AppException(
-                        com.liennganh.shopee.exception.ErrorCode.USER_NOT_FOUND));
-        return ApiResponse.success(productService.getProductsByOwner(user), "Products retrieved successfully");
+        User user = new User();
+        user.setId(userId);
+        return ApiResponse.success(productService.getProductsByOwner(user),
+                "Lấy danh sách sản phẩm của shop thành công");
     }
 
+    /**
+     * Xóa sản phẩm
+     * Quyền hạn: SELLER (chủ sản phẩm) hoặc ADMIN
+     * 
+     */
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
-        return ApiResponse.success(null, "Product deleted successfully");
+        return ApiResponse.success(null, "Xóa sản phẩm thành công");
     }
 
+    /**
+     * Khóa sản phẩm (Ban) - dành cho Admin
+     * Quyền hạn: ADMIN
+     * 
+     */
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/ban")
     public ApiResponse<Product> banProduct(@PathVariable Long id, @RequestParam String reason) {
-        return ApiResponse.success(productService.banProduct(id, reason), "Product banned successfully");
+        return ApiResponse.success(productService.banProduct(id, reason), "Khóa sản phẩm thành công");
     }
 
+    /**
+     * Mở khóa sản phẩm (Unban) - dành cho Admin
+     * Quyền hạn: ADMIN
+     * 
+     */
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/unban")
     public ApiResponse<Product> unbanProduct(@PathVariable Long id) {
-        return ApiResponse.success(productService.unbanProduct(id), "Product unbanned successfully");
+        return ApiResponse.success(productService.unbanProduct(id), "Mở khóa sản phẩm thành công");
     }
 
+    /**
+     * Cập nhật thông tin sản phẩm
+     * Quyền hạn: SELLER (chủ sản phẩm) hoặc ADMIN
+     * 
+     *             stockQuantity, categoryId)
+     */
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
     @PutMapping("/{id}")
     public ApiResponse<Product> updateProduct(@PathVariable Long id, @RequestBody Map<String, Object> body) {
-        Product product = productService.getProductById(id);
-        if (body.containsKey("name"))
-            product.setName((String) body.get("name"));
-        if (body.containsKey("description"))
-            product.setDescription((String) body.get("description"));
-        if (body.containsKey("price"))
-            product.setPrice(new BigDecimal(body.get("price").toString()));
-        if (body.containsKey("stockQuantity"))
-            product.setStockQuantity(Integer.parseInt(body.get("stockQuantity").toString()));
-        return ApiResponse.success(productService.createProduct(product), "Product updated successfully");
+        return ApiResponse.success(productService.updateProduct(id, body), "Cập nhật sản phẩm thành công");
     }
 
+    /**
+     * Cập nhật sản phẩm kèm upload ảnh mới
+     * Quyền hạn: SELLER (chủ sản phẩm) hoặc ADMIN
+     * 
+     */
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
     @PutMapping(value = "/{id}/with-image", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<Product> updateProductWithImage(
             @PathVariable Long id,
@@ -170,15 +220,17 @@ public class ProductController {
             @RequestParam(required = false) Integer stockQuantity,
             @RequestParam(value = "image", required = false) MultipartFile imageFile) {
         try {
-            Product product = productService.getProductById(id);
+            Map<String, Object> updates = new java.util.HashMap<>();
             if (name != null)
-                product.setName(name);
+                updates.put("name", name);
             if (description != null)
-                product.setDescription(description);
+                updates.put("description", description);
             if (price != null)
-                product.setPrice(price);
+                updates.put("price", price);
             if (stockQuantity != null)
-                product.setStockQuantity(stockQuantity);
+                updates.put("stockQuantity", stockQuantity);
+
+            Product product = productService.updateProduct(id, updates);
 
             if (imageFile != null && !imageFile.isEmpty()) {
                 String fileName = fileStorageService.storeFile(imageFile);
@@ -186,84 +238,93 @@ public class ProductController {
                         .path("/api/files/")
                         .path(fileName)
                         .toUriString();
-                product.setImageUrl(imageUrl);
-
-                // Sync image to all variants
-                List<ProductVariant> variants = variantRepository.findByProductId(id);
-                for (ProductVariant v : variants) {
-                    v.setImageUrl(imageUrl);
-                    variantRepository.save(v);
-                }
-            } else {
-                // Even if no new image, ensure variants match current product image
-                List<ProductVariant> variants = variantRepository.findByProductId(id);
-                for (ProductVariant v : variants) {
-                    v.setImageUrl(product.getImageUrl());
-                    variantRepository.save(v);
-                }
+                product = productService.updateProductImage(id, imageUrl);
             }
 
-            return ApiResponse.success(productService.createProduct(product), "Product updated successfully");
+            return ApiResponse.success(product, "Cập nhật sản phẩm thành công");
         } catch (Exception e) {
-            return ApiResponse.error(500, "Failed to update product: " + e.getMessage());
+            return ApiResponse.error(500, "Lỗi khi cập nhật sản phẩm: " + e.getMessage());
         }
     }
 
-    // ========== PRODUCT ATTRIBUTES (Seller tự tạo thuộc tính) ==========
+    // ========== THUỘC TÍNH SẢN PHẨM (ATTRIBUTES) ==========
 
+    /**
+     * Lấy danh sách thuộc tính của sản phẩm
+     * Quyền hạn: Public
+     * 
+     */
     @GetMapping("/{productId}/attributes")
     public ApiResponse<List<ProductAttribute>> getProductAttributes(@PathVariable Long productId) {
-        return ApiResponse.success(attributeRepository.findByProductId(productId), "Attributes retrieved");
+        return ApiResponse.success(productService.getProductAttributes(productId),
+                "Lấy danh sách thuộc tính thành công");
     }
 
+    /**
+     * Thêm thuộc tính mới cho sản phẩm
+     * Quyền hạn: SELLER, ADMIN (Cần bổ sung Authorization sau)
+     * 
+     */
     @PostMapping("/{productId}/attributes")
     public ApiResponse<ProductAttribute> addAttribute(
             @PathVariable Long productId,
             @RequestBody Map<String, Object> body) {
-        Product product = productService.getProductById(productId);
-        ProductAttribute attr = new ProductAttribute();
-        attr.setProduct(product);
-        attr.setName((String) body.get("name"));
-        return ApiResponse.success(attributeRepository.save(attr), "Attribute added");
+        return ApiResponse.success(productService.addAttribute(productId, (String) body.get("name")),
+                "Thêm thuộc tính thành công");
     }
 
+    /**
+     * Thêm tùy chọn (option) cho thuộc tính
+     * Quyền hạn: SELLER, ADMIN (Cần bổ sung Authorization sau)
+     * 
+     */
     @PostMapping("/attributes/{attributeId}/options")
     public ApiResponse<ProductAttributeOption> addOption(
             @PathVariable Long attributeId,
             @RequestBody Map<String, Object> body) {
-        ProductAttribute attr = attributeRepository.findById(attributeId)
-                .orElseThrow(() -> new RuntimeException("Attribute not found"));
-        ProductAttributeOption option = new ProductAttributeOption();
-        option.setAttribute(attr);
-        option.setValue((String) body.get("value"));
-        option.setImageUrl((String) body.get("imageUrl"));
-        return ApiResponse.success(optionRepository.save(option), "Option added");
+        return ApiResponse.success(
+                productService.addOption(attributeId, (String) body.get("value"), (String) body.get("imageUrl")),
+                "Thêm tùy chọn thành công");
     }
 
-    // ========== PRODUCT VARIANTS ==========
+    // ========== BIẾN THỂ SẢN PHẨM (VARIANTS) ==========
 
+    /**
+     * Lấy danh sách biến thể của sản phẩm
+     * Quyền hạn: Public
+     * 
+     */
     @GetMapping("/{productId}/variants")
     public ApiResponse<List<ProductVariant>> getVariants(@PathVariable Long productId) {
-        return ApiResponse.success(variantRepository.findByProductId(productId), "Variants retrieved");
+        return ApiResponse.success(productService.getVariants(productId), "Lấy danh sách biến thể thành công");
     }
 
+    /**
+     * Thêm biến thể mới cho sản phẩm
+     * Quyền hạn: SELLER, ADMIN (Cần bổ sung Authorization sau)
+     * 
+     */
     @PostMapping("/{productId}/variants")
     public ApiResponse<ProductVariant> addVariant(
             @PathVariable Long productId,
             @RequestBody Map<String, Object> body) {
-        Product product = productService.getProductById(productId);
-        ProductVariant variant = new ProductVariant();
-        variant.setProduct(product);
-        variant.setAttributes(body.get("attributes").toString());
-        variant.setPrice(new BigDecimal(body.get("price").toString()));
-        variant.setStockQuantity(Integer.parseInt(body.get("stockQuantity").toString()));
-        variant.setImageUrl((String) body.get("imageUrl"));
-        return ApiResponse.success(variantRepository.save(variant), "Variant added");
+        return ApiResponse.success(productService.addVariant(
+                productId,
+                body.get("attributes").toString(),
+                new BigDecimal(body.get("price").toString()),
+                Integer.parseInt(body.get("stockQuantity").toString()),
+                (String) body.get("imageUrl")),
+                "Thêm biến thể thành công");
     }
 
+    /**
+     * Xóa biến thể
+     * Quyền hạn: SELLER, ADMIN (Cần bổ sung Authorization sau)
+     * 
+     */
     @DeleteMapping("/variants/{variantId}")
     public ApiResponse<Void> deleteVariant(@PathVariable Long variantId) {
-        variantRepository.deleteById(variantId);
-        return ApiResponse.success(null, "Variant deleted");
+        productService.deleteVariant(variantId);
+        return ApiResponse.success(null, "Xóa biến thể thành công");
     }
 }

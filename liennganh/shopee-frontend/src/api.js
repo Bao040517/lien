@@ -8,13 +8,13 @@ const api = axios.create({
     withCredentials: true // Important for CORS if using cookies later
 });
 
-// Add request interceptor if we switch to JWT later
-// api.interceptors.request.use((config) => {
-//   const token = localStorage.getItem('token');
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
+// JWT Token interceptor - gửi token trong mỗi request
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
 
 export default api;

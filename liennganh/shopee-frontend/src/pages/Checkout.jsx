@@ -215,15 +215,24 @@ const Checkout = () => {
                 }
             });
 
-            alert(res.data.message); // DEBUG: Show success info
+            console.log("Voucher API Response:", res.data);
 
+            if (res.data.success === false || res.data.code !== 1000) {
+                throw new Error(res.data.message || "Lỗi áp dụng voucher");
+            }
+
+            // Success case
             setShopVouchers(prev => ({
                 ...prev,
-                [shopId]: { ...prev[shopId], discount: res.data.data, applied: true }
+                [shopId]: { ...prev[shopId], discount: Number(res.data.data), applied: true }
             }));
 
+            alert(`Áp dụng thành công! Giảm: ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(res.data.data)}`);
+
         } catch (error) {
-            alert(error.response?.data?.message || "Mã giảm giá không hợp lệ");
+            console.error(error);
+            const msg = error.response?.data?.message || error.message || "Mã giảm giá không hợp lệ";
+            alert(msg);
             setShopVouchers(prev => ({
                 ...prev,
                 [shopId]: { ...prev[shopId], discount: 0, applied: false }

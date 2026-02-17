@@ -1,13 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import api from '../../api';
-import { Tag, Plus, Trash2, FolderOpen } from 'lucide-react';
+import { Tag, Plus, Trash2, FolderOpen, Pencil, X, ImagePlus } from 'lucide-react';
 
 const AdminCategories = () => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
+    const [editingId, setEditingId] = useState(null);
     const [form, setForm] = useState({ name: '', description: '' });
+    const [imageFile, setImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
     const [saving, setSaving] = useState(false);
+    const fileInputRef = useRef(null);
 
     useEffect(() => { fetchCategories(); }, []);
 
@@ -19,18 +23,72 @@ const AdminCategories = () => {
         finally { setLoading(false); }
     };
 
-    const handleCreate = async (e) => {
+    const resetForm = () => {
+        setForm({ name: '', description: '' });
+        setImageFile(null);
+        setImagePreview(null);
+        setEditingId(null);
+        setShowForm(false);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+    };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImageFile(file);
+            setImagePreview(URL.createObjectURL(file));
+        }
+    };
+
+    const handleEdit = (cat) => {
+        setEditingId(cat.id);
+        setForm({ name: cat.name, description: cat.description || '' });
+        setImagePreview(cat.imageUrl || null);
+        setImageFile(null);
+        setShowForm(true);
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!form.name.trim()) return;
         setSaving(true);
         try {
-            const res = await api.post('/categories', form);
-            const newCat = res.data.data || res.data;
-            setCategories(prev => [...prev, newCat]);
-            setForm({ name: '', description: '' });
-            setShowForm(false);
-        } catch { alert('Tạo danh mục thất bại!'); }
+            const formData = new FormData();
+            formData.append('name', form.name);
+            formData.append('description', form.description || '');
+            if (imageFile) {
+                formData.append('image', imageFile);
+            }
+
+            let res;
+            if (editingId) {
+                // Cập nhật danh mục
+                res = await api.put(`/categories/${editingId}`, formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+                setCategories(prev => prev.map(c => c.id === editingId ? (res.data.data || res.data) : c));
+            } else {
+                // Tạo mới kèm ảnh
+                res = await api.post('/categories/with-image', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+                const newCat = res.data.data || res.data;
+                setCategories(prev => [...prev, newCat]);
+            }
+            resetForm();
+        } catch (err) {
+            console.error(err);
+            alert(editingId ? 'Cập nhật danh mục thất bại!' : 'Tạo danh mục thất bại!');
+        }
         finally { setSaving(false); }
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm('Xoá danh mục này? Hành động không thể hoàn tác.')) return;
+        try {
+            await api.delete(`/categories/${id}`);
+            setCategories(prev => prev.filter(c => c.id !== id));
+        } catch { alert('Xoá danh mục thất bại!'); }
     };
 
     return (
@@ -40,18 +98,28 @@ const AdminCategories = () => {
                     <h1 className="text-2xl font-bold text-gray-800">Quản lý Danh mục</h1>
                     <p className="text-sm text-gray-500 mt-1">{categories.length} danh mục</p>
                 </div>
-                <button onClick={() => setShowForm(!showForm)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${showForm ? 'bg-gray-200 text-gray-700' : 'bg-blue-600 text-white hover:bg-blue-700'
+                <button onClick={() => { if (showForm && !editingId) { resetForm(); } else { resetForm(); setShowForm(true); } }}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${showForm && !editingId ? 'bg-gray-200 text-gray-700' : 'bg-blue-600 text-white hover:bg-blue-700'
                         }`}>
-                    {showForm ? 'Đóng' : <><Plus className="w-4 h-4" /> Thêm danh mục</>}
+                    {showForm && !editingId ? 'Đóng' : <><Plus className="w-4 h-4" /> Thêm danh mục</>}
                 </button>
             </div>
 
-            {/* Create Form */}
+            {/* Create / Edit Form */}
             {showForm && (
-                <form onSubmit={handleCreate} className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
-                    <h3 className="font-bold text-gray-700 mb-4">Tạo danh mục mới</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="font-bold text-gray-700">
+                            {editingId ? 'Sửa danh mục' : 'Tạo danh mục mới'}
+                        </h3>
+                        {editingId && (
+                            <button type="button" onClick={resetForm}
+                                className="text-gray-400 hover:text-gray-600 transition">
+                                <X className="w-5 h-5" />
+                            </button>
+                        )}
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-600 mb-1">Tên danh mục *</label>
                             <input type="text" required value={form.name}
@@ -66,10 +134,31 @@ const AdminCategories = () => {
                                 placeholder="Mô tả ngắn..."
                                 className="w-full border border-gray-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-300 outline-none" />
                         </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">Ảnh danh mục</label>
+                            <div className="flex items-center gap-3">
+                                {imagePreview && (
+                                    <div className="w-12 h-12 rounded-lg overflow-hidden border border-gray-200 flex-shrink-0">
+                                        <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                                    </div>
+                                )}
+                                <label className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 cursor-pointer hover:bg-gray-50 transition flex-1">
+                                    <ImagePlus className="w-4 h-4" />
+                                    {imageFile ? imageFile.name : (editingId && imagePreview ? 'Đổi ảnh...' : 'Chọn ảnh...')}
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleImageChange}
+                                        className="hidden"
+                                    />
+                                </label>
+                            </div>
+                        </div>
                     </div>
                     <button type="submit" disabled={saving}
                         className="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition disabled:opacity-50">
-                        {saving ? 'Đang tạo...' : 'Tạo danh mục'}
+                        {saving ? 'Đang lưu...' : (editingId ? 'Cập nhật' : 'Tạo danh mục')}
                     </button>
                 </form>
             )}
@@ -85,15 +174,34 @@ const AdminCategories = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0">
                         {categories.map((cat, i) => (
                             <div key={cat.id}
-                                className={`p-5 flex items-start gap-4 hover:bg-blue-50/30 transition ${i < categories.length - (categories.length % 3 || 3) ? 'border-b border-gray-100' : ''
+                                className={`p-5 flex items-start gap-4 hover:bg-blue-50/30 transition group ${i < categories.length - (categories.length % 3 || 3) ? 'border-b border-gray-100' : ''
                                     } ${(i + 1) % 3 !== 0 ? 'sm:border-r border-gray-100' : ''}`}>
-                                <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <Tag className="w-5 h-5 text-blue-500" />
+                                {/* Ảnh danh mục */}
+                                <div className="w-14 h-14 rounded-xl overflow-hidden border border-gray-100 flex-shrink-0 bg-gray-50 flex items-center justify-center">
+                                    {cat.imageUrl ? (
+                                        <img src={cat.imageUrl} alt={cat.name}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => { e.target.onerror = null; e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                                    ) : null}
+                                    <Tag className={`w-6 h-6 text-blue-400 ${cat.imageUrl ? 'hidden' : ''}`} />
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <p className="text-sm font-semibold text-gray-800">{cat.name}</p>
                                     <p className="text-xs text-gray-400 mt-0.5">{cat.description || 'Không có mô tả'}</p>
                                     <p className="text-xs text-gray-300 mt-1">ID: {cat.id}</p>
+                                </div>
+                                {/* Nút Sửa / Xoá */}
+                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition flex-shrink-0">
+                                    <button onClick={() => handleEdit(cat)}
+                                        className="p-1.5 rounded-lg hover:bg-blue-100 text-blue-500 transition"
+                                        title="Sửa">
+                                        <Pencil className="w-4 h-4" />
+                                    </button>
+                                    <button onClick={() => handleDelete(cat.id)}
+                                        className="p-1.5 rounded-lg hover:bg-red-100 text-red-500 transition"
+                                        title="Xoá">
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
                                 </div>
                             </div>
                         ))}

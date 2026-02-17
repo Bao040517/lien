@@ -1,97 +1,90 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import React, { useState, useEffect } from 'react';
 import api from '../../api';
-import { Bell, Check, Info, AlertTriangle } from 'lucide-react';
-import { format } from 'date-fns';
+import { useAuth } from '../../context/AuthContext';
+import { Bell, CheckCheck, Clock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const SellerNotifications = () => {
+    const { user } = useAuth();
+    const navigate = useNavigate();
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const { user } = useAuth();
+    useEffect(() => {
+        if (user) fetchNotifications();
+    }, [user]);
 
     const fetchNotifications = async () => {
-        if (!user) return;
         try {
-            const res = await api.get('/notifications', {
-                params: { userId: user.id }
-            });
-            setNotifications(res.data.data || []);
+            const res = await api.get('/notifications', { params: { userId: user.id } });
+            setNotifications(res.data.data);
         } catch (error) {
-            console.error('Failed to fetch notifications:', error);
+            console.error(error);
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => {
-        if (user) {
-            fetchNotifications();
+    const handleMarkRead = async (notif) => {
+        if (!notif.read) {
+            try {
+                await api.put(`/notifications/${notif.id}/read`);
+                setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, read: true } : n));
+            } catch (error) { console.error(error); }
         }
-    }, [user]);
 
-    const handleMarkAsRead = async (id) => {
-        try {
-            await api.put(`/notifications/${id}/read`);
-            setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
-        } catch (error) {
-            console.error('Failed to mark as read:', error);
+        if (notif.type === 'Product' || notif.type === 'PRODUCT_BAN' || notif.type === 'PRODUCT_UNBAN') {
+            navigate('/seller/products');
+        } else if (notif.type === 'Review' || notif.type === 'REVIEW') {
+            // navigate('/seller/reviews'); // Placeholder
+            navigate('/seller/products'); // Redirect to products since review connects to product
+        } else if (notif.type === 'Order' || notif.type === 'ORDER') {
+            navigate('/seller/orders');
         }
     };
 
+    if (loading) return <div className="p-8 text-center text-gray-500">Đang tải thông báo...</div>;
+
     return (
-        <div className="max-w-4xl mx-auto">
-            <h1 className="text-2xl font-bold mb-6 flex items-center gap-2">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 min-h-[600px]">
+            <h1 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
                 <Bell className="w-6 h-6 text-orange-500" />
-                Thông báo
+                Thông báo của Shop
             </h1>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                {loading ? (
-                    <div className="p-8 text-center text-gray-500">Đang tải thông báo...</div>
-                ) : notifications.length > 0 ? (
-                    <div className="divide-y divide-gray-100">
-                        {notifications.map(notif => (
-                            <div
-                                key={notif.id}
-                                className={`p-4 flex gap-4 transition hover:bg-gray-50 ${!notif.read ? 'bg-orange-50/50' : ''}`}
-                                onClick={() => !notif.read && handleMarkAsRead(notif.id)}
-                            >
-                                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 
-                                    ${notif.type === 'PRODUCT_BAN' ? 'bg-red-100 text-red-500'
-                                        : notif.type === 'PRODUCT_UNBAN' ? 'bg-green-100 text-green-500'
-                                            : 'bg-blue-100 text-blue-500'}`}>
-                                    {notif.type === 'PRODUCT_BAN' ? <AlertTriangle className="w-5 h-5" />
-                                        : notif.type === 'PRODUCT_UNBAN' ? <Check className="w-5 h-5" />
-                                            : <Info className="w-5 h-5" />}
-                                </div>
-                                <div className="flex-1">
-                                    <div className="flex justify-between items-start">
-                                        <h3 className={`font-semibold text-gray-800 ${!notif.read ? 'text-orange-900' : ''}`}>
-                                            {notif.title}
-                                        </h3>
-                                        <span className="text-xs text-gray-400 whitespace-nowrap ml-2">
-                                            {format(new Date(notif.createdAt), 'dd/MM/yyyy HH:mm')}
-                                        </span>
-                                    </div>
-                                    <p className="text-sm text-gray-600 mt-1">{notif.message}</p>
-                                    {notif.relatedUrl && (
-                                        <a href={notif.relatedUrl} className="text-xs text-blue-500 hover:underline mt-2 inline-block">
-                                            Xem chi tiết
-                                        </a>
-                                    )}
-                                </div>
-                                {!notif.read && (
-                                    <div className="w-2 h-2 rounded-full bg-orange-500 mt-2"></div>
-                                )}
-                            </div>
-                        ))}
+            <div className="space-y-4">
+                {notifications.length === 0 ? (
+                    <div className="text-center text-gray-400 py-12 flex flex-col items-center">
+                        <Bell className="w-12 h-12 mb-4 text-gray-200" />
+                        <p>Chưa có thông báo nào</p>
                     </div>
                 ) : (
-                    <div className="p-12 text-center text-gray-400">
-                        <Bell className="w-12 h-12 mx-auto mb-3 text-gray-200" />
-                        <p>Bạn chưa có thông báo nào</p>
-                    </div>
+                    notifications.map(notif => (
+                        <div
+                            key={notif.id}
+                            onClick={() => handleMarkRead(notif)}
+                            className={`p-4 rounded-lg border cursor-pointer transition-all hover:shadow-md ${notif.read ? 'bg-white border-gray-100' : 'bg-blue-50 border-blue-200'}`}
+                        >
+                            <div className="flex justify-between items-start mb-2">
+                                <h3 className={`font-semibold ${notif.read ? 'text-gray-700' : 'text-blue-700'}`}>{notif.title}</h3>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xs text-gray-400 flex items-center gap-1">
+                                        <Clock className="w-3 h-3" />
+                                        {new Date(notif.createdAt).toLocaleString('vi-VN')}
+                                    </span>
+                                    {!notif.read && <div className="w-2 h-2 bg-blue-500 rounded-full"></div>}
+                                </div>
+                            </div>
+                            <p className="text-sm text-gray-600 mb-2">{notif.message}</p>
+                            {!notif.read && (
+                                <div className="flex justify-end mt-2">
+                                    <span className="text-xs text-blue-500 flex items-center gap-1 font-medium">
+                                        <CheckCheck className="w-3 h-3" /> Đánh dấu đã đọc
+                                    </span>
+                                </div>
+                            )}
+                        </div>
+                    ))
                 )}
             </div>
         </div>

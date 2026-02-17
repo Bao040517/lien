@@ -71,6 +71,12 @@ const SellerVouchers = () => {
             return;
         }
 
+        // Date Validation: Start must be BEFORE End
+        if (new Date(formData.startDate) >= new Date(formData.endDate)) {
+            alert("Ngày kết thúc phải sau ngày bắt đầu. (Lưu ý: 12:00 PM là 12 giờ trưa, không phải đêm)");
+            return;
+        }
+
         const payload = {
             ...formData,
             discountValue: parseFloat(formData.discountValue),

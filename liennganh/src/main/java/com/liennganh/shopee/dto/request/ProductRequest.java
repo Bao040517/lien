@@ -3,13 +3,16 @@ package com.liennganh.shopee.dto.request;
 import lombok.Data;
 import java.math.BigDecimal;
 
+/**
+ * DTO cho yêu cầu tạo/cập nhật sản phẩm
+ */
 @Data
 public class ProductRequest {
-    private Long shopId;
-    private Long categoryId;
-    private String name;
-    private String description;
-    private BigDecimal price;
-    private Integer stockQuantity;
-    private String imageUrl;
+    private Long shopId; // ID shop bán (thường lấy từ user đang login)
+    private Long categoryId; // ID danh mục
+    private String name; // Tên sản phẩm
+    private String description;// Mô tả sản phẩm
+    private BigDecimal price; // Giá bán
+    private Integer stockQuantity; // Số lượng tồn
+    private String imageUrl; // Link ảnh
 }
