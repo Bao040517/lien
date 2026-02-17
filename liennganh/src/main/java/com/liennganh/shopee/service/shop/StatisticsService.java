@@ -9,6 +9,7 @@ import com.liennganh.shopee.repository.shop.ShopRepository;
 import com.liennganh.shopee.repository.product.ProductRepository;
 import com.liennganh.shopee.repository.order.OrderRepository;
 import com.liennganh.shopee.repository.order.OrderItemRepository;
+import com.liennganh.shopee.repository.product.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,7 @@ public class StatisticsService {
         private final ProductRepository productRepository;
         private final OrderRepository orderRepository;
         private final OrderItemRepository orderItemRepository;
+        private final ReviewRepository reviewRepository;
 
         // Seller Statistics
         public SellerStatisticsDTO getSellerStatistics(Long sellerId) {
@@ -119,6 +121,66 @@ public class StatisticsService {
                                 .limit(10)
                                 .collect(Collectors.toList());
                 stats.setTopProducts(topProducts);
+
+                // --- Chi tiết từng sản phẩm (tính từ OrderItem + Review) ---
+                // Tạo map productId -> sold (từ OrderItem DELIVERED)
+                Map<Long, Long> soldMap = new HashMap<>();
+                for (OrderItem item : orderItems) {
+                        if (item.getOrder().getStatus() == Order.OrderStatus.DELIVERED) {
+                                Long pid = item.getProduct().getId();
+                                soldMap.merge(pid, (long) item.getQuantity(), Long::sum);
+                        }
+                }
+
+                // Lấy tất cả reviews của shop
+                List<Review> shopReviews = reviewRepository.findByProductShopId(shop.getId());
+
+                // Tạo map productId -> reviewCount
+                Map<Long, Long> reviewCountMap = new HashMap<>();
+                Map<Long, List<Integer>> reviewRatingsMap = new HashMap<>();
+                for (Review review : shopReviews) {
+                        Long pid = review.getProduct().getId();
+                        reviewCountMap.merge(pid, 1L, Long::sum);
+                        reviewRatingsMap.computeIfAbsent(pid, k -> new ArrayList<>()).add(review.getRating());
+                }
+
+                // Build productDetailStats cho TẤT CẢ sản phẩm của shop
+                List<ProductDetailStatsDTO> detailStats = new ArrayList<>();
+                for (Product p : shopProducts) {
+                        long pSold = soldMap.getOrDefault(p.getId(), 0L);
+                        long pReviews = reviewCountMap.getOrDefault(p.getId(), 0L);
+                        double pAvgRating = 0.0;
+                        if (reviewRatingsMap.containsKey(p.getId())) {
+                                List<Integer> ratings = reviewRatingsMap.get(p.getId());
+                                pAvgRating = ratings.stream().mapToInt(Integer::intValue).average().orElse(0.0);
+                                pAvgRating = Math.round(pAvgRating * 10.0) / 10.0;
+                        }
+                        detailStats.add(new ProductDetailStatsDTO(
+                                        p.getId(), p.getName(), p.getImageUrl(),
+                                        p.getPrice(), p.getStockQuantity(),
+                                        pSold, pReviews, pAvgRating));
+                }
+                stats.setProductDetailStats(detailStats);
+
+                // Tổng số lượng đã bán
+                long totalSold = orderItems.stream()
+                                .filter(item -> item.getOrder().getStatus() == Order.OrderStatus.DELIVERED)
+                                .mapToLong(OrderItem::getQuantity)
+                                .sum();
+                stats.setTotalSold(totalSold);
+
+                // Tổng số feedback (đánh giá)
+                long totalFeedback = shopReviews.size();
+                stats.setTotalFeedback(totalFeedback);
+
+                // Tỷ lệ hoàn hàng/hủy
+                double returnRate = orders.isEmpty() ? 0.0
+                                : (double) cancelled / orders.size() * 100;
+                stats.setReturnRate(Math.round(returnRate * 10.0) / 10.0);
+
+                // Điểm đánh giá trung bình của shop
+                Double avgRating = reviewRepository.getAverageRatingByShopId(shop.getId());
+                stats.setAverageRating(avgRating != null ? Math.round(avgRating * 10.0) / 10.0 : 0.0);
 
                 // --- Chart Data ---
                 List<Object[]> revenueData = orderRepository.getSellerRevenueByDate(shop.getId());

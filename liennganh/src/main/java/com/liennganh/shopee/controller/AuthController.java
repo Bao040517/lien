@@ -6,6 +6,8 @@ import com.liennganh.shopee.dto.response.ApiResponse;
 import com.liennganh.shopee.dto.response.LoginResponse;
 import com.liennganh.shopee.dto.response.UserResponse;
 import com.liennganh.shopee.service.auth.AuthService;
+import com.liennganh.shopee.service.auth.JwtService;
+import com.liennganh.shopee.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,10 +21,10 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final JwtService jwtService;
 
     /**
      * Đăng ký tài khoản USER (khách hàng)
-     * 
      */
     @PostMapping("/register")
     public ApiResponse<UserResponse> register(@RequestBody RegisterRequest request) {
@@ -33,7 +35,6 @@ public class AuthController {
     /**
      * Đăng ký tài khoản SELLER (người bán)
      * Cần chờ admin duyệt trước khi có thể sử dụng
-     * 
      */
     @PostMapping("/register-seller")
     public ApiResponse<UserResponse> registerSeller(@RequestBody RegisterRequest request) {
@@ -43,7 +44,6 @@ public class AuthController {
 
     /**
      * Đăng nhập
-     * 
      */
     @PostMapping("/login")
     public ApiResponse<LoginResponse> login(@RequestBody LoginRequest request) {
@@ -52,12 +52,12 @@ public class AuthController {
     }
 
     /**
-     * Lấy thông tin user hiện tại
-     * TODO: Sẽ lấy từ JWT token thay vì request param
-     * 
+     * Lấy thông tin user hiện tại (từ JWT token)
+     * Không cần truyền userId - tự lấy từ token
      */
     @GetMapping("/me")
-    public ApiResponse<UserResponse> getCurrentUser(@RequestParam Long userId) {
+    public ApiResponse<UserResponse> getCurrentUser() {
+        Long userId = SecurityUtils.getCurrentUserId(jwtService);
         UserResponse user = authService.getUserResponseById(userId);
         return ApiResponse.success(user, "Lấy thông tin người dùng thành công");
     }

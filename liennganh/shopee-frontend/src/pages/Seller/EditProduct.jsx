@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api';
-import { Save, ArrowLeft, Package, Plus, Trash2, Image as ImageIcon } from 'lucide-react';
+import { Save, ArrowLeft, Package, Plus, Trash2, Image as ImageIcon, X } from 'lucide-react';
 
 const EditProduct = () => {
     const { id } = useParams();
@@ -12,8 +12,12 @@ const EditProduct = () => {
     const [form, setForm] = useState({
         name: '', description: '', price: '', stockQuantity: ''
     });
-    const [imageFile, setImageFile] = useState(null);
-    const [imagePreview, setImagePreview] = useState('');
+
+    // Existing images from DB
+    const [existingImages, setExistingImages] = useState([]);
+    // New images to upload
+    const [newImageFiles, setNewImageFiles] = useState([]);
+    const [newImagePreviews, setNewImagePreviews] = useState([]);
 
     // Existing attributes & variants from DB
     const [attributes, setAttributes] = useState([]);
@@ -37,8 +41,12 @@ const EditProduct = () => {
                 price: product.price?.toString() || '',
                 stockQuantity: product.stockQuantity?.toString() || ''
             });
-            if (product.imageUrl) {
-                setImagePreview(product.imageUrl);
+
+            // Load images
+            if (product.images && product.images.length > 0) {
+                setExistingImages(product.images);
+            } else if (product.imageUrl) {
+                setExistingImages([product.imageUrl]);
             }
 
             // Load attributes
@@ -61,12 +69,26 @@ const EditProduct = () => {
         }
     };
 
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setImageFile(file);
-            setImagePreview(URL.createObjectURL(file));
+    // --- Multi-image handling ---
+    const handleNewImages = (e) => {
+        const files = Array.from(e.target.files);
+        const totalImages = existingImages.length + newImageFiles.length + files.length;
+        if (totalImages > 9) {
+            alert('Tối đa 9 ảnh sản phẩm!');
+            return;
         }
+        setNewImageFiles(prev => [...prev, ...files]);
+        setNewImagePreviews(prev => [...prev, ...files.map(f => URL.createObjectURL(f))]);
+    };
+
+    const removeExistingImage = (index) => {
+        setExistingImages(prev => prev.filter((_, i) => i !== index));
+    };
+
+    const removeNewImage = (index) => {
+        URL.revokeObjectURL(newImagePreviews[index]);
+        setNewImageFiles(prev => prev.filter((_, i) => i !== index));
+        setNewImagePreviews(prev => prev.filter((_, i) => i !== index));
     };
 
     // --- New Attribute Management ---
@@ -110,16 +132,17 @@ const EditProduct = () => {
         e.preventDefault();
         setSaving(true);
         try {
-            // Update basic product info
-            // Update basic product info
             const formData = new FormData();
             formData.append('name', form.name);
             formData.append('description', form.description);
             formData.append('price', parseFloat(form.price));
             formData.append('stockQuantity', parseInt(form.stockQuantity) || 0);
 
-            if (imageFile) {
-                formData.append('image', imageFile);
+            // Append new image files
+            if (newImageFiles.length > 0) {
+                newImageFiles.forEach(file => {
+                    formData.append('images', file);
+                });
             }
 
             await api.put(`/products/${id}/with-image`, formData, {
@@ -157,6 +180,8 @@ const EditProduct = () => {
     };
 
     const formatPrice = (p) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p);
+
+    const totalImages = existingImages.length + newImageFiles.length;
 
     if (loading) return (
         <div className="flex items-center justify-center py-20">
@@ -199,25 +224,51 @@ const EditProduct = () => {
                                 onChange={e => setForm({ ...form, stockQuantity: e.target.value })}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-300 outline-none" />
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-600 mb-1">Ảnh sản phẩm</label>
-                            <div className="flex items-center gap-4">
-                                <label className="flex items-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-400 transition">
-                                    <ImageIcon className="w-5 h-5 text-gray-400" />
-                                    <span className="text-sm text-gray-500">Thay đổi ảnh</span>
-                                    <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-                                </label>
-                                {imagePreview && (
-                                    <img src={imagePreview} alt="preview" className="w-16 h-16 object-cover rounded border" />
-                                )}
-                            </div>
-                        </div>
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-600 mb-1">Mô tả</label>
                             <textarea value={form.description}
                                 onChange={e => setForm({ ...form, description: e.target.value })}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-300 outline-none h-24 resize-none" />
                         </div>
+                    </div>
+                </div>
+
+                {/* Multi-Image Management */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                    <h2 className="text-lg font-semibold mb-4 text-gray-700">Ảnh sản phẩm <span className="text-sm font-normal text-gray-400">(Tối đa 9 ảnh)</span></h2>
+                    <div className="flex flex-wrap gap-3">
+                        {/* Existing images */}
+                        {existingImages.map((url, index) => (
+                            <div key={`existing-${index}`} className="relative w-24 h-24 rounded-lg overflow-hidden border-2 border-gray-200 group">
+                                <img src={url} alt={`img-${index}`} className="w-full h-full object-cover" />
+                                {index === 0 && existingImages.length > 0 && newImageFiles.length === 0 && (
+                                    <span className="absolute top-0.5 left-0.5 bg-orange-500 text-white text-[10px] px-1.5 py-0.5 rounded font-medium">Bìa</span>
+                                )}
+                                <button type="button" onClick={() => removeExistingImage(index)}
+                                    className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition">
+                                    <X className="w-3 h-3" />
+                                </button>
+                            </div>
+                        ))}
+                        {/* New images */}
+                        {newImagePreviews.map((preview, index) => (
+                            <div key={`new-${index}`} className="relative w-24 h-24 rounded-lg overflow-hidden border-2 border-blue-200 group">
+                                <img src={preview} alt={`new-${index}`} className="w-full h-full object-cover" />
+                                <span className="absolute bottom-0.5 left-0.5 bg-blue-500 text-white text-[10px] px-1.5 py-0.5 rounded font-medium">Mới</span>
+                                <button type="button" onClick={() => removeNewImage(index)}
+                                    className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition">
+                                    <X className="w-3 h-3" />
+                                </button>
+                            </div>
+                        ))}
+                        {/* Add button */}
+                        {totalImages < 9 && (
+                            <label className="w-24 h-24 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-400 hover:bg-orange-50/50 transition">
+                                <Plus className="w-6 h-6 text-gray-400" />
+                                <span className="text-[10px] text-gray-400 mt-1">Thêm ảnh</span>
+                                <input type="file" accept="image/*" multiple onChange={handleNewImages} className="hidden" />
+                            </label>
+                        )}
                     </div>
                 </div>
 

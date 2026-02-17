@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -81,7 +82,7 @@ public class ProductController {
      * Lọc và sắp xếp sản phẩm nâng cao
      * Quyền hạn: Public
      * 
-     *                   rating_desc, best_selling)
+     * rating_desc, best_selling)
      */
     @GetMapping("/filter")
     public ApiResponse<List<Product>> filterProducts(
@@ -119,14 +120,8 @@ public class ProductController {
             @RequestParam(required = false) String description,
             @RequestParam BigDecimal price,
             @RequestParam Integer stockQuantity,
-            @RequestParam("image") MultipartFile imageFile) {
+            @RequestParam(value = "images", required = false) MultipartFile[] imageFiles) {
         try {
-            String fileName = fileStorageService.storeFile(imageFile);
-            String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/api/files/")
-                    .path(fileName)
-                    .toUriString();
-
             Product product = new Product();
             product.setShop(new Shop());
             product.getShop().setId(shopId);
@@ -136,7 +131,25 @@ public class ProductController {
             product.setDescription(description);
             product.setPrice(price);
             product.setStockQuantity(stockQuantity);
-            product.setImageUrl(imageUrl);
+
+            // Xử lý nhiều ảnh
+            if (imageFiles != null && imageFiles.length > 0) {
+                List<String> imageUrls = new ArrayList<>();
+                for (MultipartFile file : imageFiles) {
+                    if (!file.isEmpty()) {
+                        String fileName = fileStorageService.storeFile(file);
+                        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
+                                .path("/api/files/")
+                                .path(fileName)
+                                .toUriString();
+                        imageUrls.add(url);
+                    }
+                }
+                if (!imageUrls.isEmpty()) {
+                    product.setImageUrl(imageUrls.get(0)); // Ảnh đầu tiên làm ảnh đại diện
+                    product.setImages(imageUrls);
+                }
+            }
 
             return ApiResponse.success(productService.createProduct(product),
                     "Tạo sản phẩm kèm ảnh thành công");
@@ -197,7 +210,7 @@ public class ProductController {
      * Cập nhật thông tin sản phẩm
      * Quyền hạn: SELLER (chủ sản phẩm) hoặc ADMIN
      * 
-     *             stockQuantity, categoryId)
+     * stockQuantity, categoryId)
      */
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
     @PutMapping("/{id}")
@@ -218,7 +231,7 @@ public class ProductController {
             @RequestParam(required = false) String description,
             @RequestParam(required = false) BigDecimal price,
             @RequestParam(required = false) Integer stockQuantity,
-            @RequestParam(value = "image", required = false) MultipartFile imageFile) {
+            @RequestParam(value = "images", required = false) MultipartFile[] imageFiles) {
         try {
             Map<String, Object> updates = new java.util.HashMap<>();
             if (name != null)
@@ -232,13 +245,24 @@ public class ProductController {
 
             Product product = productService.updateProduct(id, updates);
 
-            if (imageFile != null && !imageFile.isEmpty()) {
-                String fileName = fileStorageService.storeFile(imageFile);
-                String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path("/api/files/")
-                        .path(fileName)
-                        .toUriString();
-                product = productService.updateProductImage(id, imageUrl);
+            // Xử lý nhiều ảnh mới
+            if (imageFiles != null && imageFiles.length > 0) {
+                List<String> imageUrls = new ArrayList<>();
+                for (MultipartFile file : imageFiles) {
+                    if (!file.isEmpty()) {
+                        String fileName = fileStorageService.storeFile(file);
+                        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
+                                .path("/api/files/")
+                                .path(fileName)
+                                .toUriString();
+                        imageUrls.add(url);
+                    }
+                }
+                if (!imageUrls.isEmpty()) {
+                    product = productService.updateProductImage(id, imageUrls.get(0));
+                    product.setImages(imageUrls);
+                    product = productService.saveProduct(product);
+                }
             }
 
             return ApiResponse.success(product, "Cập nhật sản phẩm thành công");

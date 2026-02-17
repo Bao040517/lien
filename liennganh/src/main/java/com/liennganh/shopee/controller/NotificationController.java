@@ -3,6 +3,8 @@ package com.liennganh.shopee.controller;
 import com.liennganh.shopee.dto.response.ApiResponse;
 import com.liennganh.shopee.entity.Notification;
 import com.liennganh.shopee.service.notification.NotificationService;
+import com.liennganh.shopee.service.auth.JwtService;
+import com.liennganh.shopee.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,8 +13,7 @@ import java.util.List;
 
 /**
  * Controller quản lý thông báo
- * Cho phép người dùng xem danh sách thông báo và đánh dấu đã đọc
- * Yêu cầu đăng nhập để sử dụng
+ * User/Seller chỉ xem được thông báo của mình, Admin xem được tất cả
  */
 @RestController
 @RequestMapping("/api/notifications")
@@ -21,22 +22,23 @@ public class NotificationController {
 
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private JwtService jwtService;
 
     /**
      * Lấy danh sách thông báo của người dùng hiện tại
-     * Quyền hạn: USER, SELLER, ADMIN
-     * 
+     * User/Seller chỉ xem được thông báo của mình, Admin xem được tất cả
      */
     @GetMapping
     public ApiResponse<List<Notification>> getMyNotifications(@RequestParam Long userId) {
+        Long currentUserId = SecurityUtils.getCurrentUserId(jwtService);
+        SecurityUtils.validateOwnership(userId, currentUserId);
         return ApiResponse.success(notificationService.getUserNotifications(userId),
                 "Lấy danh sách thông báo thành công");
     }
 
     /**
      * Đánh dấu một thông báo là đã đọc
-     * Quyền hạn: USER, SELLER, ADMIN
-     * 
      */
     @PutMapping("/{id}/read")
     public ApiResponse<Notification> markAsRead(@PathVariable Long id) {
@@ -44,12 +46,13 @@ public class NotificationController {
     }
 
     /**
-     * Lấy số lượng thông báo chưa đọc của người dùng
-     * Quyền hạn: USER, SELLER, ADMIN
-     * 
+     * Lấy số lượng thông báo chưa đọc
+     * User/Seller chỉ xem được của mình, Admin xem được tất cả
      */
     @GetMapping("/unread-count")
     public ApiResponse<Long> getUnreadCount(@RequestParam Long userId) {
+        Long currentUserId = SecurityUtils.getCurrentUserId(jwtService);
+        SecurityUtils.validateOwnership(userId, currentUserId);
         return ApiResponse.success(notificationService.getUnreadCount(userId), "Lấy số lượng tin chưa đọc thành công");
     }
 }

@@ -40,6 +40,11 @@ public class Product {
     @Column(name = "image_url")
     private String imageUrl; // URL ảnh đại diện
 
+    @ElementCollection
+    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "image_url")
+    private List<String> images; // Danh sách ảnh sản phẩm (nhiều ảnh)
+
     private boolean isBanned = false; // Trạng thái cấm bán (Vi phạm chính sách)
     private String violationReason; // Lý do vi phạm
 
@@ -50,6 +55,10 @@ public class Product {
     public void setViolationReason(String violationReason) {
         this.violationReason = violationReason;
     }
+
+    // Thống kê bán hàng
+    @Column(name = "sold", columnDefinition = "bigint default 0")
+    private Long sold = 0L; // Số lượng đã bán
 
     // Thống kê đánh giá
     @Column(name = "average_rating", columnDefinition = "double precision default 0.0")
@@ -140,6 +149,14 @@ public class Product {
         return isBanned;
     }
 
+    public Long getSold() {
+        return sold;
+    }
+
+    public void setSold(Long sold) {
+        this.sold = sold;
+    }
+
     public Double getAverageRating() {
         return averageRating;
     }
@@ -170,5 +187,13 @@ public class Product {
 
     public void setVariants(List<ProductVariant> variants) {
         this.variants = variants;
+    }
+
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
     }
 }

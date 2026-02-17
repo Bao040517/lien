@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
-import { Plus, Trash2, Package, Image as ImageIcon, Save } from 'lucide-react';
+import { Plus, Trash2, Package, Image as ImageIcon, Save, X } from 'lucide-react';
 
 const AddProduct = () => {
     const { user } = useAuth();
@@ -11,8 +11,8 @@ const AddProduct = () => {
     const [categories, setCategories] = useState([]);
     const [shops, setShops] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [imageFile, setImageFile] = useState(null);
-    const [imagePreview, setImagePreview] = useState('');
+    const [imageFiles, setImageFiles] = useState([]);
+    const [imagePreviews, setImagePreviews] = useState([]);
 
     // Product form
     const [form, setForm] = useState({
@@ -21,11 +21,8 @@ const AddProduct = () => {
 
     // Attributes (seller-defined)
     const [attributes, setAttributes] = useState([]);
-    // attributes = [{ name: "Size", options: ["S", "M", "L"] }, { name: "Màu", options: ["Đen", "Trắng"] }]
-
     // Variants
     const [variants, setVariants] = useState([]);
-    // variants = [{ attributes: {Size: "S", Màu: "Đen"}, price: 250000, stockQuantity: 50 }, ...]
 
     useEffect(() => {
         const fetchData = async () => {
@@ -83,7 +80,7 @@ const AddProduct = () => {
         const updated = [...attributes];
         updated.splice(attrIndex, 1);
         setAttributes(updated);
-        setVariants([]); // Clear variants when attributes change
+        setVariants([]);
     };
 
     // --- Generate variants from attribute combinations ---
@@ -91,7 +88,6 @@ const AddProduct = () => {
         const validAttrs = attributes.filter(a => a.name && a.options.some(o => o));
         if (validAttrs.length === 0) return;
 
-        // Cartesian product
         const combinations = validAttrs.reduce((acc, attr) => {
             const validOptions = attr.options.filter(o => o);
             if (acc.length === 0) {
@@ -125,13 +121,27 @@ const AddProduct = () => {
         setVariants(updated);
     };
 
-    // --- Image handling ---
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setImageFile(file);
-            setImagePreview(URL.createObjectURL(file));
+    // --- Multi-image handling ---
+    const handleImagesChange = (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length + imageFiles.length > 9) {
+            alert('Tối đa 9 ảnh sản phẩm!');
+            return;
         }
+        const newFiles = [...imageFiles, ...files];
+        const newPreviews = [...imagePreviews, ...files.map(f => URL.createObjectURL(f))];
+        setImageFiles(newFiles);
+        setImagePreviews(newPreviews);
+    };
+
+    const removeImage = (index) => {
+        const newFiles = [...imageFiles];
+        const newPreviews = [...imagePreviews];
+        URL.revokeObjectURL(newPreviews[index]);
+        newFiles.splice(index, 1);
+        newPreviews.splice(index, 1);
+        setImageFiles(newFiles);
+        setImagePreviews(newPreviews);
     };
 
     // --- Submit ---
@@ -142,8 +152,8 @@ const AddProduct = () => {
         try {
             let product;
 
-            if (imageFile) {
-                // Create with image
+            if (imageFiles.length > 0) {
+                // Create with images
                 const formData = new FormData();
                 formData.append('shopId', form.shopId);
                 formData.append('categoryId', form.categoryId);
@@ -151,7 +161,9 @@ const AddProduct = () => {
                 formData.append('description', form.description);
                 formData.append('price', form.price);
                 formData.append('stockQuantity', form.stockQuantity || '0');
-                formData.append('image', imageFile);
+                imageFiles.forEach(file => {
+                    formData.append('images', file);
+                });
 
                 const res = await api.post('/products/with-image', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
@@ -255,17 +267,7 @@ const AddProduct = () => {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-600 mb-1">Ảnh sản phẩm</label>
-                            <div className="flex items-center gap-4">
-                                <label className="flex items-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-400 transition">
-                                    <ImageIcon className="w-5 h-5 text-gray-400" />
-                                    <span className="text-sm text-gray-500">Chọn ảnh</span>
-                                    <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-                                </label>
-                                {imagePreview && (
-                                    <img src={imagePreview} alt="preview" className="w-16 h-16 object-cover rounded border" />
-                                )}
-                            </div>
+                            {/* Spacer */}
                         </div>
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-600 mb-1">Mô tả</label>
@@ -275,6 +277,32 @@ const AddProduct = () => {
                                 placeholder="Mô tả chi tiết sản phẩm..."
                             />
                         </div>
+                    </div>
+                </div>
+
+                {/* Multi-Image Upload */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                    <h2 className="text-lg font-semibold mb-4 text-gray-700">Ảnh sản phẩm <span className="text-sm font-normal text-gray-400">(Tối đa 9 ảnh, ảnh đầu tiên làm ảnh đại diện)</span></h2>
+                    <div className="flex flex-wrap gap-3">
+                        {imagePreviews.map((preview, index) => (
+                            <div key={index} className="relative w-24 h-24 rounded-lg overflow-hidden border-2 border-gray-200 group">
+                                <img src={preview} alt={`preview-${index}`} className="w-full h-full object-cover" />
+                                {index === 0 && (
+                                    <span className="absolute top-0.5 left-0.5 bg-orange-500 text-white text-[10px] px-1.5 py-0.5 rounded font-medium">Bìa</span>
+                                )}
+                                <button type="button" onClick={() => removeImage(index)}
+                                    className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition">
+                                    <X className="w-3 h-3" />
+                                </button>
+                            </div>
+                        ))}
+                        {imageFiles.length < 9 && (
+                            <label className="w-24 h-24 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-400 hover:bg-orange-50/50 transition">
+                                <Plus className="w-6 h-6 text-gray-400" />
+                                <span className="text-[10px] text-gray-400 mt-1">Thêm ảnh</span>
+                                <input type="file" accept="image/*" multiple onChange={handleImagesChange} className="hidden" />
+                            </label>
+                        )}
                     </div>
                 </div>
 

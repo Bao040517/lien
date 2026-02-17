@@ -16,6 +16,10 @@ public class SellerStatisticsDTO {
     private BigDecimal totalRevenue; // Tổng doanh thu
     private Long totalOrders; // Tổng số đơn hàng
     private Long totalProducts; // Tổng số sản phẩm
+    private Long totalSold; // Tổng số lượng đã bán
+    private Long totalFeedback; // Tổng số lượt đánh giá
+    private Double returnRate; // Tỷ lệ hoàn hàng/hủy (%)
+    private Double averageRating; // Điểm đánh giá trung bình (sao)
 
     // Thống kê đơn hàng theo trạng thái
     private Long pendingOrders; // Đơn chờ xác nhận
@@ -25,6 +29,7 @@ public class SellerStatisticsDTO {
     private Long cancelledOrders; // Đơn đã hủy
 
     private List<TopProductDTO> topProducts; // Top sản phẩm bán chạy của shop
+    private List<ProductDetailStatsDTO> productDetailStats; // Thống kê chi tiết từng sản phẩm
 
     // Dữ liệu biểu đồ
     private List<ChartDataDTO> revenueChart; // Biểu đồ doanh thu
@@ -116,5 +121,45 @@ public class SellerStatisticsDTO {
 
     public void setOrdersChart(List<ChartDataDTO> ordersChart) {
         this.ordersChart = ordersChart;
+    }
+
+    public Long getTotalSold() {
+        return totalSold;
+    }
+
+    public void setTotalSold(Long totalSold) {
+        this.totalSold = totalSold;
+    }
+
+    public Long getTotalFeedback() {
+        return totalFeedback;
+    }
+
+    public void setTotalFeedback(Long totalFeedback) {
+        this.totalFeedback = totalFeedback;
+    }
+
+    public Double getReturnRate() {
+        return returnRate;
+    }
+
+    public void setReturnRate(Double returnRate) {
+        this.returnRate = returnRate;
+    }
+
+    public Double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(Double averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public List<ProductDetailStatsDTO> getProductDetailStats() {
+        return productDetailStats;
+    }
+
+    public void setProductDetailStats(List<ProductDetailStatsDTO> productDetailStats) {
+        this.productDetailStats = productDetailStats;
     }
 }

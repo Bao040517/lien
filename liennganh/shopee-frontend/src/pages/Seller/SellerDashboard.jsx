@@ -1,17 +1,21 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Package, Plus, DollarSign, ShoppingBag, TrendingUp, Eye } from 'lucide-react';
+import { Package, Plus, DollarSign, ShoppingBag, Eye, Star, MessageSquare, RotateCcw, ShoppingCart } from 'lucide-react';
 import api from '../../api';
 
 const SellerDashboard = () => {
     const { user } = useAuth();
-    const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [productDetailStats, setProductDetailStats] = useState([]);
     const [stats, setStats] = useState({
         totalProducts: 0,
         totalOrders: 0,
-        revenue: 0
+        revenue: 0,
+        totalSold: 0,
+        totalFeedback: 0,
+        returnRate: 0,
+        averageRating: 0
     });
 
     useEffect(() => {
@@ -22,35 +26,25 @@ const SellerDashboard = () => {
 
     const fetchDashboardData = async () => {
         try {
-            const [productsRes, statsRes] = await Promise.all([
-                api.get(`/products/my-shop?userId=${user.id}`),
-                api.get(`/seller/statistics?sellerId=${user.id}`).catch(() => ({ data: { data: null } }))
-            ]);
-
-            // Handle Products
-            const productsData = productsRes.data.data || productsRes.data.result;
-            if (Array.isArray(productsData)) {
-                setProducts(productsData);
-            }
-
-            // Handle Stats
+            const statsRes = await api.get(`/seller/statistics?sellerId=${user.id}`);
             const statsData = statsRes.data.data || statsRes.data;
+
             if (statsData) {
                 setStats({
                     totalProducts: statsData.totalProducts || 0,
                     totalOrders: statsData.totalOrders || 0,
-                    revenue: statsData.totalRevenue || 0
+                    revenue: statsData.totalRevenue || 0,
+                    totalSold: statsData.totalSold || 0,
+                    totalFeedback: statsData.totalFeedback || 0,
+                    returnRate: statsData.returnRate || 0,
+                    averageRating: statsData.averageRating || 0
                 });
-            } else {
-                // Fallback if stats API fails or returns null (though it shouldn't)
-                const prods = Array.isArray(productsData) ? productsData : [];
-                setStats(prev => ({
-                    ...prev,
-                    totalProducts: prods.length,
-                    revenue: prods.reduce((sum, p) => sum + (Number(p.price) * (p.sold || 0)), 0)
-                }));
-            }
 
+                // Dữ liệu chi tiết từng sản phẩm từ backend
+                if (statsData.productDetailStats) {
+                    setProductDetailStats(statsData.productDetailStats);
+                }
+            }
         } catch (error) {
             console.error("Failed to fetch dashboard data:", error);
         } finally {
@@ -78,48 +72,48 @@ const SellerDashboard = () => {
                 </div>
             </div>
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
+            {/* Summary Stats Row */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
                     <div className="flex justify-between items-start">
                         <div>
-                            <h3 className="text-gray-500 text-sm font-medium">Tổng Sản Phẩm</h3>
-                            <p className="text-3xl font-bold mt-2 text-gray-800">{stats.totalProducts}</p>
+                            <h3 className="text-gray-500 text-xs font-medium uppercase tracking-wide">Tổng Sản Phẩm</h3>
+                            <p className="text-2xl font-bold mt-1 text-gray-800">{stats.totalProducts}</p>
                         </div>
-                        <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center">
-                            <Package className="text-orange-500 w-6 h-6" />
+                        <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center">
+                            <Package className="text-orange-500 w-5 h-5" />
                         </div>
                     </div>
-                    <Link to="/seller/products" className="text-xs text-orange-500 hover:underline mt-3 block">Xem tất cả →</Link>
+                    <Link to="/seller/products" className="text-xs text-orange-500 hover:underline mt-2 block">Xem tất cả →</Link>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
                     <div className="flex justify-between items-start">
                         <div>
-                            <h3 className="text-gray-500 text-sm font-medium">Đơn Hàng</h3>
-                            <p className="text-3xl font-bold mt-2 text-gray-800">{stats.totalOrders}</p>
+                            <h3 className="text-gray-500 text-xs font-medium uppercase tracking-wide">Đơn Hàng</h3>
+                            <p className="text-2xl font-bold mt-1 text-gray-800">{stats.totalOrders}</p>
                         </div>
-                        <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                            <ShoppingBag className="text-blue-500 w-6 h-6" />
+                        <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
+                            <ShoppingBag className="text-blue-500 w-5 h-5" />
                         </div>
                     </div>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
                     <div className="flex justify-between items-start">
                         <div>
-                            <h3 className="text-gray-500 text-sm font-medium">Doanh Thu</h3>
-                            <p className="text-3xl font-bold mt-2 text-gray-800">{formatPrice(stats.revenue)}</p>
+                            <h3 className="text-gray-500 text-xs font-medium uppercase tracking-wide">Doanh Thu</h3>
+                            <p className="text-2xl font-bold mt-1 text-gray-800">{formatPrice(stats.revenue)}</p>
                         </div>
-                        <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
-                            <DollarSign className="text-green-500 w-6 h-6" />
+                        <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
+                            <DollarSign className="text-green-500 w-5 h-5" />
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Recent Products */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            {/* Chi tiết sản phẩm - Detail Table from Backend */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8">
                 <div className="px-6 py-4 border-b flex justify-between items-center">
-                    <h3 className="font-bold text-gray-700">Sản phẩm gần đây</h3>
+                    <h3 className="font-bold text-gray-700">Chi tiết sản phẩm</h3>
                     <Link to="/seller/products"
                         className="text-sm text-orange-500 hover:text-orange-600 font-medium">
                         Xem tất cả →
@@ -131,31 +125,102 @@ const SellerDashboard = () => {
                         <div className="animate-spin w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full mx-auto mb-2"></div>
                         Đang tải...
                     </div>
-                ) : (products && products.length > 0) ? (
-                    <div className="divide-y divide-gray-50">
-                        {products.slice(0, 5).map((product) => (
-                            <div key={product.id} className="px-6 py-3 flex items-center gap-4 hover:bg-orange-50/30 transition">
-                                <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                                    {product.imageUrl ? (
-                                        <img src={product.imageUrl} alt="" className="w-full h-full object-cover" />
-                                    ) : (
-                                        <Package className="w-5 h-5 text-gray-300 m-auto mt-3.5" />
-                                    )}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="font-medium text-gray-900 text-sm truncate">{product.name}</p>
-                                    <p className="text-xs text-gray-400">{product.category?.name || 'Chưa phân loại'}</p>
-                                </div>
-                                <div className="text-right">
-                                    <p className="text-sm font-bold text-orange-600">{formatPrice(product.price)}</p>
-                                    <p className="text-xs text-gray-400">Kho: {product.stockQuantity}</p>
-                                </div>
-                                <Link to={`/seller/edit-product/${product.id}`}
-                                    className="p-2 text-gray-400 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition">
-                                    <Eye className="w-4 h-4" />
-                                </Link>
-                            </div>
-                        ))}
+                ) : productDetailStats.length > 0 ? (
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
+                                    <th className="px-4 py-3 text-left font-medium">Sản Phẩm</th>
+                                    <th className="px-4 py-3 text-left font-medium">Giá</th>
+                                    <th className="px-4 py-3 text-center font-medium">Kho</th>
+                                    <th className="px-4 py-3 text-center font-medium">Đã Bán</th>
+                                    <th className="px-4 py-3 text-center font-medium">Đánh Giá</th>
+                                    <th className="px-4 py-3 text-center font-medium">Sao TB</th>
+                                    <th className="px-4 py-3 text-center font-medium">Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {productDetailStats.map((product) => (
+                                    <tr key={product.productId} className="border-t border-gray-100 hover:bg-orange-50/30 transition">
+                                        <td className="px-4 py-3">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                                                    {product.imageUrl ? (
+                                                        <img src={product.imageUrl} alt="" className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <Package className="w-4 h-4 text-gray-300 m-auto mt-3" />
+                                                    )}
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="font-medium text-gray-900 text-sm truncate max-w-[200px]">{product.productName}</p>
+                                                    <p className="text-xs text-gray-400">ID: {product.productId}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <span className="font-semibold text-orange-600">{formatPrice(product.price)}</span>
+                                        </td>
+                                        <td className="px-4 py-3 text-center">
+                                            <span className={`font-medium ${product.stockQuantity <= 10 ? 'text-red-500' : 'text-gray-700'}`}>
+                                                {product.stockQuantity}
+                                            </span>
+                                        </td>
+                                        <td className="px-4 py-3 text-center">
+                                            <span className="font-medium text-purple-600">{product.sold}</span>
+                                        </td>
+                                        <td className="px-4 py-3 text-center">
+                                            <span className="font-medium text-blue-600">{product.reviewCount}</span>
+                                        </td>
+                                        <td className="px-4 py-3 text-center">
+                                            <div className="flex items-center justify-center gap-1">
+                                                <Star className={`w-3.5 h-3.5 ${product.averageRating > 0 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
+                                                <span className="font-medium text-gray-700">{product.averageRating.toFixed(1)}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-4 py-3 text-center">
+                                            <Link to={`/seller/edit-product/${product.productId}`}
+                                                className="p-1.5 text-gray-400 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition inline-block">
+                                                <Eye className="w-4 h-4" />
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                            {/* Tổng (Totals Row) - all from backend */}
+                            <tfoot>
+                                <tr className="bg-orange-50 border-t-2 border-orange-200 font-bold text-gray-800">
+                                    <td className="px-4 py-3" colSpan={2}>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-orange-600">TỔNG CỘNG</span>
+                                            <span className="text-sm font-normal text-gray-400">({productDetailStats.length} sản phẩm)</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-3 text-center text-gray-600">
+                                        {productDetailStats.reduce((sum, p) => sum + (p.stockQuantity || 0), 0)}
+                                    </td>
+                                    <td className="px-4 py-3 text-center">
+                                        <span className="text-purple-600">{stats.totalSold}</span>
+                                    </td>
+                                    <td className="px-4 py-3 text-center">
+                                        <span className="text-blue-600">{stats.totalFeedback}</span>
+                                    </td>
+                                    <td className="px-4 py-3 text-center">
+                                        <div className="flex items-center justify-center gap-1">
+                                            <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                                            <span className="text-yellow-600">{stats.averageRating}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-3 text-center">
+                                        <div className="flex items-center justify-center gap-1 text-sm">
+                                            <RotateCcw className="w-3.5 h-3.5 text-red-400" />
+                                            <span className={`${stats.returnRate > 5 ? 'text-red-500' : 'text-green-600'}`}>
+                                                {stats.returnRate}%
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
                 ) : (
                     <div className="p-8 text-center text-gray-400">

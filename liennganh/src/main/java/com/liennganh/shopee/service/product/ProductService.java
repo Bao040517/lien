@@ -83,7 +83,7 @@ public class ProductService {
     /**
      * Cập nhật thông tin sản phẩm
      * 
-     *             stockQuantity, categoryId)
+     * stockQuantity, categoryId)
      */
     @org.springframework.transaction.annotation.Transactional
     public Product updateProduct(Long id, java.util.Map<String, Object> body) {
@@ -127,6 +127,13 @@ public class ProductService {
     }
 
     /**
+     * Lưu trực tiếp entity Product vào DB
+     */
+    public Product saveProduct(Product product) {
+        return productRepository.save(product);
+    }
+
+    /**
      * Lấy thông tin chi tiết sản phẩm
      * 
      * @throws AppException PRODUCT_NOT_FOUND
@@ -146,7 +153,7 @@ public class ProductService {
     /**
      * Lọc và sắp xếp sản phẩm nâng cao
      * 
-     *                   best_selling, rating_desc)
+     * best_selling, rating_desc)
      */
     public List<Product> filterProducts(String keyword, Long categoryId, BigDecimal minPrice, BigDecimal maxPrice,
             String sortBy) {
