@@ -158,7 +158,8 @@ public class StatisticsService {
                         detailStats.add(new ProductDetailStatsDTO(
                                         p.getId(), p.getName(), p.getImageUrl(),
                                         p.getPrice(), p.getStockQuantity(),
-                                        pSold, pReviews, pAvgRating));
+                                        pSold, pReviews, pAvgRating,
+                                        p.isBanned(), p.getViolationReason()));
                 }
                 stats.setProductDetailStats(detailStats);
 
@@ -240,10 +241,18 @@ public class StatisticsService {
 
                         if (!productIds.isEmpty()) {
                                 List<OrderItem> items = orderItemRepository.findByProductIdIn(productIds);
-                                long totalOrders = items.stream()
-                                                .map(item -> item.getOrder().getId())
-                                                .distinct()
-                                                .count();
+                                Set<Order> shopOrders = items.stream().map(OrderItem::getOrder)
+                                                .collect(Collectors.toSet());
+
+                                // Calculate metrics
+                                long shopDeliveredOrders = shopOrders.stream()
+                                                .filter(o -> o.getStatus() == Order.OrderStatus.DELIVERED).count();
+                                // OrderStatus.RETURNED does not exist yet, defaulting to 0
+                                long returnedOrders = 0;
+                                long totalShopOrders = shopOrders.size();
+
+                                double returnRate = totalShopOrders == 0 ? 0.0
+                                                : ((double) returnedOrders / totalShopOrders) * 100.0;
 
                                 BigDecimal revenue = items.stream()
                                                 .filter(item -> item.getOrder()
@@ -252,13 +261,24 @@ public class StatisticsService {
                                                                 .multiply(BigDecimal.valueOf(item.getQuantity())))
                                                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-                                topSellers.add(new TopSellerDTO(shop.getOwner().getId(), shop.getName(), totalOrders,
-                                                revenue));
+                                Double avgRating = reviewRepository.getAverageRatingByShopId(shop.getId());
+                                if (avgRating == null)
+                                        avgRating = 0.0;
+
+                                topSellers.add(new TopSellerDTO(
+                                                shop.getId(),
+                                                shop.getName(),
+                                                null, // Logo URL not available
+                                                revenue,
+                                                shopDeliveredOrders,
+                                                Math.round(avgRating * 10.0) / 10.0,
+                                                Math.round(returnRate * 10.0) / 10.0,
+                                                shop.getOwner().getCreatedAt()));
                         }
                 }
 
                 topSellers = topSellers.stream()
-                                .sorted((a, b) -> b.getRevenue().compareTo(a.getRevenue()))
+                                .sorted((a, b) -> b.getTotalRevenue().compareTo(a.getTotalRevenue()))
                                 .limit(10)
                                 .collect(Collectors.toList());
                 stats.setTopSellers(topSellers);

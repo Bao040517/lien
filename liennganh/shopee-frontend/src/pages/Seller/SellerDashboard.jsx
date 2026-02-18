@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Package, Plus, DollarSign, ShoppingBag, Eye, Star, MessageSquare, RotateCcw, ShoppingCart } from 'lucide-react';
+import { Package, Plus, DollarSign, ShoppingBag, Eye, Star, MessageSquare, RotateCcw, ShoppingCart, AlertTriangle } from 'lucide-react';
 import api from '../../api';
 
 const SellerDashboard = () => {
@@ -72,6 +72,22 @@ const SellerDashboard = () => {
                 </div>
             </div>
 
+            {/* Banner cảnh báo sản phẩm bị khóa */}
+            {productDetailStats.some(p => p.isBanned) && (
+                <div className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl p-4 mb-6 flex items-center gap-3">
+                    <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <AlertTriangle className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                        <p className="text-red-800 font-semibold">⚠️ Có {productDetailStats.filter(p => p.isBanned).length} sản phẩm bị khóa!</p>
+                        <p className="text-red-600 text-sm">Vui lòng kiểm tra và cập nhật lại thông tin sản phẩm vi phạm.</p>
+                    </div>
+                    <Link to="/seller/products" className="ml-auto text-sm text-red-600 hover:text-red-800 font-medium whitespace-nowrap">
+                        Xem chi tiết →
+                    </Link>
+                </div>
+            )}
+
             {/* Summary Stats Row */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                 <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
@@ -141,19 +157,39 @@ const SellerDashboard = () => {
                             </thead>
                             <tbody>
                                 {productDetailStats.map((product) => (
-                                    <tr key={product.productId} className="border-t border-gray-100 hover:bg-orange-50/30 transition">
+                                    <tr key={product.productId} className={`border-t border-gray-100 transition ${product.isBanned
+                                            ? 'bg-red-50 border-l-4 border-red-500 hover:bg-red-100/50'
+                                            : 'hover:bg-orange-50/30'
+                                        }`}>
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                                                <div className="w-10 h-10 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 relative">
                                                     {product.imageUrl ? (
-                                                        <img src={product.imageUrl} alt="" className="w-full h-full object-cover" />
+                                                        <img src={product.imageUrl} alt="" className={`w-full h-full object-cover ${product.isBanned ? 'grayscale opacity-60' : ''}`} />
                                                     ) : (
                                                         <Package className="w-4 h-4 text-gray-300 m-auto mt-3" />
                                                     )}
+                                                    {product.isBanned && (
+                                                        <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center">
+                                                            <AlertTriangle className="w-5 h-5 text-red-600" />
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 <div className="min-w-0">
-                                                    <p className="font-medium text-gray-900 text-sm truncate max-w-[200px]">{product.productName}</p>
+                                                    <p className={`font-medium text-sm truncate max-w-[200px] ${product.isBanned ? 'text-red-700' : 'text-gray-900'}`}>
+                                                        {product.productName}
+                                                        {product.isBanned && (
+                                                            <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full animate-pulse">
+                                                                <AlertTriangle className="w-3 h-3" /> BỊ KHÓA
+                                                            </span>
+                                                        )}
+                                                    </p>
                                                     <p className="text-xs text-gray-400">ID: {product.productId}</p>
+                                                    {product.isBanned && product.violationReason && (
+                                                        <p className="text-xs text-red-500 mt-0.5 truncate max-w-[200px]" title={product.violationReason}>
+                                                            Lý do: {product.violationReason}
+                                                        </p>
+                                                    )}
                                                 </div>
                                             </div>
                                         </td>

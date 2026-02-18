@@ -275,10 +275,14 @@ const Checkout = () => {
                 const group = groupedItems[shopId];
                 const voucher = shopVouchers[shopId];
 
-                const orderItems = group.items.map(item => ({
-                    product: { id: item.product.id },
-                    quantity: item.quantity
-                }));
+                const orderItems = group.items.map(item => {
+                    // Handle case where item might be the product itself or a cart item
+                    const product = item.product || item;
+                    return {
+                        productId: product.id,
+                        quantity: item.quantity
+                    };
+                });
 
                 const payload = {
                     userId: user.id,

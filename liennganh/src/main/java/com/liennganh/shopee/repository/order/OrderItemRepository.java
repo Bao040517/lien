@@ -14,4 +14,9 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
      * (Thường dùng để check ràng buộc khi xóa sản phẩm)
      */
     List<OrderItem> findByProductIdIn(List<Long> productIds);
+
+    /**
+     * Xóa tất cả OrderItem của sản phẩm (dùng khi xóa sản phẩm)
+     */
+    void deleteByProductId(Long productId);
 }

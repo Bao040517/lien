@@ -2,14 +2,13 @@ import { useState, useEffect, useRef } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
-import { LayoutDashboard, Package, ShoppingBag, BarChart3, Settings, LogOut, Store, ImagePlus, Bell, Ticket } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingBag, BarChart3, Settings, LogOut, Store, ImagePlus, Bell, Ticket, AlertTriangle } from 'lucide-react';
 
 const menuItems = [
     { path: '/seller', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/seller/products', label: 'Sản phẩm', icon: Package },
     { path: '/seller/notifications', label: 'Thông báo', icon: Bell },
-    { path: '/seller/vouchers', label: 'Mã giảm giá', icon: Ticket }, // New item
-    { path: '/seller/add-product', label: 'Thêm sản phẩm', icon: ImagePlus },
+    { path: '/seller/vouchers', label: 'Mã giảm giá', icon: Ticket },
     { path: '/seller/orders', label: 'Đơn hàng', icon: ShoppingBag },
     { path: '/seller/revenue', label: 'Doanh thu', icon: BarChart3 },
 ];
@@ -28,12 +27,17 @@ const SellerLayout = () => {
     const [notifications, setNotifications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [showNotifications, setShowNotifications] = useState(false);
+    const [bannedProductCount, setBannedProductCount] = useState(0);
     const notificationRef = useRef(null);
 
     useEffect(() => {
         if (user) {
             fetchUnreadCount();
-            const interval = setInterval(fetchUnreadCount, 30000); // Poll every 30s
+            fetchBannedCount();
+            const interval = setInterval(() => {
+                fetchUnreadCount();
+                fetchBannedCount();
+            }, 30000);
             return () => clearInterval(interval);
         }
     }, [user]);
@@ -53,6 +57,15 @@ const SellerLayout = () => {
             const res = await api.get('/notifications/unread-count', { params: { userId: user.id } });
             setUnreadCount(res.data.data);
         } catch (e) { console.error("Error fetching unread count", e); }
+    };
+
+    const fetchBannedCount = async () => {
+        try {
+            const res = await api.get(`/products/my-shop?userId=${user.id}`);
+            const data = res.data.data || res.data.result || [];
+            const banned = Array.isArray(data) ? data.filter(p => p.banned).length : 0;
+            setBannedProductCount(banned);
+        } catch (e) { console.error("Error fetching banned count", e); }
     };
 
     const handleToggleNotifications = async () => {
@@ -85,16 +98,49 @@ const SellerLayout = () => {
         }
     };
 
-    if (!user || user.role !== 'SELLER') {
+    if (!user) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-orange-50">
                 <div className="text-center">
                     <Store className="w-16 h-16 mx-auto mb-4 text-orange-400" />
                     <h1 className="text-2xl font-bold mb-2 text-gray-800">Truy cập bị từ chối</h1>
-                    <p className="text-gray-500 mb-6">Bạn cần đăng ký trở thành Seller để truy cập trang này.</p>
-                    <Link to="/register-seller" className="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 transition">
-                        Đăng ký bán hàng
+                    <p className="text-gray-500 mb-6">Bạn cần đăng nhập để truy cập trang này.</p>
+                    <Link to="/login" className="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 transition">
+                        Đăng nhập
                     </Link>
+                </div>
+            </div>
+        );
+    }
+
+    if (user.role !== 'SELLER') {
+        const handleUpgradeToSeller = async () => {
+            try {
+                await api.post(`/users/${user.id}/upgrade-seller`);
+                alert('Đã gửi yêu cầu trở thành Seller! Vui lòng chờ Admin duyệt.');
+                navigate('/');
+            } catch (err) {
+                const msg = err.response?.data?.message || 'Có lỗi xảy ra';
+                alert(msg);
+            }
+        };
+
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-orange-50">
+                <div className="text-center max-w-md">
+                    <Store className="w-16 h-16 mx-auto mb-4 text-orange-400" />
+                    <h1 className="text-2xl font-bold mb-2 text-gray-800">Kênh Người Bán</h1>
+                    <p className="text-gray-500 mb-6">
+                        Xin chào <strong>{user.username}</strong>! Bạn đang là User.
+                        Nhấn nút bên dưới để đăng ký trở thành Seller và bắt đầu bán hàng.
+                    </p>
+                    <button
+                        onClick={handleUpgradeToSeller}
+                        className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition font-medium"
+                    >
+                        🏪 Đăng ký trở thành Seller
+                    </button>
+                    <p className="text-xs text-gray-400 mt-4">Yêu cầu sẽ được Admin xem xét và phê duyệt</p>
                 </div>
             </div>
         );
@@ -160,6 +206,8 @@ const SellerLayout = () => {
                     {menuItems.map((item) => {
                         const isActive = location.pathname === item.path;
                         const Icon = item.icon;
+                        const showBannedBadge = item.path === '/seller/products' && bannedProductCount > 0;
+                        const showNotifBadge = item.path === '/seller/notifications' && unreadCount > 0;
                         return (
                             <Link
                                 key={item.path}
@@ -171,6 +219,16 @@ const SellerLayout = () => {
                             >
                                 <Icon className="w-5 h-5" />
                                 {item.label}
+                                {showBannedBadge && (
+                                    <span className="ml-auto inline-flex items-center gap-1 px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full animate-pulse">
+                                        <AlertTriangle className="w-3 h-3" /> {bannedProductCount}
+                                    </span>
+                                )}
+                                {showNotifBadge && (
+                                    <span className="ml-auto inline-flex items-center justify-center w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full">
+                                        +{unreadCount > 9 ? '9' : unreadCount}
+                                    </span>
+                                )}
                             </Link>
                         );
                     })}

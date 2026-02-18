@@ -31,11 +31,29 @@ public class OrderController {
     @PreAuthorize("hasAnyRole('USER', 'SELLER')")
     @PostMapping
     public ApiResponse<Order> createOrder(@RequestBody com.liennganh.shopee.dto.request.OrderRequest orderRequest) {
+        // Validate request
+        if (orderRequest.getUserId() == null) {
+            throw new com.liennganh.shopee.exception.AppException(
+                    com.liennganh.shopee.exception.ErrorCode.INVALID_INPUT);
+        }
+        if (orderRequest.getItems() == null || orderRequest.getItems().isEmpty()) {
+            throw new com.liennganh.shopee.exception.AppException(
+                    com.liennganh.shopee.exception.ErrorCode.INVALID_INPUT);
+        }
+
         // Đảm bảo user chỉ tạo đơn cho chính mình
         Long currentUserId = SecurityUtils.getCurrentUserId(jwtService);
         SecurityUtils.validateOwnership(orderRequest.getUserId(), currentUserId);
 
         List<OrderItem> items = orderRequest.getItems().stream().map(dtoItem -> {
+            if (dtoItem.getProductId() == null) {
+                throw new com.liennganh.shopee.exception.AppException(
+                        com.liennganh.shopee.exception.ErrorCode.INVALID_INPUT);
+            }
+            if (dtoItem.getQuantity() == null || dtoItem.getQuantity() <= 0) {
+                throw new com.liennganh.shopee.exception.AppException(
+                        com.liennganh.shopee.exception.ErrorCode.INVALID_QUANTITY);
+            }
             OrderItem item = new OrderItem();
             com.liennganh.shopee.entity.Product p = new com.liennganh.shopee.entity.Product();
             p.setId(dtoItem.getProductId());

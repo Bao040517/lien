@@ -39,6 +39,8 @@ public class User {
     private LocalDateTime createdAt;
 
     @OneToOne(mappedBy = "owner")
+    @lombok.EqualsAndHashCode.Exclude
+    @lombok.ToString.Exclude
     private Shop shop; // Shop mà user này sở hữu (nếu là SELLER)
 
     @PrePersist

@@ -51,7 +51,6 @@ public class OrderService {
      * @throws AppException USER_NOT_FOUND, ADDRESS_NOT_FOUND, PRODUCT_NOT_FOUND,
      *                      PRODUCT_OUT_OF_STOCK
      */
-    @Transactional
     public Order createOrder(Long userId, List<OrderItem> items, String voucherCode, Long addressId,
             String paymentMethod) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));

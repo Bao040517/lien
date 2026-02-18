@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../api';
-import { Package, Search, Trash2, Eye, ExternalLink, ShieldAlert, ShieldCheck } from 'lucide-react';
+import { Package, Search, Trash2, Eye, ExternalLink, ShieldAlert, ShieldCheck, Sparkles } from 'lucide-react';
 
 const AdminProducts = () => {
     const [products, setProducts] = useState([]);
@@ -8,21 +8,37 @@ const AdminProducts = () => {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [catFilter, setCatFilter] = useState('ALL');
+    const [lastSeenMaxId, setLastSeenMaxId] = useState(0);
 
     useEffect(() => {
+        // Lấy maxId đã xem lần trước từ localStorage
+        const savedMaxId = parseInt(localStorage.getItem('admin_products_last_seen_max_id') || '0');
+        setLastSeenMaxId(savedMaxId);
         fetchData();
     }, []);
 
     const fetchData = () => {
         Promise.all([
-            api.get('/products'),
+            api.get('/products/all'),
             api.get('/categories')
         ]).then(([pRes, cRes]) => {
-            setProducts(pRes.data.data || []);
+            const allProducts = pRes.data.data || [];
+            // Sắp xếp theo ID giảm dần → sản phẩm mới nhất lên đầu
+            allProducts.sort((a, b) => b.id - a.id);
+            setProducts(allProducts);
             setCategories(cRes.data.data || []);
+
+            // Lưu maxId hiện tại vào localStorage để lần sau biết đâu là "mới"
+            if (allProducts.length > 0) {
+                const currentMaxId = Math.max(...allProducts.map(p => p.id));
+                localStorage.setItem('admin_products_last_seen_max_id', currentMaxId.toString());
+            }
         }).catch(e => console.error(e))
             .finally(() => setLoading(false));
     };
+
+    // Kiểm tra sản phẩm có phải mới tạo không (ID > lastSeenMaxId)
+    const isNewProduct = (product) => lastSeenMaxId > 0 && product.id > lastSeenMaxId;
 
     const handleDelete = async (id, name) => {
         if (!window.confirm(`Xoá sản phẩm "${name}"? Hành động này không thể hoàn tác.`)) return;
@@ -37,8 +53,9 @@ const AdminProducts = () => {
         if (!reason) return;
         try {
             await api.put(`/products/${id}/ban`, null, { params: { reason } });
-            alert('Đã khóa sản phẩm');
-            fetchData();
+            setProducts(prev => prev.map(p =>
+                p.id === id ? { ...p, banned: true, isBanned: true, violationReason: reason } : p
+            ));
         } catch (e) {
             alert('Khóa thất bại: ' + (e.response?.data?.message || e.message));
         }
@@ -48,14 +65,17 @@ const AdminProducts = () => {
         if (!window.confirm(`Mở khóa cho sản phẩm "${name}"?`)) return;
         try {
             await api.put(`/products/${id}/unban`);
-            alert('Đã mở khóa sản phẩm');
-            fetchData();
+            setProducts(prev => prev.map(p =>
+                p.id === id ? { ...p, banned: false, isBanned: false, violationReason: null } : p
+            ));
         } catch (e) {
             alert('Mở khóa thất bại: ' + (e.response?.data?.message || e.message));
         }
     };
 
     const formatPrice = (p) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p);
+
+    const newCount = products.filter(p => isNewProduct(p)).length;
 
     const filtered = products.filter(p => {
         const matchSearch = p.name?.toLowerCase().includes(search.toLowerCase());
@@ -71,6 +91,19 @@ const AdminProducts = () => {
                     <p className="text-sm text-gray-500 mt-1">{products.length} sản phẩm trong hệ thống</p>
                 </div>
             </div>
+
+            {/* Banner thông báo sản phẩm mới */}
+            {newCount > 0 && (
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 mb-6 flex items-center gap-3 animate-pulse">
+                    <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Sparkles className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                        <p className="text-green-800 font-semibold">🎉 Có {newCount} sản phẩm mới vừa được tạo!</p>
+                        <p className="text-green-600 text-sm">Sản phẩm mới đã được đưa lên đầu danh sách và đánh dấu nổi bật.</p>
+                    </div>
+                </div>
+            )}
 
             {/* Filters */}
             <div className="bg-white rounded-xl border border-gray-100 p-4 mb-6 flex flex-col sm:flex-row gap-3">
@@ -111,9 +144,13 @@ const AdminProducts = () => {
                             </thead>
                             <tbody className="divide-y divide-gray-100">
                                 {filtered.map(product => {
-                                    const isBanned = product.banned || product.isBanned; // Check both possibilities
+                                    const isBanned = product.banned || product.isBanned;
+                                    const isNew = isNewProduct(product);
                                     return (
-                                        <tr key={product.id} className={`hover:bg-gray-50/50 transition-colors ${isBanned ? 'bg-red-100 border-l-4 border-red-500' : ''}`}>
+                                        <tr key={product.id} className={`hover:bg-gray-50/50 transition-colors ${isBanned ? 'bg-red-100 border-l-4 border-red-500'
+                                                : isNew ? 'bg-green-50 border-l-4 border-green-500'
+                                                    : ''
+                                            }`}>
                                             <td className="px-6 py-3">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 relative">
@@ -129,7 +166,14 @@ const AdminProducts = () => {
                                                         )}
                                                     </div>
                                                     <div className="min-w-0">
-                                                        <p className={`text-sm font-medium truncate max-w-xs ${isBanned ? 'text-red-800' : 'text-gray-800'}`}>{product.name}</p>
+                                                        <p className={`text-sm font-medium truncate max-w-xs ${isBanned ? 'text-red-800' : isNew ? 'text-green-800' : 'text-gray-800'}`}>
+                                                            {product.name}
+                                                            {isNew && (
+                                                                <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 bg-green-500 text-white text-[10px] font-bold rounded-full animate-bounce">
+                                                                    <Sparkles className="w-3 h-3" /> MỚI
+                                                                </span>
+                                                            )}
+                                                        </p>
                                                         <p className="text-xs text-gray-400">ID: {product.id}</p>
                                                     </div>
                                                 </div>

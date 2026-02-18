@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Package, Plus, Search, Trash2, Edit3, Eye } from 'lucide-react';
+import { Package, Plus, Search, Trash2, Edit3, Eye, AlertTriangle } from 'lucide-react';
 import api from '../../api';
 
 const SellerProducts = () => {
@@ -74,6 +74,19 @@ const SellerProducts = () => {
                 </div>
             </div>
 
+            {/* Cảnh báo sản phẩm bị khóa */}
+            {products.some(p => p.banned) && (
+                <div className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl p-4 mb-6 flex items-center gap-3">
+                    <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <AlertTriangle className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                        <p className="text-red-800 font-semibold">⚠️ Có {products.filter(p => p.banned).length} sản phẩm bị khóa!</p>
+                        <p className="text-red-600 text-sm">Các sản phẩm vi phạm đã được đánh dấu bên dưới. Vui lòng cập nhật lại thông tin.</p>
+                    </div>
+                </div>
+            )}
+
             {/* Product Table */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 {loading ? (
@@ -96,7 +109,10 @@ const SellerProducts = () => {
                             </thead>
                             <tbody className="divide-y divide-gray-100">
                                 {filtered.map(product => (
-                                    <tr key={product.id} className="hover:bg-orange-50/30 transition">
+                                    <tr key={product.id} className={`transition ${product.banned
+                                            ? 'bg-red-50 border-l-4 border-red-500 hover:bg-red-100/50'
+                                            : 'hover:bg-orange-50/30'
+                                        }`}>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-14 h-14 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 relative">

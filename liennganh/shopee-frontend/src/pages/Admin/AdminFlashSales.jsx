@@ -35,7 +35,7 @@ const AdminFlashSales = () => {
 
     const fetchProducts = async () => {
         try {
-            const res = await api.get('/products');
+            const res = await api.get('/products/all');
             setProducts(res.data.data || []);
         } catch (error) {
             console.error(error);
@@ -81,14 +81,15 @@ const AdminFlashSales = () => {
             };
 
             if (editingId) {
-                await api.put(`/flash-sales/${editingId}`, payload);
-                alert('Cập nhật Flash Sale thành công!');
+                const res = await api.put(`/flash-sales/${editingId}`, payload);
+                const updated = res.data.data || res.data;
+                setFlashSales(prev => prev.map(s => s.id === editingId ? updated : s));
             } else {
-                await api.post('/flash-sales', payload);
-                alert('Tạo Flash Sale thành công!');
+                const res = await api.post('/flash-sales', payload);
+                const newSale = res.data.data || res.data;
+                setFlashSales(prev => [...prev, newSale]);
             }
 
-            fetchFlashSales();
             setShowModal(false);
             setForm({ startDate: '', endDate: '', productIds: [] });
             setEditingId(null);

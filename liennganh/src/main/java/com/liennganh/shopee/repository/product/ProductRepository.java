@@ -38,4 +38,9 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
      * Tìm sản phẩm của Shop (chỉ lấy sp chưa bị khóa - dùng cho User xem shop)
      */
     List<Product> findByShopAndIsBannedFalse(Shop shop);
+
+    /**
+     * Lấy tất cả sản phẩm chưa bị khóa (dùng cho User xem danh sách)
+     */
+    List<Product> findByIsBannedFalse();
 }

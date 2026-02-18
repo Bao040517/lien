@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../api';
-import { Users, Search, Lock, Unlock, Shield } from 'lucide-react';
+import { Users, Search, Lock, Unlock, Shield, Sparkles } from 'lucide-react';
 
 const roleLabels = { USER: 'Người dùng', SELLER: 'Người bán', ADMIN: 'Quản trị viên' };
 const roleColors = {
@@ -14,16 +14,32 @@ const AdminUsers = () => {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [roleFilter, setRoleFilter] = useState('ALL');
+    const [lastSeenMaxId, setLastSeenMaxId] = useState(0);
 
-    useEffect(() => { fetchUsers(); }, []);
+    useEffect(() => {
+        const savedMaxId = parseInt(localStorage.getItem('admin_users_last_seen_max_id') || '0');
+        setLastSeenMaxId(savedMaxId);
+        fetchUsers();
+    }, []);
 
     const fetchUsers = async () => {
         try {
             const res = await api.get('/admin/users');
-            setUsers(res.data.data || []);
+            const allUsers = res.data.data || [];
+            // Sắp xếp ID giảm dần → mới nhất lên đầu
+            allUsers.sort((a, b) => b.id - a.id);
+            setUsers(allUsers);
+
+            // Lưu maxId hiện tại
+            if (allUsers.length > 0) {
+                const currentMaxId = Math.max(...allUsers.map(u => u.id));
+                localStorage.setItem('admin_users_last_seen_max_id', currentMaxId.toString());
+            }
         } catch (e) { console.error(e); }
         finally { setLoading(false); }
     };
+
+    const isNewUser = (user) => lastSeenMaxId > 0 && user.id > lastSeenMaxId;
 
     const handleLock = async (id) => {
         if (!window.confirm('Khoá tài khoản này?')) return;
@@ -40,6 +56,8 @@ const AdminUsers = () => {
         } catch { alert('Mở khoá thất bại!'); }
     };
 
+    const newCount = users.filter(u => isNewUser(u)).length;
+
     const filtered = users.filter(u => {
         const matchSearch = u.username?.toLowerCase().includes(search.toLowerCase()) ||
             u.email?.toLowerCase().includes(search.toLowerCase());
@@ -55,6 +73,19 @@ const AdminUsers = () => {
                     <p className="text-sm text-gray-500 mt-1">{users.length} tài khoản trong hệ thống</p>
                 </div>
             </div>
+
+            {/* Banner thông báo user mới */}
+            {newCount > 0 && (
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 mb-6 flex items-center gap-3 animate-pulse">
+                    <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Sparkles className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                        <p className="text-blue-800 font-semibold">👤 Có {newCount} người dùng mới đăng ký!</p>
+                        <p className="text-blue-600 text-sm">Người dùng mới đã được đưa lên đầu danh sách và đánh dấu nổi bật.</p>
+                    </div>
+                </div>
+            )}
 
             {/* Filters */}
             <div className="bg-white rounded-xl border border-gray-100 p-4 mb-6 flex flex-col sm:flex-row gap-3">
@@ -99,18 +130,29 @@ const AdminUsers = () => {
                             <tbody className="divide-y divide-gray-100">
                                 {filtered.map(user => {
                                     const isLocked = user.isLocked || user.locked;
+                                    const isNew = isNewUser(user);
                                     return (
-                                        <tr key={user.id} className={`hover:bg-gray-50/50 ${isLocked ? 'bg-red-50/30' : ''}`}>
+                                        <tr key={user.id} className={`hover:bg-gray-50/50 transition-colors ${isLocked ? 'bg-red-50/30'
+                                                : isNew ? 'bg-blue-50 border-l-4 border-blue-500'
+                                                    : ''
+                                            }`}>
                                             <td className="px-6 py-3 text-sm text-gray-400">#{user.id}</td>
                                             <td className="px-6 py-3">
                                                 <div className="flex items-center gap-3">
                                                     <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold ${user.role === 'ADMIN' ? 'bg-gradient-to-br from-purple-500 to-purple-700'
-                                                            : user.role === 'SELLER' ? 'bg-gradient-to-br from-orange-400 to-orange-600'
-                                                                : 'bg-gradient-to-br from-blue-400 to-blue-600'
+                                                        : user.role === 'SELLER' ? 'bg-gradient-to-br from-orange-400 to-orange-600'
+                                                            : 'bg-gradient-to-br from-blue-400 to-blue-600'
                                                         }`}>
                                                         {user.role === 'ADMIN' ? <Shield className="w-4 h-4" /> : user.username?.charAt(0).toUpperCase()}
                                                     </div>
-                                                    <span className="text-sm font-medium text-gray-800">{user.username}</span>
+                                                    <span className="text-sm font-medium text-gray-800">
+                                                        {user.username}
+                                                        {isNew && (
+                                                            <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 bg-blue-500 text-white text-[10px] font-bold rounded-full animate-bounce">
+                                                                <Sparkles className="w-3 h-3" /> MỚI
+                                                            </span>
+                                                        )}
+                                                    </span>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-3 text-sm text-gray-500">{user.email}</td>

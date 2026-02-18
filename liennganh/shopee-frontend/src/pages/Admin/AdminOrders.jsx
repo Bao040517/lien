@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../api';
-import { ShoppingCart, Search, Clock, Package, Truck, CheckCircle, XCircle, AlertCircle, ChevronDown } from 'lucide-react';
+import { ShoppingCart, Search, Clock, Package, Truck, CheckCircle, XCircle, AlertCircle, ChevronDown, Sparkles } from 'lucide-react';
 
 const statusConfig = {
     PENDING: { label: 'Chờ xác nhận', icon: Clock, color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
@@ -18,13 +18,30 @@ const AdminOrders = () => {
     const [statusFilter, setStatusFilter] = useState('ALL');
     const [search, setSearch] = useState('');
     const [updating, setUpdating] = useState(null);
+    const [lastSeenMaxId, setLastSeenMaxId] = useState(0);
 
     useEffect(() => {
+        const savedMaxId = parseInt(localStorage.getItem('admin_orders_last_seen_max_id') || '0');
+        setLastSeenMaxId(savedMaxId);
+
         api.get('/admin/orders')
-            .then(res => setOrders(res.data.data || []))
+            .then(res => {
+                const allOrders = res.data.data || [];
+                // Sắp xếp ID giảm dần → mới nhất lên đầu
+                allOrders.sort((a, b) => b.id - a.id);
+                setOrders(allOrders);
+
+                // Lưu maxId hiện tại
+                if (allOrders.length > 0) {
+                    const currentMaxId = Math.max(...allOrders.map(o => o.id));
+                    localStorage.setItem('admin_orders_last_seen_max_id', currentMaxId.toString());
+                }
+            })
             .catch(e => console.error(e))
             .finally(() => setLoading(false));
     }, []);
+
+    const isNewOrder = (order) => lastSeenMaxId > 0 && order.id > lastSeenMaxId;
 
     const handleUpdateStatus = async (orderId, newStatus) => {
         setUpdating(orderId);
@@ -36,6 +53,8 @@ const AdminOrders = () => {
     };
 
     const formatPrice = (p) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p || 0);
+
+    const newCount = orders.filter(o => isNewOrder(o)).length;
 
     const filtered = orders.filter(o => {
         const matchStatus = statusFilter === 'ALL' || o.status === statusFilter;
@@ -56,6 +75,19 @@ const AdminOrders = () => {
                     <p className="text-sm text-gray-500 mt-1">{orders.length} đơn hàng</p>
                 </div>
             </div>
+
+            {/* Banner thông báo đơn hàng mới */}
+            {newCount > 0 && (
+                <div className="bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 rounded-xl p-4 mb-6 flex items-center gap-3 animate-pulse">
+                    <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Sparkles className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                        <p className="text-red-800 font-semibold">🛒 Có {newCount} đơn hàng mới!</p>
+                        <p className="text-red-600 text-sm">Đơn hàng mới đã được đưa lên đầu danh sách và đánh dấu nổi bật.</p>
+                    </div>
+                </div>
+            )}
 
             {/* Status Filter Tabs */}
             <div className="flex gap-1 mb-6 bg-gray-100 rounded-xl p-1 overflow-x-auto">
@@ -114,10 +146,19 @@ const AdminOrders = () => {
                                 {filtered.map(order => {
                                     const sc = statusConfig[order.status] || statusConfig.PENDING;
                                     const StatusIcon = sc.icon;
+                                    const isNew = isNewOrder(order);
                                     return (
-                                        <tr key={order.id} className="hover:bg-gray-50/50">
+                                        <tr key={order.id} className={`hover:bg-gray-50/50 transition-colors ${isNew ? 'bg-red-50 border-l-4 border-red-500' : ''
+                                            }`}>
                                             <td className="px-6 py-3">
-                                                <span className="text-sm font-mono font-bold text-gray-800">#{order.id}</span>
+                                                <span className="text-sm font-mono font-bold text-gray-800">
+                                                    #{order.id}
+                                                    {isNew && (
+                                                        <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full animate-bounce">
+                                                            <Sparkles className="w-3 h-3" /> MỚI
+                                                        </span>
+                                                    )}
+                                                </span>
                                             </td>
                                             <td className="px-6 py-3">
                                                 <div className="flex items-center gap-2">

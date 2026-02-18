@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../api';
-import { UserCheck, Search, Check, X, Ban, Store } from 'lucide-react';
+import { UserCheck, Search, Check, X, Ban, Store, Sparkles } from 'lucide-react';
 
 const statusConfig = {
     PENDING: { label: 'Chờ duyệt', color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
@@ -15,8 +15,13 @@ const AdminSellers = () => {
     const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState('ALL');
     const [search, setSearch] = useState('');
+    const [lastSeenMaxId, setLastSeenMaxId] = useState(0);
 
-    useEffect(() => { fetchData(); }, []);
+    useEffect(() => {
+        const savedMaxId = parseInt(localStorage.getItem('admin_sellers_last_seen_max_id') || '0');
+        setLastSeenMaxId(savedMaxId);
+        fetchData();
+    }, []);
 
     const fetchData = async () => {
         try {
@@ -24,18 +29,37 @@ const AdminSellers = () => {
                 api.get('/admin/sellers'),
                 api.get('/admin/sellers/pending')
             ]);
-            setSellers(allRes.data.data || []);
-            setPending(pendingRes.data.data || []);
+            const allSellers = allRes.data.data || [];
+            const allPending = pendingRes.data.data || [];
+
+            // Sắp xếp ID giảm dần → mới nhất lên đầu
+            allSellers.sort((a, b) => b.id - a.id);
+            allPending.sort((a, b) => b.id - a.id);
+
+            setSellers(allSellers);
+            setPending(allPending);
+
+            // Lưu maxId hiện tại
+            const allIds = [...allSellers, ...allPending].map(s => s.id);
+            if (allIds.length > 0) {
+                localStorage.setItem('admin_sellers_last_seen_max_id', Math.max(...allIds).toString());
+            }
         } catch (e) { console.error(e); }
         finally { setLoading(false); }
     };
+
+    const isNewSeller = (seller) => lastSeenMaxId > 0 && seller.id > lastSeenMaxId;
 
     const handleAction = async (id, action) => {
         const msgs = { approve: 'Duyệt', reject: 'Từ chối', suspend: 'Tạm khoá' };
         if (action !== 'approve' && !window.confirm(`${msgs[action]} seller này?`)) return;
         try {
             await api.put(`/admin/sellers/${id}/${action}`);
-            fetchData();
+            const newStatus = action === 'approve' ? 'APPROVED' : action === 'reject' ? 'REJECTED' : 'SUSPENDED';
+            setSellers(prev => prev.map(s =>
+                s.id === id ? { ...s, sellerStatus: newStatus } : s
+            ));
+            setPending(prev => prev.filter(s => s.id !== id));
         } catch { alert(`${msgs[action]} thất bại!`); }
     };
 
@@ -56,6 +80,8 @@ const AdminSellers = () => {
         return list;
     };
 
+    const newCount = [...sellers, ...pending].filter(s => isNewSeller(s)).length;
+
     return (
         <div>
             <div className="flex items-center justify-between mb-6">
@@ -64,6 +90,19 @@ const AdminSellers = () => {
                     <p className="text-sm text-gray-500 mt-1">{sellers.length} người bán · {pending.length} chờ duyệt</p>
                 </div>
             </div>
+
+            {/* Banner thông báo seller mới */}
+            {newCount > 0 && (
+                <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-xl p-4 mb-6 flex items-center gap-3 animate-pulse">
+                    <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Sparkles className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                        <p className="text-orange-800 font-semibold">🆕 Có {newCount} người bán mới đăng ký!</p>
+                        <p className="text-orange-600 text-sm">Người bán mới đã được đưa lên đầu danh sách và đánh dấu nổi bật.</p>
+                    </div>
+                </div>
+            )}
 
             {/* Tabs */}
             <div className="flex gap-1 mb-6 bg-gray-100 rounded-xl p-1 overflow-x-auto">
@@ -110,15 +149,24 @@ const AdminSellers = () => {
                             <tbody className="divide-y divide-gray-100">
                                 {getList().map(seller => {
                                     const status = statusConfig[seller.sellerStatus] || statusConfig.PENDING;
+                                    const isNew = isNewSeller(seller);
                                     return (
-                                        <tr key={seller.id} className="hover:bg-gray-50/50">
+                                        <tr key={seller.id} className={`hover:bg-gray-50/50 transition-colors ${isNew ? 'bg-orange-50 border-l-4 border-orange-500' : ''
+                                            }`}>
                                             <td className="px-6 py-3 text-sm text-gray-400">#{seller.id}</td>
                                             <td className="px-6 py-3">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-9 h-9 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
                                                         {seller.username?.charAt(0).toUpperCase()}
                                                     </div>
-                                                    <span className="text-sm font-medium text-gray-800">{seller.username}</span>
+                                                    <span className="text-sm font-medium text-gray-800">
+                                                        {seller.username}
+                                                        {isNew && (
+                                                            <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 bg-orange-500 text-white text-[10px] font-bold rounded-full animate-bounce">
+                                                                <Sparkles className="w-3 h-3" /> MỚI
+                                                            </span>
+                                                        )}
+                                                    </span>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-3 text-sm text-gray-500">{seller.email}</td>

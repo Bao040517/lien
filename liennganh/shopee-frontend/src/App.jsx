@@ -5,7 +5,7 @@ import SellerLayout from './layouts/SellerLayout';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import SellerRegister from './pages/SellerRegister';
+
 import SellerDashboard from './pages/Seller/SellerDashboard';
 import AddProduct from './pages/Seller/AddProduct';
 import SellerProducts from './pages/Seller/SellerProducts';
@@ -44,8 +44,7 @@ const App = () => {
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
-          <Route path="register-seller" element={<SellerRegister />} />
-          <Route path="register-seller" element={<SellerRegister />} />
+
           <Route path="product/:id" element={<ProductDetail />} />
           <Route path="shop/:id" element={<ShopProfile />} />
           <Route path="cart" element={<Cart />} />

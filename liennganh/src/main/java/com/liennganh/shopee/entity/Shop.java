@@ -18,6 +18,8 @@ public class Shop {
     @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToOne
     @JoinColumn(name = "owner_id", nullable = false)
+    @lombok.EqualsAndHashCode.Exclude
+    @lombok.ToString.Exclude
     private User owner; // Người sở hữu Shop
 
     @Column(nullable = false)

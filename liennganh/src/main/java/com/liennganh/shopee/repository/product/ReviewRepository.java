@@ -38,4 +38,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
      * Lấy danh sách đánh giá do user viết
      */
     List<Review> findByUserId(Long userId);
+
+    /**
+     * Xóa tất cả review của sản phẩm (dùng khi xóa sản phẩm)
+     */
+    void deleteByProductId(Long productId);
 }

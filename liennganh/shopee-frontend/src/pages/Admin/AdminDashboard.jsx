@@ -34,7 +34,7 @@ const AdminDashboard = () => {
             api.get('/admin/statistics').catch(() => null),
             api.get('/admin/sellers/pending').catch(() => ({ data: { data: [] } })),
             api.get('/users').catch(() => ({ data: { data: [] } })),
-            api.get('/products').catch(() => ({ data: { data: [] } })),
+            api.get('/products/all').catch(() => ({ data: { data: [] } })),
             api.get('/admin/orders').catch(() => ({ data: { data: [] } }))
         ]).then(([statsRes, pendingRes, usersRes, productsRes, ordersRes]) => {
             const users = usersRes?.data?.data || [];
@@ -192,6 +192,94 @@ const AdminDashboard = () => {
                         })}
                     </div>
                 </div>
+            </div>
+
+            {/* Top Sellers */}
+            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden mb-8">
+                <div className="px-6 py-4 border-b flex items-center justify-between bg-gradient-to-r from-orange-50 to-white">
+                    <div className="flex items-center gap-2">
+                        <TrendingUp className="w-5 h-5 text-orange-500" />
+                        <h3 className="font-bold text-gray-800">🏆 Đối Tác Xuất Sắc (Top Sellers)</h3>
+                    </div>
+                </div>
+
+                {(!stats?.topSellers || stats.topSellers.length === 0) ? (
+                    <div className="p-8 text-center text-gray-400">
+                        <Store className="w-12 h-12 mx-auto mb-3 text-orange-200" />
+                        <p>Chưa có dữ liệu xếp hạng</p>
+                    </div>
+                ) : (
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead className="bg-gray-50 text-xs text-gray-500 uppercase font-semibold">
+                                <tr>
+                                    <th className="px-6 py-3 text-center w-16">#</th>
+                                    <th className="px-6 py-3 text-left">Cửa hàng</th>
+                                    <th className="px-6 py-3 text-right">Doanh thu</th>
+                                    <th className="px-6 py-3 text-right">Đơn hàng</th>
+                                    <th className="px-6 py-3 text-center">Đánh giá</th>
+                                    <th className="px-6 py-3 text-center">Tỷ lệ hoàn</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                                {stats.topSellers.map((seller, index) => (
+                                    <tr key={seller.shopId} className="hover:bg-orange-50/30 transition-colors">
+                                        <td className="px-6 py-4 text-center">
+                                            {index < 3 ? (
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto text-white font-bold shadow-sm ${index === 0 ? 'bg-yellow-400' : index === 1 ? 'bg-gray-400' : 'bg-orange-400'
+                                                    }`}>
+                                                    {index + 1}
+                                                </div>
+                                            ) : (
+                                                <span className="text-gray-500 font-medium">#{index + 1}</span>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg flex items-center justify-center text-orange-600 font-bold border border-orange-100">
+                                                    {seller.shopName?.charAt(0).toUpperCase()}
+                                                </div>
+                                                <div>
+                                                    <div className="font-bold text-gray-800">{seller.shopName}</div>
+                                                    <div className="text-xs text-gray-500 flex items-center gap-1">
+                                                        <Clock className="w-3 h-3" />
+                                                        tham gia {new Date(seller.joinDate).toLocaleDateString('vi-VN')}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <span className="font-bold text-emerald-600 block">
+                                                {formatPrice(seller.totalRevenue)}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <span className="px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-full">
+                                                {seller.totalOrders} đơn
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <div className="flex items-center justify-center gap-1 bg-yellow-50 px-2 py-1 rounded-full w-fit mx-auto border border-yellow-100">
+                                                <span className="font-bold text-yellow-700">{seller.averageRating || 0}</span>
+                                                <span className="text-yellow-400">★</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <span className={`px-2.5 py-1 text-xs font-bold rounded-full ${seller.returnRate > 10
+                                                ? 'bg-red-50 text-red-600'
+                                                : seller.returnRate > 5
+                                                    ? 'bg-orange-50 text-orange-600'
+                                                    : 'bg-green-50 text-green-600'
+                                                }`}>
+                                                {seller.returnRate}%
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
 
             {/* Pending Sellers */}

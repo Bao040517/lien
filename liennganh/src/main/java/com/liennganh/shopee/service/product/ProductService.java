@@ -40,10 +40,17 @@ public class ProductService {
     private NotificationService notificationService;
 
     /**
-     * Lấy danh sách tất cả sản phẩm
+     * Lấy danh sách sản phẩm chưa bị khóa (Public view)
      * 
      */
     public List<Product> getAllProducts() {
+        return productRepository.findByIsBannedFalse();
+    }
+
+    /**
+     * Lấy tất cả sản phẩm kể cả bị khóa (Admin only)
+     */
+    public List<Product> getAllProductsIncludingBanned() {
         return productRepository.findAll();
     }
 
@@ -236,9 +243,32 @@ public class ProductService {
 
     /**
      * Xóa sản phẩm vĩnh viễn
+     * Xóa tất cả dữ liệu liên quan (reviews, order items, cart items, flash sale
+     * items) trước
      */
+    @org.springframework.transaction.annotation.Transactional
     public void deleteProduct(Long id) {
         Product product = getProductById(id);
+
+        // Xóa reviews
+        com.liennganh.shopee.repository.product.ReviewRepository reviewRepository = context
+                .getBean(com.liennganh.shopee.repository.product.ReviewRepository.class);
+        reviewRepository.deleteByProductId(id);
+
+        // Xóa order items
+        com.liennganh.shopee.repository.order.OrderItemRepository orderItemRepository = context
+                .getBean(com.liennganh.shopee.repository.order.OrderItemRepository.class);
+        orderItemRepository.deleteByProductId(id);
+
+        // Xóa cart items & flash sale items qua EntityManager (không có repo riêng)
+        jakarta.persistence.EntityManager em = context.getBean(jakarta.persistence.EntityManager.class);
+        em.createNativeQuery("DELETE FROM cart_items WHERE product_id = :pid")
+                .setParameter("pid", id).executeUpdate();
+        em.createNativeQuery("DELETE FROM flash_sale_items WHERE product_id = :pid")
+                .setParameter("pid", id).executeUpdate();
+
+        // Cuối cùng xóa product (attributes, variants, images sẽ cascade theo entity
+        // config)
         productRepository.delete(product);
     }
 

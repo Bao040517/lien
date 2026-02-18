@@ -33,16 +33,6 @@ public class AuthController {
     }
 
     /**
-     * Đăng ký tài khoản SELLER (người bán)
-     * Cần chờ admin duyệt trước khi có thể sử dụng
-     */
-    @PostMapping("/register-seller")
-    public ApiResponse<UserResponse> registerSeller(@RequestBody RegisterRequest request) {
-        UserResponse user = authService.registerSeller(request);
-        return ApiResponse.success(user, "Đăng ký người bán thành công. Vui lòng chờ admin duyệt.");
-    }
-
-    /**
      * Đăng nhập
      */
     @PostMapping("/login")

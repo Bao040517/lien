@@ -27,9 +27,8 @@ public class ProductController {
     private FileStorageService fileStorageService;
 
     /**
-     * Lấy danh sách tất cả sản phẩm
+     * Lấy danh sách sản phẩm (chưa bị khóa)
      * Quyền hạn: Public
-     * 
      */
     @GetMapping
     public ApiResponse<List<Product>> getAllProducts() {
@@ -37,13 +36,61 @@ public class ProductController {
     }
 
     /**
+     * Lấy tất cả sản phẩm kể cả bị khóa (Admin only)
+     * Quyền hạn: ADMIN
+     */
+    @GetMapping("/all")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<List<Product>> getAllProductsAdmin() {
+        return ApiResponse.success(productService.getAllProductsIncludingBanned(), "Lấy tất cả sản phẩm thành công");
+    }
+
+    /**
      * Xem chi tiết sản phẩm theo ID
-     * Quyền hạn: Public
-     * 
+     * Sản phẩm bị khóa: chỉ ADMIN và SELLER (chủ sản phẩm) mới xem được
      */
     @GetMapping("/{id}")
     public ApiResponse<Product> getProductById(@PathVariable Long id) {
-        return ApiResponse.success(productService.getProductById(id), "Lấy thông tin sản phẩm thành công");
+        Product product = productService.getProductById(id);
+
+        // Nếu sản phẩm bị khóa → kiểm tra quyền xem
+        if (product.isBanned()) {
+            org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                    .getContext().getAuthentication();
+
+            boolean isAdmin = false;
+            boolean isOwner = false;
+
+            if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
+                // Kiểm tra role ADMIN
+                isAdmin = auth.getAuthorities().stream()
+                        .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+                // Kiểm tra SELLER chủ sản phẩm
+                if (!isAdmin) {
+                    String username = null;
+                    Object principal = auth.getPrincipal();
+                    if (principal instanceof String) {
+                        username = (String) principal;
+                    } else if (principal instanceof org.springframework.security.core.userdetails.UserDetails) {
+                        username = ((org.springframework.security.core.userdetails.UserDetails) principal)
+                                .getUsername();
+                    }
+                    if (username != null) {
+                        isOwner = product.getShop() != null
+                                && product.getShop().getOwner() != null
+                                && username.equals(product.getShop().getOwner().getUsername());
+                    }
+                }
+            }
+
+            if (!isAdmin && !isOwner) {
+                throw new com.liennganh.shopee.exception.AppException(
+                        com.liennganh.shopee.exception.ErrorCode.PRODUCT_NOT_FOUND);
+            }
+        }
+
+        return ApiResponse.success(product, "Lấy thông tin sản phẩm thành công");
     }
 
     /**
