@@ -329,7 +329,7 @@ const Checkout = () => {
     const formatPrice = (price) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
 
     if (!user) {
-        navigate('/login');
+        navigate('/login', { state: { from: { pathname: '/checkout' } }, replace: true });
         return null;
     }
 
