@@ -74,10 +74,19 @@ const Home = () => {
     const ITEMS_PER_PAGE = 40;
     const flashSaleRef = useRef(null);
 
+    const categoryRef = useRef(null);
+
     const scrollFlashSale = (direction) => {
         if (flashSaleRef.current) {
             const scrollAmount = 320;
             flashSaleRef.current.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
+        }
+    };
+
+    const scrollCategory = (direction) => {
+        if (categoryRef.current) {
+            const scrollAmount = categoryRef.current.clientWidth;
+            categoryRef.current.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
         }
     };
 
@@ -244,36 +253,58 @@ const Home = () => {
                 )}
 
                 {/* 1. CATEGORIES SECTION */}
-                <div className="bg-white p-4 rounded shadow-sm">
+                <div className="bg-white p-4 rounded shadow-sm relative group/cats">
                     <h2 className="text-gray-500 uppercase font-medium mb-4 text-sm">Danh Mục</h2>
-                    <div className="grid grid-cols-10 gap-4">
-                        {categories.slice(0, 20).map(cat => {
+                    
+                    {/* Left Arrow */}
+                    <button
+                        onClick={() => scrollCategory('left')}
+                        className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white shadow-md border hover:border-orange-500 hover:text-orange-500 rounded-full flex items-center justify-center opacity-0 group-hover/cats:opacity-100 transition-all transform -translate-x-1/2"
+                    >
+                        <ChevronLeft className="w-6 h-6" />
+                    </button>
+                    {/* Right Arrow */}
+                    <button
+                        onClick={() => scrollCategory('right')}
+                        className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white shadow-md border hover:border-orange-500 hover:text-orange-500 rounded-full flex items-center justify-center opacity-0 group-hover/cats:opacity-100 transition-all transform translate-x-1/2"
+                    >
+                        <ChevronRight className="w-6 h-6" />
+                    </button>
+
+                    <div className="overflow-x-auto snap-x snap-mandatory flex scroll-smooth" ref={categoryRef} style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                        {/* Nhóm các danh mục thành từng trang (mỗi trang có grid 2 dòng x 10 cột) để khi trượt sẽ qua trang mới */}
+                        {Array.from({ length: Math.ceil(categories.length / 20) }).map((_, pageIndex) => {
+                            const pageCategories = categories.slice(pageIndex * 20, (pageIndex + 1) * 20);
                             return (
-                                <Link
-                                    to={`/category/${cat.id}`}
-                                    state={{ categoryName: cat.name }}
-                                    key={cat.id}
-                                    className="flex flex-col items-center group cursor-pointer hover:shadow-md border border-transparent hover:border-gray-200 p-2 rounded transition"
-                                >
-                                    <div className="w-20 h-20 mb-2 flex items-center justify-center overflow-hidden transition-transform group-hover:-translate-y-1 rounded-full border border-gray-100 bg-gray-50">
-                                        {cat.imageUrl ? (
-                                            <img
-                                                src={getImageUrl(cat.imageUrl)}
-                                                alt={cat.name}
-                                                className="w-full h-full object-cover"
-                                                onError={(e) => {
-                                                    e.target.onerror = null;
-                                                    e.target.src = 'https://placehold.co/80x80?text=IMG';
-                                                }}
-                                            />
-                                        ) : (
-                                            <span className="text-2xl text-gray-400 font-bold">
-                                                {cat.name?.charAt(0)}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <span className="text-xs text-center text-gray-800 group-hover:text-orange-500 line-clamp-2">{cat.name}</span>
-                                </Link>
+                                <div key={pageIndex} className="min-w-full flex-shrink-0 snap-start grid grid-cols-4 md:grid-cols-10 gap-x-2 gap-y-4 px-2">
+                                    {pageCategories.map(cat => (
+                                        <Link
+                                            to={`/category/${cat.id}`}
+                                            state={{ categoryName: cat.name }}
+                                            key={cat.id}
+                                            className="flex flex-col items-center group cursor-pointer hover:shadow-sm border border-transparent hover:border-gray-200 p-2 rounded transition bg-white"
+                                        >
+                                            <div className="w-16 h-16 md:w-20 md:h-20 mb-2 flex items-center justify-center overflow-hidden transition-transform group-hover:-translate-y-1 rounded-full border border-gray-100 bg-gray-50">
+                                                {cat.imageUrl ? (
+                                                    <img
+                                                        src={getImageUrl(cat.imageUrl)}
+                                                        alt={cat.name}
+                                                        className="w-full h-full object-cover"
+                                                        onError={(e) => {
+                                                            e.target.onerror = null;
+                                                            e.target.src = 'https://placehold.co/80x80?text=IMG';
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <span className="text-xl md:text-2xl text-gray-400 font-bold">
+                                                        {cat.name?.charAt(0)}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <span className="text-xs text-center text-gray-800 group-hover:text-orange-500 line-clamp-2 w-full">{cat.name}</span>
+                                        </Link>
+                                    ))}
+                                </div>
                             );
                         })}
                     </div>
