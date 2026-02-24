@@ -174,14 +174,30 @@ cd lien/liennganh
 ```
 
 ### 2. Chạy bằng Docker (Khuyên dùng) 🐳
-Cách nhanh nhất để chạy toàn bộ hệ thống (Frontend + Backend + Database):
+Đây là cách nhanh nhất và ổn định nhất để chạy toàn bộ hệ thống (Frontend + Backend + Database) với đầy đủ cấu hình Volume (để lưu trữ ảnh upload không bị mất khi restart).
 
 ```bash
 docker-compose up --build -d
 ```
-> - Frontend: **http://localhost:3000**
-> - Backend: **http://localhost:8080/api**
-> - Database tự động khởi tạo.
+> - **Frontend (React)**: Truy cập tại **http://localhost:3000**
+> - **Backend API (Spring Boot)**: Truy cập tại **http://localhost:8080/api**
+> - **Database (PostgreSQL)**: Port **5433** ở localhost (trong container nội bộ là 5432).
+
+Ngừng chạy Docker:
+```bash
+docker-compose down
+```
+
+#### 🐳 Đẩy cấu hình Docker lên GitHub
+Hệ thống đã chuẩn bị sẵn `Dockerfile` ở thư mục gốc (Spring Boot), `Dockerfile` và `nginx.conf` ở `shopee-frontend` (React), cùng với `docker-compose.yml` liên kết mọi thứ. Để đẩy các file cấu hình này lên Github cho người khác cùng chạy:
+
+1. Mở Terminal (Cmd/PowerShell) ở thư mục gốc chứa project.
+2. Gõ các lệnh Git sau:
+   ```bash
+   git add Dockerfile docker-compose.yml shopee-frontend/Dockerfile shopee-frontend/nginx.conf
+   git commit -m "Cấu hình Docker Compose cho toàn bộ hệ thống + Volume uploads"
+   git push origin main
+   ```
 
 ### 3. Chạy Thủ công (Dành cho Dev)
 

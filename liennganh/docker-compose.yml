@@ -11,10 +11,13 @@ services:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=admin
       - JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      - FILE_UPLOAD_DIR=/app/uploads
     depends_on:
       - db
     networks:
       - shopee-network
+    volumes:
+      - backend-uploads:/app/uploads
 
   frontend:
     build: ./shopee-frontend
@@ -46,3 +49,4 @@ networks:
 
 volumes:
   db-data:
+  backend-uploads:
