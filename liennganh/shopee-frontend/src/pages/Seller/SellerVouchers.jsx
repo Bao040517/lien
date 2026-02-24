@@ -7,6 +7,8 @@ import { format } from 'date-fns';
 const SellerVouchers = () => {
     const [vouchers, setVouchers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const vouchersPerPage = 6;
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({
         code: '',
@@ -122,6 +124,14 @@ const SellerVouchers = () => {
         }
     };
 
+    // Calculate pagination
+    const indexOfLastVoucher = currentPage * vouchersPerPage;
+    const indexOfFirstVoucher = indexOfLastVoucher - vouchersPerPage;
+    const currentVouchers = vouchers.slice(indexOfFirstVoucher, indexOfLastVoucher);
+    const totalPages = Math.ceil(vouchers.length / vouchersPerPage);
+
+
+
     return (
         <div>
             <div className="flex justify-between items-center mb-6">
@@ -140,8 +150,8 @@ const SellerVouchers = () => {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {loading ? (
                     <div className="col-span-full text-center py-12 text-gray-500">Đang tải...</div>
-                ) : vouchers.length > 0 ? (
-                    vouchers.map(voucher => (
+                ) : currentVouchers.length > 0 ? (
+                    currentVouchers.map(voucher => (
                         <div key={voucher.id} className="bg-white border border-gray-100 rounded-xl shadow-sm p-4 hover:shadow-md transition relative group overflow-hidden">
                             {/* Decorative Cutouts */}
                             <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-gray-50 rounded-full"></div>
@@ -195,6 +205,52 @@ const SellerVouchers = () => {
                     </div>
                 )}
             </div>
+
+            {/* Pagination Controls */}
+            {!loading && totalPages > 1 && (
+                <div className="flex items-center justify-between mt-6 bg-white p-4 rounded shadow-sm border border-gray-100">
+                    <div className="text-sm text-gray-500">
+                        Hiển thị <span className="font-medium text-gray-800">{indexOfFirstVoucher + 1}</span> đến{' '}
+                        <span className="font-medium text-gray-800">
+                            {Math.min(indexOfLastVoucher, vouchers.length)}
+                        </span>{' '}
+                        trong số <span className="font-medium text-gray-800">{vouchers.length}</span> mã giảm giá
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <button
+                            onClick={() => paginate(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="px-3 py-1 border border-gray-300 rounded text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                        >
+                            Trước
+                        </button>
+
+                        {paginationRange.map((page, index) => (
+                            <button
+                                key={index}
+                                onClick={() => typeof page === 'number' ? paginate(page) : null}
+                                disabled={typeof page !== 'number'}
+                                className={`px-3 py-1 border rounded transition ${currentPage === page
+                                    ? 'bg-orange-500 text-white border-orange-500'
+                                    : typeof page === 'number'
+                                        ? 'border-gray-300 text-gray-600 hover:bg-gray-50'
+                                        : 'border-transparent text-gray-400'
+                                    }`}
+                            >
+                                {page}
+                            </button>
+                        ))}
+
+                        <button
+                            onClick={() => paginate(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className="px-3 py-1 border border-gray-300 rounded text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                        >
+                            Sau
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Modal */}
             {showModal && (

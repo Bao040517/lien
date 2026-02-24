@@ -9,6 +9,8 @@ import com.liennganh.shopee.service.shop.StatisticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import com.liennganh.shopee.service.order.OrderService;
+import com.liennganh.shopee.entity.Order;
 
 import java.util.List;
 
@@ -25,6 +27,20 @@ public class SellerController {
 
     private final SellerService sellerService;
     private final StatisticsService statisticsService;
+    private final OrderService orderService;
+
+    // ========== QUẢN LÝ ĐƠN HÀNG (ORDER MANAGEMENT) ==========
+
+    /**
+     * Lấy danh sách đơn hàng của shop
+     * Quyền hạn: SELLER, ADMIN
+     */
+    @GetMapping("/orders")
+    public ApiResponse<List<Order>> getShopOrders(@RequestParam Long sellerId) {
+        Shop shop = sellerService.getMyShop(sellerId);
+        List<Order> orders = orderService.getOrdersByShop(shop.getId());
+        return ApiResponse.success(orders, "Lấy danh sách đơn hàng thành công");
+    }
 
     // ========== QUáº¢N LÃ SHOP (SHOP MANAGEMENT) ==========
 

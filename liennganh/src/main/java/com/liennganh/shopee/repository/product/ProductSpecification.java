@@ -37,11 +37,19 @@ public class ProductSpecification {
     }
 
     /**
-     * Tìm kiếm theo tên (gần đúng)
+     * Tìm kiếm theo tên sản phẩm HOẶC tên Shop (gần đúng)
      */
     public static Specification<Product> nameContains(String keyword) {
-        return (root, query, criteriaBuilder) -> keyword == null ? criteriaBuilder.conjunction()
-                : criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + keyword.toLowerCase() + "%");
+        return (root, query, criteriaBuilder) -> {
+            if (keyword == null || keyword.trim().isEmpty()) {
+                return criteriaBuilder.conjunction();
+            }
+            String pattern = "%" + keyword.toLowerCase() + "%";
+            Predicate productNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), pattern);
+            Predicate shopNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("shop").get("name")),
+                    pattern);
+            return criteriaBuilder.or(productNameMatch, shopNameMatch);
+        };
     }
 
     /**

@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import api from '../../api';
-import { Tag, Plus, Trash2, FolderOpen, Pencil, X, ImagePlus } from 'lucide-react';
-import { getImageUrl } from '../../utils';
+import { Plus, Edit, Trash2, Save, X, FolderOpen, Sparkles } from 'lucide-react';
+import Pagination from '../../components/Pagination';
 import ConfirmModal from '../../components/Admin/ConfirmModal';
 
 const AdminCategories = () => {
@@ -112,18 +112,7 @@ const AdminCategories = () => {
     const currentCategories = categories.slice(indexOfFirstCategory, indexOfLastCategory);
     const totalPages = Math.ceil(categories.length / categoriesPerPage);
 
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    const getPaginationRange = (current, total) => {
-        if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-
-        if (current <= 3) return [1, 2, 3, 4, '...', total];
-        if (current >= total - 2) return [1, '...', total - 3, total - 2, total - 1, total];
-
-        return [1, '...', current - 1, current, current + 1, '...', total];
-    };
-
-    const paginationRange = getPaginationRange(currentPage, totalPages);
 
     return (
         <div>
@@ -257,43 +246,16 @@ const AdminCategories = () => {
                             </tbody>
                         </table>
 
-                        {/* Pagination UI */}
-                        {totalPages > 1 && (
-                            <div className="flex items-center justify-between px-6 py-3 border-t border-gray-100 bg-white">
-                                <div className="text-sm text-gray-500">
-                                    Hiển thị <span className="font-medium">{indexOfFirstCategory + 1}</span> đến <span className="font-medium">{Math.min(indexOfLastCategory, categories.length)}</span> trong số <span className="font-medium">{categories.length}</span> danh mục
-                                </div>
-                                <div className="flex gap-1">
-                                    <button
-                                        onClick={() => paginate(currentPage - 1)}
-                                        disabled={currentPage === 1}
-                                        className="px-3 py-1 border border-gray-200 rounded text-sm disabled:opacity-50 hover:bg-gray-50"
-                                    >
-                                        Trước
-                                    </button>
-                                    {paginationRange.map((page, index) => (
-                                        page === '...' ? (
-                                            <span key={`ellipsis-${index}`} className="px-3 py-1 text-gray-500">...</span>
-                                        ) : (
-                                            <button
-                                                key={`page-${page}`}
-                                                onClick={() => paginate(page)}
-                                                className={`px-3 py-1 border rounded text-sm ${currentPage === page ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}`}
-                                            >
-                                                {page}
-                                            </button>
-                                        )
-                                    ))}
-                                    <button
-                                        onClick={() => paginate(currentPage + 1)}
-                                        disabled={currentPage === totalPages}
-                                        className="px-3 py-1 border border-gray-200 rounded text-sm disabled:opacity-50 hover:bg-gray-50"
-                                    >
-                                        Sau
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                            totalItems={categories.length}
+                            startItem={indexOfFirstCategory + 1}
+                            endItem={Math.min(indexOfLastCategory, categories.length)}
+                            itemLabel="danh mục"
+                            accentColor="blue"
+                        />
                     </div>
                 ) : (
                     <div className="p-16 text-center flex flex-col items-center">

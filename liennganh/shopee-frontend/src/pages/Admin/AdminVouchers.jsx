@@ -42,12 +42,19 @@ const AdminVouchers = () => {
                 return;
             }
 
+            const formatForApi = (date) => {
+                const pad = (n) => n.toString().padStart(2, '0');
+                return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+            };
+
             const payload = {
-                ...form,
+                code: form.code,
+                discountType: form.discountType,
                 discountValue: Number(form.discountValue),
-                minOrderValue: Number(form.minOrderValue),
+                minOrderValue: Number(form.minOrderValue || 0),
                 usageLimit: Number(form.usageLimit),
-                expiryDate: new Date(form.expiryDate).toISOString()
+                startDate: formatForApi(new Date()),
+                endDate: formatForApi(new Date(form.expiryDate))
             };
 
             const res = await api.post('/vouchers', payload);
@@ -91,14 +98,14 @@ const AdminVouchers = () => {
                                     <th className="px-6 py-3">Mã Code</th>
                                     <th className="px-6 py-3">Giảm giá</th>
                                     <th className="px-6 py-3">Đơn tối thiểu</th>
-                                    <th className="px-6 py-3">Lượt dùng</th>
+                                    <th className="px-6 py-3">Lượt còn lại</th>
                                     <th className="px-6 py-3">Hết hạn</th>
                                     <th className="px-6 py-3">Trạng thái</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
                                 {vouchers.map(v => {
-                                    const isExpired = new Date(v.expiryDate) < new Date();
+                                    const isExpired = new Date(v.endDate) < new Date();
                                     return (
                                         <tr key={v.id} className="hover:bg-gray-50">
                                             <td className="px-6 py-4 font-medium text-orange-600">{v.code}</td>
@@ -110,10 +117,10 @@ const AdminVouchers = () => {
                                             </td>
                                             <td className="px-6 py-4 text-gray-600">{formatPrice(v.minOrderValue)}</td>
                                             <td className="px-6 py-4 text-gray-600">
-                                                {v.usedCount || 0} / {v.usageLimit}
+                                                {v.usageLimit}
                                             </td>
                                             <td className="px-6 py-4 text-gray-500 text-sm">
-                                                {new Date(v.expiryDate).toLocaleDateString('vi-VN')}
+                                                {new Date(v.endDate).toLocaleDateString('vi-VN')}
                                             </td>
                                             <td className="px-6 py-4">
                                                 {isExpired ? (

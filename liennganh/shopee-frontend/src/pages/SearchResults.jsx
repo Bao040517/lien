@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import api from '../api';
-import { ShoppingBag, Filter } from 'lucide-react';
+import { ShoppingBag, Filter, Store, Star, MessageSquare, Clock, ChevronRight } from 'lucide-react';
 import { getImageUrl } from '../utils';
 
 const SearchResults = () => {
@@ -9,6 +9,7 @@ const SearchResults = () => {
     const keyword = searchParams.get('keyword') || '';
 
     const [products, setProducts] = useState([]);
+    const [matchedShop, setMatchedShop] = useState(null);
     const [loading, setLoading] = useState(true);
     const [sortBy, setSortBy] = useState('relevance');
 
@@ -17,15 +18,34 @@ const SearchResults = () => {
     useEffect(() => {
         const fetchResults = async () => {
             setLoading(true);
+            setMatchedShop(null);
             try {
-                // Call filter endpoint
-                const res = await api.get(`/products/filter`, {
-                    params: {
-                        keyword: keyword,
-                        sortBy: sortBy === 'relevance' ? null : sortBy
+                // Fetch products and matching shops in parallel
+                const [productsRes, shopsRes] = await Promise.all([
+                    api.get(`/products/filter`, {
+                        params: {
+                            keyword: keyword,
+                            sortBy: sortBy === 'relevance' ? null : sortBy
+                        }
+                    }),
+                    api.get(`/shops/search`, { params: { keyword: keyword } })
+                ]);
+
+                setProducts(productsRes.data.data?.content || productsRes.data.data || []);
+
+                // Take the first matched shop
+                const shops = shopsRes.data.data || [];
+                if (shops.length > 0) {
+                    // Fetch product count for the matched shop
+                    const shop = shops[0];
+                    try {
+                        const shopProductsRes = await api.get(`/products/shop/${shop.id}`, { params: { size: 1 } });
+                        const totalElements = shopProductsRes.data.data?.totalElements || 0;
+                        setMatchedShop({ ...shop, productCount: totalElements });
+                    } catch {
+                        setMatchedShop({ ...shop, productCount: 0 });
                     }
-                });
-                setProducts(res.data.data?.content || res.data.data || []);
+                }
             } catch (error) {
                 console.error("Search error:", error);
             } finally {
@@ -37,6 +57,7 @@ const SearchResults = () => {
             fetchResults();
         } else {
             setProducts([]);
+            setMatchedShop(null);
             setLoading(false);
         }
     }, [keyword, sortBy]);
@@ -51,6 +72,72 @@ const SearchResults = () => {
                     <span>Kết quả tìm kiếm cho "{keyword}"</span>
                 </div>
 
+                {/* Matched Shop Card */}
+                {matchedShop && (
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-100 mb-6 overflow-hidden">
+                        <div className="flex items-center justify-between px-5 py-3 bg-gray-50 border-b">
+                            <span className="text-sm text-gray-500 font-medium">
+                                SHOP LIÊN QUAN ĐẾN "<span className="uppercase text-gray-700">{keyword}</span>"
+                            </span>
+                            <Link
+                                to={`/shop/${matchedShop.id}`}
+                                className="text-orange-500 text-sm font-medium flex items-center gap-1 hover:underline"
+                            >
+                                Xem Shop <ChevronRight className="w-4 h-4" />
+                            </Link>
+                        </div>
+                        <div className="p-5 flex flex-col md:flex-row gap-6 items-start">
+                            {/* Shop Info */}
+                            <Link to={`/shop/${matchedShop.id}`} className="flex items-center gap-4 group shrink-0">
+                                <div className="w-16 h-16 rounded-full bg-orange-500 flex items-center justify-center text-white text-2xl font-bold shadow-md border-2 border-orange-300">
+                                    {matchedShop.name?.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-800 group-hover:text-orange-500 transition">
+                                        {matchedShop.name}
+                                    </h3>
+                                    <p className="text-xs text-gray-400 mt-0.5">Online</p>
+                                </div>
+                            </Link>
+
+                            {/* Shop Stats */}
+                            <div className="flex flex-wrap gap-x-8 gap-y-3 items-center text-sm">
+                                <div className="flex items-center gap-2 text-gray-600">
+                                    <ShoppingBag className="w-4 h-4 text-orange-400" />
+                                    <span>Sản Phẩm: </span>
+                                    <span className="text-orange-500 font-semibold">{matchedShop.productCount}</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-gray-600">
+                                    <Star className="w-4 h-4 text-orange-400" />
+                                    <span>Đánh Giá: </span>
+                                    <span className="text-orange-500 font-semibold">4.9</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-gray-600">
+                                    <MessageSquare className="w-4 h-4 text-orange-400" />
+                                    <span>Tỉ Lệ Phản Hồi: </span>
+                                    <span className="text-orange-500 font-semibold">99%</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-gray-600">
+                                    <Clock className="w-4 h-4 text-orange-400" />
+                                    <span>Phản Hồi: </span>
+                                    <span className="text-orange-500 font-semibold">trong vài giờ</span>
+                                </div>
+                            </div>
+
+                            {/* CTA */}
+                            <div className="ml-auto shrink-0 hidden md:block">
+                                <Link
+                                    to={`/shop/${matchedShop.id}`}
+                                    className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2"
+                                >
+                                    <Store className="w-4 h-4" /> Xem Shop
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Sort Bar */}
                 <div className="bg-white p-4 rounded shadow-sm mb-6">
                     <div className="flex items-center gap-4">
                         <span className="text-gray-500 flex items-center gap-1"><Filter className="w-4 h-4" /> Sắp xếp theo</span>
@@ -80,6 +167,14 @@ const SearchResults = () => {
                         </button>
                     </div>
                 </div>
+
+                {/* Results Title */}
+                {!loading && products.length > 0 && (
+                    <div className="flex items-center gap-2 mb-4 text-sm text-gray-500">
+                        <ShoppingBag className="w-4 h-4" />
+                        Kết quả tìm kiếm cho từ khoá '<span className="text-orange-500 font-medium">{keyword}</span>'
+                    </div>
+                )}
 
                 {/* Results Grid */}
                 {loading ? (
@@ -113,7 +208,7 @@ const SearchResults = () => {
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="text-xs text-gray-500 pb-1">Đã bán {product.soldCount || 100}</div>
+                                        <div className="text-xs text-gray-500 pb-1">Đã bán {product.soldCount || 0}</div>
                                     </div>
                                 </div>
                             </Link>

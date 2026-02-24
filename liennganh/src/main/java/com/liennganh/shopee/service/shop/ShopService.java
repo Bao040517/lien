@@ -33,4 +33,14 @@ public class ShopService {
                 .orElseThrow(() -> new com.liennganh.shopee.exception.AppException(
                         com.liennganh.shopee.exception.ErrorCode.SHOP_NOT_FOUND));
     }
+
+    /**
+     * Tìm kiếm Shop theo tên
+     */
+    public List<Shop> searchByName(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return List.of();
+        }
+        return shopRepository.findByNameContainingIgnoreCase(keyword.trim());
+    }
 }

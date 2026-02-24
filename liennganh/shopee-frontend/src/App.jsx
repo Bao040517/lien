@@ -9,10 +9,14 @@ import Register from './pages/Register';
 import SellerDashboard from './pages/Seller/SellerDashboard';
 import AddProduct from './pages/Seller/AddProduct';
 import SellerProducts from './pages/Seller/SellerProducts';
+import SellerProductAnalytics from './pages/Seller/SellerProductAnalytics';
 
 import SellerVouchers from './pages/Seller/SellerVouchers';
 import SellerNotifications from './pages/Seller/SellerNotifications';
 import EditProduct from './pages/Seller/EditProduct';
+import SellerOrders from './pages/Seller/SellerOrders';
+import SellerRevenue from './pages/Seller/SellerRevenue';
+import SellerSettings from './pages/Seller/SellerSettings';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import AdminUsers from './pages/Admin/AdminUsers';
 import AdminSellers from './pages/Admin/AdminSellers';
@@ -32,6 +36,7 @@ import ShopProfile from './pages/ShopProfile';
 import ChatPage from './pages/ChatPage';
 import { useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import PrivateRoute from './components/PrivateRoute';
 
 const App = () => {
   const { loading } = useAuth();
@@ -49,16 +54,16 @@ const App = () => {
 
           <Route path="product/:id" element={<ProductDetail />} />
           <Route path="shop/:id" element={<ShopProfile />} />
-          <Route path="cart" element={<Cart />} />
-          <Route path="checkout" element={<Checkout />} />
+          <Route path="cart" element={<PrivateRoute><Cart /></PrivateRoute>} />
+          <Route path="checkout" element={<PrivateRoute><Checkout /></PrivateRoute>} />
           <Route path="search" element={<SearchResults />} />
           <Route path="category/:id" element={<CategoryProducts />} />
-          <Route path="purchase" element={<OrderHistory />} />
-          <Route path="messages" element={<ChatPage />} />
+          <Route path="purchase" element={<PrivateRoute><OrderHistory /></PrivateRoute>} />
+          <Route path="messages" element={<PrivateRoute><ChatPage /></PrivateRoute>} />
         </Route>
 
         {/* Admin Routes — Dark Sidebar Layout */}
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/admin" element={<PrivateRoute requiredRole="ADMIN"><AdminLayout /></PrivateRoute>}>
           <Route index element={<AdminDashboard />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="sellers" element={<AdminSellers />} />
@@ -72,16 +77,18 @@ const App = () => {
         </Route>
 
         {/* Seller Routes — Orange Sidebar Layout */}
-        <Route path="/seller" element={<SellerLayout />}>
+        <Route path="/seller" element={<PrivateRoute><SellerLayout /></PrivateRoute>}>
           <Route index element={<SellerDashboard />} />
           <Route path="products" element={<SellerProducts />} />
+          <Route path="product-analytics" element={<SellerProductAnalytics />} />
           <Route path="notifications" element={<SellerNotifications />} />
           <Route path="vouchers" element={<SellerVouchers />} />
           <Route path="edit-product/:id" element={<EditProduct />} />
           <Route path="add-product" element={<AddProduct />} />
-          <Route path="orders" element={<SellerDashboard />} />
-          <Route path="revenue" element={<SellerDashboard />} />
+          <Route path="orders" element={<SellerOrders />} />
+          <Route path="revenue" element={<SellerRevenue />} />
           <Route path="messages" element={<ChatPage />} />
+          <Route path="settings" element={<SellerSettings />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

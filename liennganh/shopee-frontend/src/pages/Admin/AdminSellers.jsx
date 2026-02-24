@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../api';
 import { UserCheck, Search, Check, X, Ban, Store, Sparkles } from 'lucide-react';
+import Pagination from '../../components/Pagination';
 import ConfirmModal from '../../components/Admin/ConfirmModal';
 
 const statusConfig = {
@@ -17,8 +18,14 @@ const AdminSellers = () => {
     const [tab, setTab] = useState('ALL');
     const [search, setSearch] = useState('');
     const [lastSeenMaxId, setLastSeenMaxId] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const sellersPerPage = 10;
 
     const [confirmModal, setConfirmModal] = useState({ isOpen: false, type: 'danger', title: '', message: '', targetId: null, actionType: null });
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [search, tab]);
 
     useEffect(() => {
         const savedMaxId = parseInt(localStorage.getItem('admin_sellers_last_seen_max_id') || '0');
@@ -77,7 +84,7 @@ const AdminSellers = () => {
 
     const confirmAction = async (id, action) => {
         try {
-            await api.put(`/admin/sellers/${id}/${action}`);
+            await api.put(`/ admin / sellers / ${id}/${action}`);
             const newStatus = action === 'approve' ? 'APPROVED' : action === 'reject' ? 'REJECTED' : 'SUSPENDED';
             setSellers(prev => prev.map(s =>
                 s.id === id ? { ...s, sellerStatus: newStatus } : s
@@ -105,6 +112,14 @@ const AdminSellers = () => {
     };
 
     const newCount = [...sellers, ...pending].filter(s => isNewSeller(s)).length;
+
+    const filteredList = getList();
+    const indexOfLastSeller = currentPage * sellersPerPage;
+    const indexOfFirstSeller = indexOfLastSeller - sellersPerPage;
+    const currentSellers = filteredList.slice(indexOfFirstSeller, indexOfLastSeller);
+    const totalPages = Math.ceil(filteredList.length / sellersPerPage);
+
+
 
     return (
         <div>
@@ -171,7 +186,7 @@ const AdminSellers = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
-                                {getList().map(seller => {
+                                {currentSellers.map(seller => {
                                     const status = statusConfig[seller.sellerStatus] || statusConfig.PENDING;
                                     const isNew = isNewSeller(seller);
                                     return (
@@ -236,12 +251,22 @@ const AdminSellers = () => {
                                 })}
                             </tbody>
                         </table>
-                        {getList().length === 0 && (
+                        {filteredList.length === 0 && (
                             <div className="p-8 text-center text-gray-400">
                                 <Store className="w-12 h-12 mx-auto mb-3 text-gray-200" />
                                 <p>Không có người bán nào</p>
                             </div>
                         )}
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                            totalItems={filteredList.length}
+                            startItem={indexOfFirstSeller + 1}
+                            endItem={Math.min(indexOfLastSeller, filteredList.length)}
+                            itemLabel="người bán"
+                            accentColor="blue"
+                        />
                     </div>
                 )}
             </div>

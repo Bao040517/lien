@@ -13,7 +13,8 @@ import java.util.List;
 
 /**
  * Controller quáº£n lÃ½ Shop (Cá»­a hÃ ng)
- * Cung cáº¥p API xem danh sÃ¡ch shop, chi tiáº¿t shop vÃ  xem shop cá»§a chÃ­nh mÃ¬nh
+ * Cung cáº¥p API xem danh sÃ¡ch shop, chi tiáº¿t shop vÃ  xem shop cá»§a chÃ­nh
+ * mÃ¬nh
  * (Ä‘á»‘i vá»›i seller)
  */
 @RestController
@@ -34,6 +35,15 @@ public class ShopController {
     @GetMapping
     public ApiResponse<List<Shop>> getAllShops() {
         return ApiResponse.success(shopService.getAllShops(), "Láº¥y danh sÃ¡ch cá»­a hÃ ng thÃ nh cÃ´ng");
+    }
+
+    /**
+     * Tìm kiếm Shop theo tên
+     * Quyền hạn: Public
+     */
+    @GetMapping("/search")
+    public ApiResponse<List<Shop>> searchShops(@RequestParam String keyword) {
+        return ApiResponse.success(shopService.searchByName(keyword), "Tìm kiếm shop thành công");
     }
 
     /**
@@ -74,4 +84,3 @@ public class ShopController {
         return ApiResponse.success(shop.getOwner().getId(), "Láº¥y owner ID thÃ nh cÃ´ng");
     }
 }
-
