@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import api from '../../api';
-import { Package, Search, Trash2, Eye, ExternalLink, ShieldAlert, ShieldCheck, Sparkles } from 'lucide-react';
+import { Search, Plus, Trash2, Edit, Save, X, Ban, Settings, CheckCircle, Package, ExternalLink, ShieldAlert, ShieldCheck, Sparkles } from 'lucide-react';
+import ConfirmModal from '../../components/Admin/ConfirmModal';
+import PromptModal from '../../components/Admin/PromptModal';
 import { getImageUrl } from '../../utils';
 
 const AdminProducts = () => {
@@ -12,6 +14,9 @@ const AdminProducts = () => {
     const [lastSeenMaxId, setLastSeenMaxId] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 10;
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false, type: 'danger', title: '', message: '', targetId: null, action: '' });
+    const [promptModal, setPromptModal] = useState({ isOpen: false, title: '', message: '', targetId: null, targetName: '' });
+
 
     useEffect(() => {
         // Lấy maxId đã xem lần trước từ localStorage

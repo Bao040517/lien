@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../api';
 import { UserCheck, Search, Check, X, Ban, Store, Sparkles } from 'lucide-react';
+import ConfirmModal from '../../components/Admin/ConfirmModal';
 
 const statusConfig = {
     PENDING: { label: 'Chờ duyệt', color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
@@ -16,6 +17,8 @@ const AdminSellers = () => {
     const [tab, setTab] = useState('ALL');
     const [search, setSearch] = useState('');
     const [lastSeenMaxId, setLastSeenMaxId] = useState(0);
+
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false, type: 'danger', title: '', message: '', targetId: null, actionType: null });
 
     useEffect(() => {
         const savedMaxId = parseInt(localStorage.getItem('admin_sellers_last_seen_max_id') || '0');
@@ -50,9 +53,29 @@ const AdminSellers = () => {
 
     const isNewSeller = (seller) => lastSeenMaxId > 0 && seller.id > lastSeenMaxId;
 
-    const handleAction = async (id, action) => {
-        const msgs = { approve: 'Duyệt', reject: 'Từ chối', suspend: 'Tạm khoá' };
-        if (action !== 'approve' && !window.confirm(`${msgs[action]} seller này?`)) return;
+    const handleActionClick = (id, actionType) => {
+        const msgs = {
+            approve: { title: 'Duyệt người bán này?', type: 'success', msg: 'Họ sẽ được phép đăng sản phẩm và bán hàng.' },
+            reject: { title: 'Từ chối người bán này?', type: 'danger', msg: 'Yêu cầu mở shop sẽ bị huỷ bỏ.' },
+            suspend: { title: 'Tạm khoá người bán này?', type: 'warning', msg: 'Họ sẽ không thể truy cập trang quản trị shop.' }
+        };
+
+        if (actionType === 'approve') {
+            confirmAction(id, actionType);
+            return;
+        }
+
+        setConfirmModal({
+            isOpen: true,
+            type: msgs[actionType].type,
+            title: msgs[actionType].title,
+            message: msgs[actionType].msg,
+            targetId: id,
+            actionType: actionType
+        });
+    };
+
+    const confirmAction = async (id, action) => {
         try {
             await api.put(`/admin/sellers/${id}/${action}`);
             const newStatus = action === 'approve' ? 'APPROVED' : action === 'reject' ? 'REJECTED' : 'SUSPENDED';
@@ -60,7 +83,8 @@ const AdminSellers = () => {
                 s.id === id ? { ...s, sellerStatus: newStatus } : s
             ));
             setPending(prev => prev.filter(s => s.id !== id));
-        } catch { alert(`${msgs[action]} thất bại!`); }
+        } catch { alert('Thao tác thất bại!'); }
+        setConfirmModal({ ...confirmModal, isOpen: false });
     };
 
     const tabs = [
@@ -178,30 +202,30 @@ const AdminSellers = () => {
                                             <td className="px-6 py-3 text-center space-x-1">
                                                 {seller.sellerStatus === 'PENDING' && (
                                                     <>
-                                                        <button onClick={() => handleAction(seller.id, 'approve')}
+                                                        <button onClick={() => handleActionClick(seller.id, 'approve')}
                                                             className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white text-xs rounded-lg hover:bg-green-600 transition">
                                                             <Check className="w-3 h-3" /> Duyệt
                                                         </button>
-                                                        <button onClick={() => handleAction(seller.id, 'reject')}
+                                                        <button onClick={() => handleActionClick(seller.id, 'reject')}
                                                             className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600 transition">
                                                             <X className="w-3 h-3" /> Từ chối
                                                         </button>
                                                     </>
                                                 )}
                                                 {seller.sellerStatus === 'APPROVED' && (
-                                                    <button onClick={() => handleAction(seller.id, 'suspend')}
+                                                    <button onClick={() => handleActionClick(seller.id, 'suspend')}
                                                         className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-500 text-white text-xs rounded-lg hover:bg-gray-600 transition">
                                                         <Ban className="w-3 h-3" /> Tạm khoá
                                                     </button>
                                                 )}
                                                 {seller.sellerStatus === 'SUSPENDED' && (
-                                                    <button onClick={() => handleAction(seller.id, 'approve')}
+                                                    <button onClick={() => handleActionClick(seller.id, 'approve')}
                                                         className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white text-xs rounded-lg hover:bg-green-600 transition">
                                                         <Check className="w-3 h-3" /> Mở khoá
                                                     </button>
                                                 )}
                                                 {seller.sellerStatus === 'REJECTED' && (
-                                                    <button onClick={() => handleAction(seller.id, 'approve')}
+                                                    <button onClick={() => handleActionClick(seller.id, 'approve')}
                                                         className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white text-xs rounded-lg hover:bg-green-600 transition">
                                                         <Check className="w-3 h-3" /> Duyệt lại
                                                     </button>
@@ -221,6 +245,15 @@ const AdminSellers = () => {
                     </div>
                 )}
             </div>
+
+            <ConfirmModal
+                isOpen={confirmModal.isOpen}
+                type={confirmModal.type}
+                title={confirmModal.title}
+                message={confirmModal.message}
+                onConfirm={() => confirmAction(confirmModal.targetId, confirmModal.actionType)}
+                onCancel={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+            />
         </div>
     );
 };

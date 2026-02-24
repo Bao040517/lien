@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../api';
 import { Users, Search, Lock, Unlock, Shield, Sparkles } from 'lucide-react';
+import ConfirmModal from '../../components/Admin/ConfirmModal';
 
 const roleLabels = { USER: 'Người dùng', SELLER: 'Người bán', ADMIN: 'Quản trị viên' };
 const roleColors = {
@@ -15,6 +16,8 @@ const AdminUsers = () => {
     const [search, setSearch] = useState('');
     const [roleFilter, setRoleFilter] = useState('ALL');
     const [lastSeenMaxId, setLastSeenMaxId] = useState(0);
+
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false, type: 'danger', title: '', message: '', action: null, targetId: null });
 
     useEffect(() => {
         const savedMaxId = parseInt(localStorage.getItem('admin_users_last_seen_max_id') || '0');
@@ -41,19 +44,42 @@ const AdminUsers = () => {
 
     const isNewUser = (user) => lastSeenMaxId > 0 && user.id > lastSeenMaxId;
 
-    const handleLock = async (id) => {
-        if (!window.confirm('Khoá tài khoản này?')) return;
-        try {
-            const res = await api.put(`/admin/users/${id}/lock`);
-            setUsers(prev => prev.map(u => u.id === id ? { ...u, isLocked: true, locked: true } : u));
-        } catch { alert('Khoá thất bại!'); }
+    const handleLock = (id) => {
+        setConfirmModal({
+            isOpen: true,
+            type: 'warning',
+            title: 'Khoá tài khoản này?',
+            message: 'Tài khoản này sẽ không thể đăng nhập hoặc thực hiện bất kỳ thao tác nào.',
+            targetId: id,
+            action: 'lock'
+        });
     };
 
-    const handleUnlock = async (id) => {
+    const confirmLock = async (id) => {
+        try {
+            await api.put(`/admin/users/${id}/lock`);
+            setUsers(prev => prev.map(u => u.id === id ? { ...u, isLocked: true, locked: true } : u));
+        } catch { alert('Khoá thất bại!'); }
+        setConfirmModal({ ...confirmModal, isOpen: false });
+    };
+
+    const handleUnlock = (id) => {
+        setConfirmModal({
+            isOpen: true,
+            type: 'success',
+            title: 'Mở khoá tài khoản này?',
+            message: 'Tài khoản này sẽ được khôi phục quyền truy cập bình thường.',
+            targetId: id,
+            action: 'unlock'
+        });
+    };
+
+    const confirmUnlock = async (id) => {
         try {
             await api.put(`/admin/users/${id}/unlock`);
             setUsers(prev => prev.map(u => u.id === id ? { ...u, isLocked: false, locked: false } : u));
         } catch { alert('Mở khoá thất bại!'); }
+        setConfirmModal({ ...confirmModal, isOpen: false });
     };
 
     const newCount = users.filter(u => isNewUser(u)).length;
@@ -133,8 +159,8 @@ const AdminUsers = () => {
                                     const isNew = isNewUser(user);
                                     return (
                                         <tr key={user.id} className={`hover:bg-gray-50/50 transition-colors ${isLocked ? 'bg-red-50/30'
-                                                : isNew ? 'bg-blue-50 border-l-4 border-blue-500'
-                                                    : ''
+                                            : isNew ? 'bg-blue-50 border-l-4 border-blue-500'
+                                                : ''
                                             }`}>
                                             <td className="px-6 py-3 text-sm text-gray-400">#{user.id}</td>
                                             <td className="px-6 py-3">
@@ -195,6 +221,18 @@ const AdminUsers = () => {
                     </div>
                 )}
             </div>
+
+            <ConfirmModal
+                isOpen={confirmModal.isOpen}
+                type={confirmModal.type}
+                title={confirmModal.title}
+                message={confirmModal.message}
+                onConfirm={() => {
+                    if (confirmModal.action === 'lock') confirmLock(confirmModal.targetId);
+                    else if (confirmModal.action === 'unlock') confirmUnlock(confirmModal.targetId);
+                }}
+                onCancel={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+            />
         </div>
     );
 };

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import api from '../../api';
 import { Tag, Plus, Trash2, FolderOpen, Pencil, X, ImagePlus } from 'lucide-react';
 import { getImageUrl } from '../../utils';
+import ConfirmModal from '../../components/Admin/ConfirmModal';
 
 const AdminCategories = () => {
     const [categories, setCategories] = useState([]);
@@ -15,6 +16,8 @@ const AdminCategories = () => {
     const fileInputRef = useRef(null);
     const [currentPage, setCurrentPage] = useState(1);
     const categoriesPerPage = 5;
+
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false, type: 'danger', title: '', message: '', targetId: null });
 
     useEffect(() => { fetchCategories(); }, []);
 
@@ -86,12 +89,22 @@ const AdminCategories = () => {
         finally { setSaving(false); }
     };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm('Xoá danh mục này? Hành động không thể hoàn tác.')) return;
+    const handleDelete = (id) => {
+        setConfirmModal({
+            isOpen: true,
+            type: 'danger',
+            title: 'Xoá danh mục này?',
+            message: 'Hành động không thể hoàn tác.',
+            targetId: id
+        });
+    };
+
+    const confirmDelete = async (id) => {
         try {
             await api.delete(`/categories/${id}`);
             setCategories(prev => prev.filter(c => c.id !== id));
         } catch { alert('Xoá danh mục thất bại!'); }
+        setConfirmModal({ ...confirmModal, isOpen: false });
     };
 
     const indexOfLastCategory = currentPage * categoriesPerPage;
@@ -292,6 +305,15 @@ const AdminCategories = () => {
                     </div>
                 )}
             </div>
+
+            <ConfirmModal
+                isOpen={confirmModal.isOpen}
+                type={confirmModal.type}
+                title={confirmModal.title}
+                message={confirmModal.message}
+                onConfirm={() => confirmDelete(confirmModal.targetId)}
+                onCancel={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+            />
         </div>
     );
 };
