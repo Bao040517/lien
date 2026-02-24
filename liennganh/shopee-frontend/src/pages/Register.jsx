@@ -13,7 +13,7 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        const result = await register(username, email, password);
+        const result = await register(username.trim(), email.trim(), password.trim());
         if (result.success) {
             navigate('/login');
         } else {
