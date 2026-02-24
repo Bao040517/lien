@@ -86,9 +86,10 @@ public class SellerService {
         return updatedShop;
     }
 
-    public List<Product> getMyProducts(Long sellerId) {
+    public org.springframework.data.domain.Page<Product> getMyProducts(Long sellerId, int page, int size) {
         Shop shop = getMyShop(sellerId);
-        return productRepository.findByShop(shop);
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        return productRepository.findByShop(shop, pageable);
     }
 
     @Transactional

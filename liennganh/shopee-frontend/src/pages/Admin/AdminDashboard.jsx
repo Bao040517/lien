@@ -33,14 +33,14 @@ const AdminDashboard = () => {
         Promise.all([
             api.get('/admin/statistics').catch(() => null),
             api.get('/admin/sellers/pending').catch(() => ({ data: { data: [] } })),
-            api.get('/users').catch(() => ({ data: { data: [] } })),
-            api.get('/products/all').catch(() => ({ data: { data: [] } })),
-            api.get('/admin/orders').catch(() => ({ data: { data: [] } }))
+            api.get('/users', { params: { size: 10000 } }).catch(() => ({ data: { data: [] } })),
+            api.get('/products/all', { params: { size: 10000 } }).catch(() => ({ data: { data: [] } })),
+            api.get('/admin/orders', { params: { size: 10000 } }).catch(() => ({ data: { data: [] } }))
         ]).then(([statsRes, pendingRes, usersRes, productsRes, ordersRes]) => {
-            const users = usersRes?.data?.data || [];
-            const products = productsRes?.data?.data || [];
-            const orders = ordersRes?.data?.data || [];
-            const pending = pendingRes?.data?.data || [];
+            const users = usersRes?.data?.data?.content || usersRes?.data?.data || [];
+            const products = productsRes?.data?.data?.content || productsRes?.data?.data || [];
+            const orders = ordersRes?.data?.data?.content || ordersRes?.data?.data || [];
+            const pending = pendingRes?.data?.data?.content || pendingRes?.data?.data || [];
             setPendingSellers(pending);
 
             if (statsRes?.data?.data) {

@@ -46,9 +46,9 @@ const ProductDetail = () => {
 
                 // Gọi API lấy sản phẩm liên quan (cùng danh mục)
                 if (productData.category?.id) {
-                    api.get(`/products/category/${productData.category.id}`)
+                    api.get(`/products/category/${productData.category.id}`, { params: { size: 10 } })
                         .then(res => {
-                            const relatedData = res.data.data || res.data;
+                            const relatedData = res.data.data?.content || res.data.data || res.data;
                             // Lọc bỏ sản phẩm hiện tại
                             setRelatedProducts(relatedData.filter(p => p.id !== productData.id));
                         })

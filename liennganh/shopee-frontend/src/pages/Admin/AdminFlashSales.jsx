@@ -36,8 +36,8 @@ const AdminFlashSales = () => {
 
     const fetchProducts = async () => {
         try {
-            const res = await api.get('/products/all');
-            setProducts(res.data.data || []);
+            const res = await api.get('/products/all', { params: { size: 10000 } });
+            setProducts(res.data.data?.content || res.data.data || []);
         } catch (error) {
             console.error(error);
         }

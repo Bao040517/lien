@@ -16,13 +16,13 @@ const ShopProfile = () => {
             try {
                 const [shopRes, productsRes, vouchersRes] = await Promise.all([
                     api.get(`/shops/${id}`),
-                    api.get(`/products/shop/${id}`),
+                    api.get(`/products/shop/${id}`, { params: { size: 10000 } }),
                     api.get(`/vouchers/shop/${id}`)
                 ]);
 
                 setShop(shopRes.data.data);
-                setProducts(productsRes.data.data || []);
-                setVouchers(vouchersRes.data.data || []);
+                setProducts(productsRes.data.data?.content || productsRes.data.data || []);
+                setVouchers(vouchersRes.data.data?.content || vouchersRes.data.data || []);
             } catch (error) {
                 console.error("Error fetching shop data:", error);
             } finally {

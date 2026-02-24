@@ -30,8 +30,11 @@ public class CategoryController {
      * Quyá»n háº¡n: Public
      */
     @GetMapping
-    public ApiResponse<List<Category>> getAllCategories() {
-        return ApiResponse.success(categoryService.getAllCategories(), "Láº¥y danh sÃ¡ch danh má»¥c thÃ nh cÃ´ng");
+    public ApiResponse<org.springframework.data.domain.Page<Category>> getAllCategories(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "100") int size) {
+        return ApiResponse.success(categoryService.getAllCategories(page, size),
+                "Láº¥y danh sÃ¡ch danh má»¥c thÃ nh cÃ´ng");
     }
 
     /**
@@ -68,7 +71,8 @@ public class CategoryController {
                 category.setImageUrl(imageUrl);
             }
 
-            return ApiResponse.success(categoryService.createCategory(category), "Táº¡o danh má»¥c kÃ¨m áº£nh thÃ nh cÃ´ng");
+            return ApiResponse.success(categoryService.createCategory(category),
+                    "Táº¡o danh má»¥c kÃ¨m áº£nh thÃ nh cÃ´ng");
         } catch (Exception e) {
             return ApiResponse.error(500, "Lá»—i khi táº¡o danh má»¥c: " + e.getMessage());
         }
@@ -113,4 +117,3 @@ public class CategoryController {
         return ApiResponse.success(null, "XoÃ¡ danh má»¥c thÃ nh cÃ´ng");
     }
 }
-

@@ -28,10 +28,10 @@ const AddProduct = () => {
         const fetchData = async () => {
             try {
                 const [catRes, shopRes] = await Promise.all([
-                    api.get('/categories'),
+                    api.get('/categories', { params: { size: 1000 } }),
                     api.get(`/shops/my-shop?userId=${user?.id}`)
                 ]);
-                setCategories(catRes.data.data || catRes.data || []);
+                setCategories(catRes.data.data?.content || catRes.data.data || catRes.data || []);
                 const shopData = shopRes.data.data || shopRes.data;
                 if (Array.isArray(shopData)) {
                     setShops(shopData);

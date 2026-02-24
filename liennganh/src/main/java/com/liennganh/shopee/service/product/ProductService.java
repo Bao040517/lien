@@ -14,6 +14,9 @@ import java.util.List;
 
 import com.liennganh.shopee.entity.*;
 import com.liennganh.shopee.service.notification.NotificationService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Service quản lý sản phẩm
@@ -43,23 +46,26 @@ public class ProductService {
      * Lấy danh sách sản phẩm chưa bị khóa (Public view)
      * 
      */
-    public List<Product> getAllProducts() {
-        return productRepository.findByIsBannedFalse();
+    public Page<Product> getAllProducts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findByIsBannedFalse(pageable);
     }
 
     /**
      * Lấy tất cả sản phẩm kể cả bị khóa (Admin only)
      */
-    public List<Product> getAllProductsIncludingBanned() {
-        return productRepository.findAll();
+    public Page<Product> getAllProductsIncludingBanned(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findAll(pageable);
     }
 
     /**
      * Lấy danh sách sản phẩm theo danh mục (chưa bị khóa)
      * 
      */
-    public List<Product> getProductsByCategory(Long categoryId) {
-        return productRepository.findByCategoryIdAndIsBannedFalse(categoryId);
+    public Page<Product> getProductsByCategory(Long categoryId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findByCategoryIdAndIsBannedFalse(categoryId, pageable);
     }
 
     /**
@@ -153,8 +159,9 @@ public class ProductService {
      * Tìm kiếm sản phẩm theo tên (không phân biệt hoa thường, chưa bị khóa)
      * 
      */
-    public List<Product> searchProducts(String keyword) {
-        return productRepository.findByNameContainingIgnoreCaseAndIsBannedFalse(keyword);
+    public Page<Product> searchProducts(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findByNameContainingIgnoreCaseAndIsBannedFalse(keyword, pageable);
     }
 
     /**
@@ -162,8 +169,8 @@ public class ProductService {
      * 
      * best_selling, rating_desc)
      */
-    public List<Product> filterProducts(String keyword, Long categoryId, BigDecimal minPrice, BigDecimal maxPrice,
-            String sortBy) {
+    public Page<Product> filterProducts(String keyword, Long categoryId, BigDecimal minPrice, BigDecimal maxPrice,
+            String sortBy, int page, int size) {
 
         Specification<Product> spec = Specification.where(ProductSpecification.nameContains(keyword))
                 .and(ProductSpecification.hasCategory(categoryId))
@@ -183,7 +190,8 @@ public class ProductService {
             sort = Sort.by("averageRating").descending();
         }
 
-        return productRepository.findAll(spec, sort);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return productRepository.findAll(spec, pageable);
     }
 
     /**
@@ -233,12 +241,13 @@ public class ProductService {
     /**
      * Lấy danh sách sản phẩm của một chủ shop (User)
      */
-    public List<Product> getProductsByOwner(com.liennganh.shopee.entity.User owner) {
+    public Page<Product> getProductsByOwner(com.liennganh.shopee.entity.User owner, int page, int size) {
         com.liennganh.shopee.repository.shop.ShopRepository shopRepository = context
                 .getBean(com.liennganh.shopee.repository.shop.ShopRepository.class);
         com.liennganh.shopee.entity.Shop shop = shopRepository.findByOwner(owner)
                 .orElseThrow(() -> new AppException(ErrorCode.SHOP_NOT_FOUND));
-        return productRepository.findByShop(shop);
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findByShop(shop, pageable);
     }
 
     /**
@@ -276,10 +285,11 @@ public class ProductService {
      * Lấy danh sách sản phẩm theo Shop ID (Public view - chỉ hiện sản phẩm chưa bị
      * khóa)
      */
-    public List<Product> getProductsByShopId(Long shopId) {
+    public Page<Product> getProductsByShopId(Long shopId, int page, int size) {
         com.liennganh.shopee.entity.Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new AppException(ErrorCode.SHOP_NOT_FOUND));
-        return productRepository.findByShopAndIsBannedFalse(shop);
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findByShopAndIsBannedFalse(shop, pageable);
     }
 
     // ========== PRODUCT ATTRIBUTES & VARIANTS (PHÂN LOẠI & BIẾN THỂ) ==========

@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -17,17 +19,24 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     /**
      * Tìm sản phẩm theo ID danh mục (chỉ lấy sp chưa bị khóa)
      */
-    List<Product> findByCategoryIdAndIsBannedFalse(Long categoryId);
+    Page<Product> findByCategoryIdAndIsBannedFalse(Long categoryId, Pageable pageable);
 
     /**
      * Tìm kiếm sản phẩm theo tên (không phân biệt hoa thường, chưa bị khóa)
      */
-    List<Product> findByNameContainingIgnoreCaseAndIsBannedFalse(String name);
+    Page<Product> findByNameContainingIgnoreCaseAndIsBannedFalse(String name, Pageable pageable);
 
     /**
-     * Tìm tất cả sản phẩm của một Shop (kể cả bị khóa - dùng cho Seller quản lý)
+     * Tìm tất cả sản phẩm của một Shop (kể cả bị khóa - dùng cho Seller quản lý) có
+     * phân trang
      */
-    List<Product> findByShop(Shop shop);
+    Page<Product> findByShop(Shop shop, Pageable pageable);
+
+    /**
+     * Tìm tất cả sản phẩm của một Shop (Không phân trang - dùng nội bộ cho tính
+     * toán Statistics)
+     */
+    List<Product> findAllByShop(Shop shop);
 
     /**
      * Đếm tổng số sản phẩm của một Shop
@@ -37,10 +46,10 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     /**
      * Tìm sản phẩm của Shop (chỉ lấy sp chưa bị khóa - dùng cho User xem shop)
      */
-    List<Product> findByShopAndIsBannedFalse(Shop shop);
+    Page<Product> findByShopAndIsBannedFalse(Shop shop, Pageable pageable);
 
     /**
      * Lấy tất cả sản phẩm chưa bị khóa (dùng cho User xem danh sách)
      */
-    List<Product> findByIsBannedFalse();
+    Page<Product> findByIsBannedFalse(Pageable pageable);
 }

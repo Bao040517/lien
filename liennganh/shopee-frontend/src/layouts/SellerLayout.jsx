@@ -65,8 +65,8 @@ const SellerLayout = () => {
 
     const fetchBannedCount = async () => {
         try {
-            const res = await api.get(`/products/my-shop?userId=${user.id}`);
-            const data = res.data.data || res.data.result || [];
+            const res = await api.get(`/products/my-shop?userId=${user.id}`, { params: { size: 10000 } });
+            const data = res.data.data?.content || res.data.data || res.data.result || [];
             const banned = Array.isArray(data) ? data.filter(p => p.banned).length : 0;
             setBannedProductCount(banned);
         } catch (e) { console.error("Error fetching banned count", e); }
