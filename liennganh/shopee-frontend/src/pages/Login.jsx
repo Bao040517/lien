@@ -27,7 +27,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        const result = await login(username, password);
+        const result = await login(username.trim(), password.trim());
         if (result.success) {
             // Lấy đường dẫn mà user muốn truy cập trước khi đăng nhập
             const from = location.state?.from?.pathname || '/';
