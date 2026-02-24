@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import Breadcrumb from '../components/Breadcrumb';
 import api from '../api';
 import { Package, Truck, CheckCircle, Clock, XCircle, ChevronDown, ChevronUp, MapPin, Star } from 'lucide-react';
 import ReviewModal from '../components/ReviewModal';
@@ -110,7 +111,12 @@ const OrderHistory = () => {
 
     return (
         <div className="max-w-5xl mx-auto px-4 py-6">
-            <h1 className="text-xl font-semibold text-gray-800 mb-4">Đơn mua</h1>
+            <div className="mb-4">
+                <Breadcrumb items={[
+                    { label: 'Trang chủ', path: '/' },
+                    { label: 'Đơn mua' }
+                ]} />
+            </div>
 
             {/* Tabs */}
             <div className="bg-white rounded-t-lg border-b flex overflow-x-auto">

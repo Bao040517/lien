@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import api from '../api';
-import { ShoppingBag, Filter, ChevronRight } from 'lucide-react';
+import { ShoppingBag, Filter } from 'lucide-react';
+import Breadcrumb from '../components/Breadcrumb';
 import { getImageUrl } from '../utils';
 
 const CategoryProducts = () => {
@@ -42,11 +43,12 @@ const CategoryProducts = () => {
     return (
         <div className="bg-gray-50 min-h-screen pb-10">
             <div className="container mx-auto px-4 py-6">
-                {/* Header & Breadcrumb */}
-                <div className="flex items-center gap-2 text-gray-500 text-sm mb-4">
-                    <Link to="/" className="hover:text-orange-500">Trang chủ</Link>
-                    <ChevronRight className="w-4 h-4" />
-                    <span className="text-gray-900 font-medium">{categoryName}</span>
+                {/* Breadcrumb */}
+                <div className="mb-4">
+                    <Breadcrumb items={[
+                        { label: 'Trang chủ', path: '/' },
+                        { label: categoryName }
+                    ]} />
                 </div>
 
                 {/* Filter Bar */}

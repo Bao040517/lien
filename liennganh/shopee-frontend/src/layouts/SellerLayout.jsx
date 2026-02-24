@@ -3,6 +3,7 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
 import { LayoutDashboard, Package, ShoppingBag, BarChart3, Settings, LogOut, Store, ImagePlus, Bell, Ticket, AlertTriangle, MessageCircle } from 'lucide-react';
+import Breadcrumb from '../components/Breadcrumb';
 
 const menuItems = [
     { path: '/seller', label: 'Dashboard', icon: LayoutDashboard },
@@ -355,9 +356,10 @@ const SellerLayout = () => {
                 {/* Top Header */}
                 <header className="bg-white border-b px-8 py-4 sticky top-0 z-30 shadow-sm">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-lg font-semibold text-gray-800">
-                            {menuItems.find(item => item.path === location.pathname)?.label || 'Seller Center'}
-                        </h2>
+                        <Breadcrumb items={[
+                            { label: 'Kênh Người Bán', path: '/seller' },
+                            { label: menuItems.find(item => item.path === location.pathname)?.label || 'Seller Center' }
+                        ]} variant="light" />
 
                         {/* Notification Bell */}
                         <div className="relative" ref={notificationRef}>

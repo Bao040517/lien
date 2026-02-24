@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import Breadcrumb from '../components/Breadcrumb';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -203,6 +204,15 @@ const ProductDetail = () => {
     return (
         <div className="bg-gray-100 min-h-screen pb-10">
             <div className="container mx-auto px-4 pt-6">
+                {/* Breadcrumb */}
+                <div className="mb-4">
+                    <Breadcrumb items={[
+                        { label: 'Trang chủ', path: '/' },
+                        ...(product.category ? [{ label: product.category.name, path: `/category/${product.category.id}` }] : []),
+                        { label: product.name }
+                    ]} />
+                </div>
+
                 {/* Product Info Card */}
                 <div className="bg-white rounded shadow-sm p-6 mb-4 flex flex-col md:flex-row gap-8">
                     {/* Left: Image */}

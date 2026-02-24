@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import api from '../api';
 import { ShoppingBag, Filter, Store, Star, MessageSquare, Clock, ChevronRight } from 'lucide-react';
+import Breadcrumb from '../components/Breadcrumb';
 import { getImageUrl } from '../utils';
 
 const SearchResults = () => {
@@ -65,11 +66,12 @@ const SearchResults = () => {
     return (
         <div className="bg-gray-50 min-h-screen pb-10">
             <div className="container mx-auto px-4 py-6">
-                {/* Header & Filter Bar */}
-                <div className="flex items-center gap-2 text-gray-500 text-sm mb-4">
-                    <Link to="/">Trang chủ</Link>
-                    <span>&gt;</span>
-                    <span>Kết quả tìm kiếm cho "{keyword}"</span>
+                {/* Breadcrumb */}
+                <div className="mb-4">
+                    <Breadcrumb items={[
+                        { label: 'Trang chủ', path: '/' },
+                        { label: `Tìm kiếm: "${keyword}"` }
+                    ]} />
                 </div>
 
                 {/* Matched Shop Card */}

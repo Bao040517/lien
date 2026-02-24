@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import Breadcrumb from '../components/Breadcrumb';
 import api from '../api';
 import { Star, MapPin, MessageSquare, Plus, ShoppingBag, Clock, ChevronRight, ChevronLeft } from 'lucide-react';
 import { getImageUrl } from '../utils';
@@ -43,6 +44,14 @@ const ShopProfile = () => {
 
     return (
         <div className="bg-gray-100 min-h-screen pb-10">
+            {/* Breadcrumb */}
+            <div className="container mx-auto px-4 pt-4">
+                <Breadcrumb items={[
+                    { label: 'Trang chủ', path: '/' },
+                    { label: shop.name }
+                ]} />
+            </div>
+
             {/* Shop Header */}
             <div className="bg-white shadow">
                 <div className="container mx-auto px-4 py-6">

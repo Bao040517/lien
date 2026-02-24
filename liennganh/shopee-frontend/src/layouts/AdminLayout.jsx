@@ -3,6 +3,7 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
 import { LayoutDashboard, Users, Store, Package, ShoppingCart, LogOut, Tag, Ticket, Zap, ShieldCheck, MessageCircle, Image as ImageIcon } from 'lucide-react';
+import Breadcrumb from '../components/Breadcrumb';
 
 const AdminLayout = () => {
     const { user, logout } = useAuth();
@@ -213,12 +214,28 @@ const AdminLayout = () => {
 
             {/* Main Content */}
             <div className="flex-1 ml-64">
-                {/* Top Header */}
+                {/* Top Header with Breadcrumb */}
                 <header className="bg-white border-b px-8 py-4 sticky top-0 z-30 shadow-sm">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-lg font-semibold text-gray-800">
-                            {menuItems.find(item => item.path === location.pathname)?.label || 'Admin'}
-                        </h2>
+                        <Breadcrumb items={(() => {
+                            const currentItem = menuItems.find(item => item.path === location.pathname);
+                            const items = [{ label: 'Admin Panel', path: '/admin' }];
+                            // Tìm section header gần nhất phía trước currentItem
+                            if (currentItem && currentItem.path !== '/admin') {
+                                const currentIdx = menuItems.indexOf(currentItem);
+                                for (let i = currentIdx - 1; i >= 0; i--) {
+                                    if (menuItems[i].section) {
+                                        items.push({ label: menuItems[i].section });
+                                        break;
+                                    }
+                                }
+                                items[items.length - 1] = { label: items[items.length - 1].label }; // keep section as non-link
+                                items.push({ label: currentItem.label });
+                            } else {
+                                items.push({ label: 'Tổng quan' });
+                            }
+                            return items;
+                        })()} variant="light" />
                         <div className="flex items-center gap-3">
                             <Link to="/" className="text-sm text-blue-600 hover:text-blue-700">
                                 ← Về cửa hàng
