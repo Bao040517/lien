@@ -101,6 +101,21 @@ public class SellerService {
         product.setDescription(productData.getDescription());
         product.setPrice(productData.getPrice());
         product.setStockQuantity(productData.getStockQuantity());
+
+        Integer discountPct = productData.getDiscountPercentage();
+        if (discountPct == null || discountPct < 0) {
+            discountPct = 0;
+        }
+        product.setDiscountPercentage(discountPct);
+
+        if (discountPct > 0 && productData.getPrice() != null) {
+            java.math.BigDecimal discountAmount = productData.getPrice().multiply(new java.math.BigDecimal(discountPct))
+                    .divide(new java.math.BigDecimal(100));
+            product.setDiscountedPrice(productData.getPrice().subtract(discountAmount));
+        } else {
+            product.setDiscountedPrice(productData.getPrice());
+        }
+
         product.setImageUrl(productData.getImageUrl());
         product.setShop(shop);
         product.setCategory(productData.getCategory());
@@ -127,6 +142,21 @@ public class SellerService {
         product.setDescription(productData.getDescription());
         product.setPrice(productData.getPrice());
         product.setStockQuantity(productData.getStockQuantity());
+
+        Integer discountPct = productData.getDiscountPercentage();
+        if (discountPct == null || discountPct < 0) {
+            discountPct = 0;
+        }
+        product.setDiscountPercentage(discountPct);
+
+        if (discountPct > 0 && productData.getPrice() != null) {
+            java.math.BigDecimal discountAmount = productData.getPrice().multiply(new java.math.BigDecimal(discountPct))
+                    .divide(new java.math.BigDecimal(100));
+            product.setDiscountedPrice(productData.getPrice().subtract(discountAmount));
+        } else {
+            product.setDiscountedPrice(productData.getPrice());
+        }
+
         product.setImageUrl(productData.getImageUrl());
         product.setCategory(productData.getCategory());
 

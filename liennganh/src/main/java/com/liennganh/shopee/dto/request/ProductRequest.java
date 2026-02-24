@@ -14,5 +14,6 @@ public class ProductRequest {
     private String description;// Mô tả sản phẩm
     private BigDecimal price; // Giá bán
     private Integer stockQuantity; // Số lượng tồn
+    private Integer discountPercentage; // % Giảm giá
     private String imageUrl; // Link ảnh
 }

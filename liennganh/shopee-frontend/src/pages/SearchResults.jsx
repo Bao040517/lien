@@ -12,6 +12,8 @@ const SearchResults = () => {
     const [loading, setLoading] = useState(true);
     const [sortBy, setSortBy] = useState('relevance');
 
+    const formatPrice = (price) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+
     useEffect(() => {
         const fetchResults = async () => {
             setLoading(true);
@@ -92,19 +94,26 @@ const SearchResults = () => {
                                     ) : (
                                         <ShoppingBag className="w-12 h-12 text-gray-300" />
                                     )}
-                                    {/* Sale badge */}
-                                    <div className="absolute top-0 right-0 bg-yellow-100 text-orange-500 px-1 text-xs">
-                                        -{product.id % 50 + 10}%
-                                    </div>
+                                    {product.discountPercentage > 0 && (
+                                        <div className="absolute top-0 right-0 bg-yellow-100 text-orange-500 px-1 text-xs font-semibold z-10">
+                                            -{product.discountPercentage}%
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="p-2">
                                     <h3 className="text-sm text-gray-800 line-clamp-2 min-h-[40px] mb-2">{product.name}</h3>
-                                    <div className="flex justify-between items-end">
-                                        <div className="text-orange-500 font-medium">
-                                            <span className="text-xs underline align-top">đ</span>
-                                            <span className="text-lg">{product.price?.toLocaleString()}</span>
+                                    <div className="flex justify-between items-end min-h-[44px]">
+                                        <div className="flex flex-col justify-end">
+                                            <div className="text-orange-500 font-medium leading-tight text-sm">
+                                                {formatPrice(product.discountedPrice || product.price || 0)}
+                                            </div>
+                                            {product.discountPercentage > 0 && (
+                                                <div className="text-gray-400 text-xs line-through mt-0.5">
+                                                    {formatPrice(product.price || 0)}
+                                                </div>
+                                            )}
                                         </div>
-                                        <div className="text-xs text-gray-500">Đã bán {product.soldCount || 100}</div>
+                                        <div className="text-xs text-gray-500 pb-1">Đã bán {product.soldCount || 100}</div>
                                     </div>
                                 </div>
                             </Link>

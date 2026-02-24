@@ -355,8 +355,8 @@ const Home = () => {
 
                                 const isFlashSaleItem = !!item.discountedPrice;
                                 const originalPrice = product.price || 0;
-                                const salePrice = item.discountedPrice || originalPrice;
-                                const discountPercent = originalPrice > 0 ? Math.round((1 - salePrice / originalPrice) * 100) : 0;
+                                const salePrice = isFlashSaleItem ? item.discountedPrice : (product.discountedPrice || originalPrice);
+                                const discountPercent = isFlashSaleItem && originalPrice > 0 ? Math.round((1 - salePrice / originalPrice) * 100) : (product.discountPercentage || 0);
 
                                 // Flash Sale specific metrics
                                 const soldCount = item.soldQuantity || 0;
@@ -441,18 +441,27 @@ const Home = () => {
                                     ) : (
                                         <ShoppingBag className="w-12 h-12 text-gray-300" />
                                     )}
-                                    <div className="absolute top-0 right-0 bg-yellow-100 text-orange-500 px-1 text-xs">
-                                        -{Math.floor(Math.random() * 50 + 10)}%
-                                    </div>
+                                    {product.discountPercentage > 0 && (
+                                        <div className="absolute top-0 right-0 bg-yellow-100 text-orange-500 px-1 text-xs font-semibold z-10">
+                                            -{product.discountPercentage}%
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="p-2">
                                     <h3 className="text-sm text-gray-800 line-clamp-2 min-h-[40px] mb-2">{product.name}</h3>
-                                    <div className="flex justify-between items-end">
-                                        <div className="text-orange-500 font-medium">
-                                            <span className="text-xs underline align-top">đ</span>
-                                            <span className="text-lg">{product.price?.toLocaleString()}</span>
+                                    <div className="flex justify-between items-end min-h-[44px]">
+                                        <div className="flex flex-col justify-end">
+                                            <div className="text-orange-500 font-medium leading-tight">
+                                                <span className="text-xs underline align-top">đ</span>
+                                                <span className="text-lg">{(product.discountedPrice || product.price || 0).toLocaleString('vi-VN')}</span>
+                                            </div>
+                                            {product.discountPercentage > 0 && (
+                                                <div className="text-gray-400 text-xs line-through mt-0.5">
+                                                    ₫{(product.price || 0).toLocaleString('vi-VN')}
+                                                </div>
+                                            )}
                                         </div>
-                                        <div className="text-xs text-gray-500">Đã bán {product.soldCount || Math.floor(Math.random() * 1000 + 50)}</div>
+                                        <div className="text-xs text-gray-500 pb-1">Đã bán {product.soldCount || Math.floor(Math.random() * 1000 + 50)}</div>
                                     </div>
                                 </div>
                             </Link>

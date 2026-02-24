@@ -15,6 +15,8 @@ public class ProductDetailStatsDTO {
     private Long sold; // Tính từ OrderItem (đơn DELIVERED)
     private Long reviewCount; // Tính từ Review
     private Double averageRating; // Tính từ Review
+    private Integer discountPercentage;
+    private BigDecimal discountedPrice;
     private Boolean isBanned; // Sản phẩm có bị khóa không
     private String violationReason; // Lý do vi phạm
 
@@ -22,7 +24,8 @@ public class ProductDetailStatsDTO {
     }
 
     public ProductDetailStatsDTO(Long productId, String productName, String imageUrl,
-            BigDecimal price, Integer stockQuantity, Long sold, Long reviewCount, Double averageRating) {
+            BigDecimal price, Integer stockQuantity, Long sold, Long reviewCount, Double averageRating,
+            Integer discountPercentage, BigDecimal discountedPrice) {
         this.productId = productId;
         this.productName = productName;
         this.imageUrl = imageUrl;
@@ -31,12 +34,16 @@ public class ProductDetailStatsDTO {
         this.sold = sold;
         this.reviewCount = reviewCount;
         this.averageRating = averageRating;
+        this.discountPercentage = discountPercentage;
+        this.discountedPrice = discountedPrice;
     }
 
     public ProductDetailStatsDTO(Long productId, String productName, String imageUrl,
             BigDecimal price, Integer stockQuantity, Long sold, Long reviewCount, Double averageRating,
+            Integer discountPercentage, BigDecimal discountedPrice,
             Boolean isBanned, String violationReason) {
-        this(productId, productName, imageUrl, price, stockQuantity, sold, reviewCount, averageRating);
+        this(productId, productName, imageUrl, price, stockQuantity, sold, reviewCount, averageRating,
+                discountPercentage, discountedPrice);
         this.isBanned = isBanned;
         this.violationReason = violationReason;
     }
@@ -103,6 +110,22 @@ public class ProductDetailStatsDTO {
 
     public void setAverageRating(Double averageRating) {
         this.averageRating = averageRating;
+    }
+
+    public Integer getDiscountPercentage() {
+        return discountPercentage;
+    }
+
+    public void setDiscountPercentage(Integer discountPercentage) {
+        this.discountPercentage = discountPercentage;
+    }
+
+    public BigDecimal getDiscountedPrice() {
+        return discountedPrice;
+    }
+
+    public void setDiscountedPrice(BigDecimal discountedPrice) {
+        this.discountedPrice = discountedPrice;
     }
 
     public Boolean getIsBanned() {

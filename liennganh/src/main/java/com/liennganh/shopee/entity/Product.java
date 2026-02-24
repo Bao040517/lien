@@ -37,6 +37,12 @@ public class Product {
     @Column(name = "stock_quantity", nullable = false)
     private Integer stockQuantity; // Số lượng tồn kho
 
+    @Column(name = "discount_percentage", columnDefinition = "integer default 0")
+    private Integer discountPercentage = 0; // % Giảm giá
+
+    @Column(name = "discounted_price")
+    private BigDecimal discountedPrice; // Giá sau khi giảm (được tính toán tự động)
+
     @Column(name = "image_url")
     private String imageUrl; // URL ảnh đại diện
 
@@ -120,6 +126,22 @@ public class Product {
 
     public void setStockQuantity(Integer stockQuantity) {
         this.stockQuantity = stockQuantity;
+    }
+
+    public Integer getDiscountPercentage() {
+        return discountPercentage;
+    }
+
+    public void setDiscountPercentage(Integer discountPercentage) {
+        this.discountPercentage = discountPercentage;
+    }
+
+    public BigDecimal getDiscountedPrice() {
+        return discountedPrice;
+    }
+
+    public void setDiscountedPrice(BigDecimal discountedPrice) {
+        this.discountedPrice = discountedPrice;
     }
 
     public String getImageUrl() {
