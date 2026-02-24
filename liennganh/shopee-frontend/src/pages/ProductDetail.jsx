@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import Breadcrumb from '../components/Breadcrumb';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -183,7 +184,9 @@ const ProductDetail = () => {
 
     const formatPrice = (price) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
     const attributeGroups = getAttributeGroups();
-    const displayPrice = selectedVariant ? selectedVariant.price : product.price;
+    const isDiscounted = !selectedVariant && product.discountPercentage > 0;
+    const baseDisplayPrice = selectedVariant ? selectedVariant.price : product.price;
+    const displayPrice = isDiscounted ? product.discountedPrice : baseDisplayPrice;
     const displayStock = selectedVariant ? selectedVariant.stockQuantity : product.stockQuantity;
     const displayImage = selectedVariant?.imageUrl || product.imageUrl;
 
@@ -201,6 +204,15 @@ const ProductDetail = () => {
     return (
         <div className="bg-gray-100 min-h-screen pb-10">
             <div className="container mx-auto px-4 pt-6">
+                {/* Breadcrumb */}
+                <div className="mb-4">
+                    <Breadcrumb items={[
+                        { label: 'Trang chủ', path: '/' },
+                        ...(product.category ? [{ label: product.category.name, path: `/category/${product.category.id}` }] : []),
+                        { label: product.name }
+                    ]} />
+                </div>
+
                 {/* Product Info Card */}
                 <div className="bg-white rounded shadow-sm p-6 mb-4 flex flex-col md:flex-row gap-8">
                     {/* Left: Image */}
@@ -232,13 +244,27 @@ const ProductDetail = () => {
                         </div>
 
                         {/* Price Section */}
-                        <div className="bg-gray-50 p-4 mb-6">
+                        <div className="bg-gray-50 p-4 mb-6 flex items-center gap-4">
                             {priceRange && !selectedVariant ? (
                                 <div className="text-3xl font-medium text-orange-500">
                                     {formatPrice(priceRange.min)} - {formatPrice(priceRange.max)}
                                 </div>
                             ) : (
-                                <div className="text-3xl font-medium text-orange-500">{formatPrice(displayPrice)}</div>
+                                <div className="flex items-center gap-3">
+                                    {isDiscounted && (
+                                        <div className="text-gray-400 line-through text-lg">
+                                            {formatPrice(baseDisplayPrice)}
+                                        </div>
+                                    )}
+                                    <div className="text-3xl font-medium text-orange-500">
+                                        {formatPrice(displayPrice)}
+                                    </div>
+                                    {isDiscounted && (
+                                        <div className="bg-orange-500 text-white text-sm font-bold px-2 py-0.5 rounded-sm uppercase inline-block">
+                                            Giảm {product.discountPercentage}%
+                                        </div>
+                                    )}
+                                </div>
                             )}
                         </div>
 
@@ -480,12 +506,27 @@ const ProductDetail = () => {
                                                 <ShoppingCart className="text-gray-300 w-10 h-10" />
                                             </div>
                                         )}
+                                        {item.discountPercentage > 0 && (
+                                            <div className="absolute top-0 right-0">
+                                                <div className="bg-gradient-to-b from-yellow-400 to-orange-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">
+                                                    <div className="text-[10px] leading-tight">GIẢM</div>
+                                                    <div className="text-sm font-black leading-tight">{item.discountPercentage}%</div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="p-3">
                                         <h3 className="text-sm text-gray-800 line-clamp-2 min-h-[40px] mb-2">{item.name}</h3>
-                                        <div className="flex justify-between items-end">
-                                            <div className="text-orange-500 font-medium text-sm">
-                                                {formatPrice(item.price)}
+                                        <div className="flex justify-between items-end min-h-[44px]">
+                                            <div className="flex flex-col justify-end">
+                                                <div className="text-orange-500 font-medium text-sm leading-tight">
+                                                    {formatPrice(item.discountedPrice || item.price)}
+                                                </div>
+                                                {item.discountPercentage > 0 && (
+                                                    <div className="text-gray-400 text-xs line-through mt-0.5">
+                                                        {formatPrice(item.price)}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Package, Plus, Search, Trash2, Edit3, Eye, AlertTriangle } from 'lucide-react';
+import Pagination from '../../components/Pagination';
 import api from '../../api';
 import { getImageUrl } from '../../utils';
 
@@ -11,6 +12,12 @@ const SellerProducts = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [deleting, setDeleting] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 10;
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm]);
 
     useEffect(() => {
         if (user) fetchProducts();
@@ -20,7 +27,11 @@ const SellerProducts = () => {
         try {
             const res = await api.get(`/products/my-shop?userId=${user.id}`);
             const data = res.data.data || res.data.result || [];
-            setProducts(Array.isArray(data) ? data : []);
+            if (data && Array.isArray(data.content)) {
+                setProducts(data.content);
+            } else {
+                setProducts(Array.isArray(data) ? data : []);
+            }
         } catch (error) {
             console.error("Failed to fetch products:", error);
         } finally {
@@ -47,6 +58,13 @@ const SellerProducts = () => {
     const filtered = products.filter(p =>
         p.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = filtered.slice(indexOfFirstProduct, indexOfLastProduct);
+    const totalPages = Math.ceil(filtered.length / productsPerPage);
+
+
 
     return (
         <div>
@@ -109,10 +127,10 @@ const SellerProducts = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
-                                {filtered.map(product => (
+                                {currentProducts.map(product => (
                                     <tr key={product.id} className={`transition ${product.banned
-                                            ? 'bg-red-50 border-l-4 border-red-500 hover:bg-red-100/50'
-                                            : 'hover:bg-orange-50/30'
+                                        ? 'bg-red-50 border-l-4 border-red-500 hover:bg-red-100/50'
+                                        : 'hover:bg-orange-50/30'
                                         }`}>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
@@ -181,6 +199,17 @@ const SellerProducts = () => {
                                 ))}
                             </tbody>
                         </table>
+
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                            totalItems={filtered.length}
+                            startItem={indexOfFirstProduct + 1}
+                            endItem={Math.min(indexOfLastProduct, filtered.length)}
+                            itemLabel="sản phẩm"
+                            accentColor="orange"
+                        />
                     </div>
                 ) : (
                     <div className="p-12 text-center">

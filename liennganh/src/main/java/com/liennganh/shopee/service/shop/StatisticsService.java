@@ -159,6 +159,7 @@ public class StatisticsService {
                                         p.getId(), p.getName(), p.getImageUrl(),
                                         p.getPrice(), p.getStockQuantity(),
                                         pSold, pReviews, pAvgRating,
+                                        p.getDiscountPercentage(), p.getDiscountedPrice(),
                                         p.isBanned(), p.getViolationReason()));
                 }
                 stats.setProductDetailStats(detailStats);

@@ -3,6 +3,7 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
 import { LayoutDashboard, Package, ShoppingBag, BarChart3, Settings, LogOut, Store, ImagePlus, Bell, Ticket, AlertTriangle, MessageCircle } from 'lucide-react';
+import Breadcrumb from '../components/Breadcrumb';
 
 const menuItems = [
     { path: '/seller', label: 'Dashboard', icon: LayoutDashboard },
@@ -12,10 +13,11 @@ const menuItems = [
     { path: '/seller/orders', label: 'Đơn hàng', icon: ShoppingBag },
     { path: '/seller/revenue', label: 'Doanh thu', icon: BarChart3 },
     { path: '/seller/messages', label: 'Tin nhắn', icon: MessageCircle },
+    { path: '/seller/settings', label: 'Cài đặt Cửa hàng', icon: Settings },
 ];
 
 const SellerLayout = () => {
-    const { user, logout } = useAuth();
+    const { user, logout, requestSellerUpgrade } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -39,11 +41,19 @@ const SellerLayout = () => {
     const [msgUnreadCount, setMsgUnreadCount] = useState(0);
     const notificationRef = useRef(null);
 
+    // Shop Setup Logic
+    const [shopProfile, setShopProfile] = useState(null);
+    const [showShopSetup, setShowShopSetup] = useState(false);
+    const [shopName, setShopName] = useState('');
+    const [shopDescription, setShopDescription] = useState('');
+    const [isUpdatingShop, setIsUpdatingShop] = useState(false);
+
     useEffect(() => {
-        if (user) {
+        if (user && user.role === 'SELLER') {
             fetchUnreadCount();
             fetchBannedCount();
             fetchMsgUnreadCount();
+            checkShopSetup(); // Check if shop needs setup
             const interval = setInterval(() => {
                 fetchUnreadCount();
                 fetchBannedCount();
@@ -52,6 +62,46 @@ const SellerLayout = () => {
             return () => clearInterval(interval);
         }
     }, [user]);
+
+    const checkShopSetup = async () => {
+        try {
+            const res = await api.get('/seller/shop', { params: { sellerId: user.id } });
+            const shop = res.data.data;
+            if (shop) {
+                setShopProfile(shop);
+                if (shop.name === `${user.username}'s Shop`) {
+                    setShopName(''); // Clear default name form
+                    setShopDescription(shop.description || '');
+                    setShowShopSetup(true);
+                }
+            }
+        } catch (e) { console.error("Error checking shop setup", e); }
+    };
+
+    const handleShopSetupSubmit = async (e) => {
+        e.preventDefault();
+        if (!shopName.trim()) {
+            alert("Vui lòng nhập tên Shop của bạn!");
+            return;
+        }
+
+        setIsUpdatingShop(true);
+        try {
+            await api.put('/seller/shop', {
+                name: shopName,
+                description: shopDescription
+            }, {
+                params: { sellerId: user.id }
+            });
+            setShowShopSetup(false);
+            setShopProfile(prev => ({ ...prev, name: shopName, description: shopDescription }));
+        } catch (error) {
+            console.error("Lỗi cập nhật Shop:", error);
+            alert("Cập nhật thông tin Shop thất bại. Vui lòng thử lại!");
+        } finally {
+            setIsUpdatingShop(false);
+        }
+    };
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -116,6 +166,9 @@ const SellerLayout = () => {
         }
     };
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
+
     if (!user) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-orange-50">
@@ -123,39 +176,6 @@ const SellerLayout = () => {
                     <Store className="w-16 h-16 mx-auto mb-4 text-orange-400" />
                     <h1 className="text-2xl font-bold mb-2 text-gray-800">Đang chuyển hướng...</h1>
                     <p className="text-gray-500 mb-6">Bạn cần đăng nhập để truy cập trang này.</p>
-                </div>
-            </div>
-        );
-    }
-
-    if (user.role !== 'SELLER') {
-        const handleUpgradeToSeller = async () => {
-            try {
-                await api.post(`/users/${user.id}/upgrade-seller`);
-                alert('Đã gửi yêu cầu trở thành Seller! Vui lòng chờ Admin duyệt.');
-                navigate('/');
-            } catch (err) {
-                const msg = err.response?.data?.message || 'Có lỗi xảy ra';
-                alert(msg);
-            }
-        };
-
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-orange-50">
-                <div className="text-center max-w-md">
-                    <Store className="w-16 h-16 mx-auto mb-4 text-orange-400" />
-                    <h1 className="text-2xl font-bold mb-2 text-gray-800">Kênh Người Bán</h1>
-                    <p className="text-gray-500 mb-6">
-                        Xin chào <strong>{user.username}</strong>! Bạn đang là User.
-                        Nhấn nút bên dưới để đăng ký trở thành Seller và bắt đầu bán hàng.
-                    </p>
-                    <button
-                        onClick={handleUpgradeToSeller}
-                        className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition font-medium"
-                    >
-                        🏪 Đăng ký trở thành Seller
-                    </button>
-                    <p className="text-xs text-gray-400 mt-4">Yêu cầu sẽ được Admin xem xét và phê duyệt</p>
                 </div>
             </div>
         );
@@ -170,7 +190,7 @@ const SellerLayout = () => {
                     </div>
                     <h1 className="text-2xl font-bold mb-2 text-yellow-800">Đang chờ duyệt</h1>
                     <p className="text-yellow-700 mb-6">
-                        Yêu cầu đăng ký Seller của bạn đang được Admin xem xét. Vui lòng quay lại sau.
+                        Yêu cầu đăng ký Seller của bạn đã được gửi và đang được Admin xem xét. Vui lòng trở lại sau.
                     </p>
                     <Link to="/" className="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 transition">
                         Về trang chủ
@@ -194,6 +214,56 @@ const SellerLayout = () => {
                     <Link to="/" className="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 transition">
                         Về trang chủ
                     </Link>
+                </div>
+            </div>
+        );
+    }
+
+    if (user.role !== 'SELLER') {
+        const handleUpgradeToSeller = async () => {
+            setIsSubmitting(true);
+            setErrorMsg('');
+            const result = await requestSellerUpgrade();
+            if (!result.success) {
+                setErrorMsg(result.message || 'Có lỗi xảy ra, vui lòng thử lại.');
+                setIsSubmitting(false);
+            }
+            // if success, the component will automatically re-render and hit the 'PENDING' block above!
+        };
+
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-orange-50">
+                <div className="text-center max-w-md p-8 bg-white rounded-2xl shadow-xl border border-orange-100">
+                    <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <Store className="w-10 h-10 text-orange-500" />
+                    </div>
+                    <h1 className="text-2xl font-bold mb-3 text-gray-800">Đăng ký Kênh Người Bán</h1>
+                    <p className="text-gray-500 mb-8 leading-relaxed">
+                        Xin chào <strong>{user.username}</strong>! Bạn chưa có Cửa hàng nào.
+                        Đăng ký ngay hôm nay để bắt đầu kinh doanh và tiếp cận hàng triệu khách hàng tiềm năng.
+                    </p>
+
+                    {errorMsg && (
+                        <div className="mb-6 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
+                            {errorMsg}
+                        </div>
+                    )}
+
+                    <button
+                        onClick={handleUpgradeToSeller}
+                        disabled={isSubmitting}
+                        className="w-full bg-orange-500 text-white px-6 py-3.5 rounded-xl hover:bg-orange-600 transition font-bold shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                        {isSubmitting ? (
+                            <>
+                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                Đang xử lý...
+                            </>
+                        ) : (
+                            '🚀 Đăng ký trở thành Seller'
+                        )}
+                    </button>
+                    <p className="text-xs text-gray-400 mt-5">Yêu cầu sẽ được gửi đến Admin để xem xét và phê duyệt.</p>
                 </div>
             </div>
         );
@@ -259,10 +329,10 @@ const SellerLayout = () => {
                 <div className="border-t p-4">
                     <div className="flex items-center gap-3 mb-3">
                         <div className="w-9 h-9 bg-orange-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                            {user.username?.charAt(0).toUpperCase()}
+                            {(shopProfile?.name || user.username)?.charAt(0).toUpperCase()}
                         </div>
                         <div className="min-w-0">
-                            <p className="text-sm font-medium text-gray-800 truncate">{user.username}</p>
+                            <p className="text-sm font-medium text-gray-800 truncate">{shopProfile?.name || user.username}</p>
                             <p className="text-xs text-gray-400">Seller</p>
                         </div>
                     </div>
@@ -286,9 +356,10 @@ const SellerLayout = () => {
                 {/* Top Header */}
                 <header className="bg-white border-b px-8 py-4 sticky top-0 z-30 shadow-sm">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-lg font-semibold text-gray-800">
-                            {menuItems.find(item => item.path === location.pathname)?.label || 'Seller Center'}
-                        </h2>
+                        <Breadcrumb items={[
+                            { label: 'Kênh Người Bán', path: '/seller' },
+                            { label: menuItems.find(item => item.path === location.pathname)?.label || 'Seller Center' }
+                        ]} variant="light" />
 
                         {/* Notification Bell */}
                         <div className="relative" ref={notificationRef}>
@@ -348,9 +419,74 @@ const SellerLayout = () => {
 
                 {/* Page Content */}
                 <main className="p-8">
-                    <Outlet />
+                    <Outlet context={{ shopProfile, setShopProfile }} />
                 </main>
             </div>
+
+            {/* Shop Setup Modal */}
+            {showShopSetup && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in">
+                        <div className="bg-orange-500 p-6 text-center text-white">
+                            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <Store className="w-8 h-8" />
+                            </div>
+                            <h2 className="text-2xl font-bold">Chào mừng Seller mới! 🎉</h2>
+                            <p className="text-orange-100 mt-2 text-sm">
+                                Yêu cầu đăng ký Kênh Người Bán của bạn đã được duyệt.
+                                Hãy đặt tên cho Cửa hàng của bạn để bắt đầu kinh doanh.
+                            </p>
+                        </div>
+                        <form onSubmit={handleShopSetupSubmit} className="p-6">
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Tên Shop <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={shopName}
+                                        onChange={(e) => setShopName(e.target.value)}
+                                        placeholder="Ví dụ: Shopee Mall, Cửa hàng Mẹ và Bé..."
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                                        required
+                                        maxLength={50}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Mô tả Shop
+                                    </label>
+                                    <textarea
+                                        value={shopDescription}
+                                        onChange={(e) => setShopDescription(e.target.value)}
+                                        placeholder="Giới thiệu ngắn gọn về cửa hàng của bạn..."
+                                        rows="3"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors resize-none"
+                                        maxLength={500}
+                                    />
+                                </div>
+                            </div>
+                            <div className="mt-8">
+                                <button
+                                    type="submit"
+                                    disabled={isUpdatingShop || !shopName.trim()}
+                                    className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                                >
+                                    {isUpdatingShop ? (
+                                        <>
+                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                            Đang lưu...
+                                        </>
+                                    ) : (
+                                        'Hoàn tất thiết lập'
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

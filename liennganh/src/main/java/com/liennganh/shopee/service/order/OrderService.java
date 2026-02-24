@@ -207,6 +207,18 @@ public class OrderService {
     }
 
     /**
+     * Lấy danh sách đơn hàng của một Shop cụ thể
+     */
+    @Transactional(readOnly = true)
+    public List<Order> getOrdersByShop(Long shopId) {
+        List<Order> orders = orderRepository.findByShopId(shopId);
+
+        // Populate isReviewed if necessary, but we might just return the list directly
+        // for seller view
+        return orders;
+    }
+
+    /**
      * Cập nhật trạng thái đơn hàng
      * 
      */

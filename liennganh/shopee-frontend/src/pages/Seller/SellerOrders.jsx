@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../api';
-import { ShoppingCart, Search, Clock, Package, Truck, CheckCircle, XCircle, AlertCircle, ChevronDown, Sparkles } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { ShoppingCart, Search, Clock, Package, Truck, CheckCircle, XCircle, ChevronDown } from 'lucide-react';
 import Pagination from '../../components/Pagination';
 
 const statusConfig = {
@@ -13,13 +14,13 @@ const statusConfig = {
 
 const allStatuses = ['PENDING', 'SHIPPING', 'DELIVERING', 'DELIVERED', 'CANCELLED'];
 
-const AdminOrders = () => {
+const SellerOrders = () => {
+    const { user } = useAuth();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [statusFilter, setStatusFilter] = useState('ALL');
     const [search, setSearch] = useState('');
     const [updating, setUpdating] = useState(null);
-    const [lastSeenMaxId, setLastSeenMaxId] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const ordersPerPage = 10;
 
@@ -28,40 +29,31 @@ const AdminOrders = () => {
     }, [search, statusFilter]);
 
     useEffect(() => {
-        const savedMaxId = parseInt(localStorage.getItem('admin_orders_last_seen_max_id') || '0');
-        setLastSeenMaxId(savedMaxId);
+        if (!user) return;
 
-        api.get('/admin/orders')
+        api.get('/seller/orders', {
+            params: { sellerId: user.id }
+        })
             .then(res => {
                 const allOrders = res.data.data || [];
                 // Sắp xếp ID giảm dần → mới nhất lên đầu
                 allOrders.sort((a, b) => b.id - a.id);
                 setOrders(allOrders);
-
-                // Lưu maxId hiện tại
-                if (allOrders.length > 0) {
-                    const currentMaxId = Math.max(...allOrders.map(o => o.id));
-                    localStorage.setItem('admin_orders_last_seen_max_id', currentMaxId.toString());
-                }
             })
             .catch(e => console.error(e))
             .finally(() => setLoading(false));
-    }, []);
-
-    const isNewOrder = (order) => lastSeenMaxId > 0 && order.id > lastSeenMaxId;
+    }, [user]);
 
     const handleUpdateStatus = async (orderId, newStatus) => {
         setUpdating(orderId);
         try {
-            await api.put(`/ admin / orders / ${orderId}/status?status=${newStatus}`);
+            await api.put(`/admin/orders/${orderId}/status?status=${newStatus}`);
             setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
         } catch { alert('Cập nhật trạng thái thất bại!'); }
         finally { setUpdating(null); }
     };
 
     const formatPrice = (p) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p || 0);
-
-    const newCount = orders.filter(o => isNewOrder(o)).length;
 
     const filtered = orders.filter(o => {
         const matchStatus = statusFilter === 'ALL' || o.status === statusFilter;
@@ -90,35 +82,22 @@ const AdminOrders = () => {
                 </div>
             </div>
 
-            {/* Banner thông báo đơn hàng mới */}
-            {newCount > 0 && (
-                <div className="bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 rounded-xl p-4 mb-6 flex items-center gap-3 animate-pulse">
-                    <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Sparkles className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                        <p className="text-red-800 font-semibold">🛒 Có {newCount} đơn hàng mới!</p>
-                        <p className="text-red-600 text-sm">Đơn hàng mới đã được đưa lên đầu danh sách và đánh dấu nổi bật.</p>
-                    </div>
-                </div>
-            )}
-
             {/* Status Filter Tabs */}
             <div className="flex gap-1 mb-6 bg-gray-100 rounded-xl p-1 overflow-x-auto">
                 <button onClick={() => setStatusFilter('ALL')}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${statusFilter === 'ALL' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${statusFilter === 'ALL' ? 'bg-orange-500 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'
                         }`}>
-                    Tất cả <span className="text-xs ml-1 px-1.5 py-0.5 rounded-full bg-gray-200">{orders.length}</span>
+                    Tất cả <span className={`text-xs ml-1 px-1.5 py-0.5 rounded-full ${statusFilter === 'ALL' ? 'bg-orange-400' : 'bg-gray-200'}`}>{orders.length}</span>
                 </button>
                 {allStatuses.map(s => {
                     const cfg = statusConfig[s];
                     return (
                         <button key={s} onClick={() => setStatusFilter(s)}
-                            className={`flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${statusFilter === s ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                            className={`flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${statusFilter === s ? 'bg-orange-500 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'
                                 }`}>
                             {cfg.label}
                             {statusCounts[s] > 0 && (
-                                <span className="text-xs px-1.5 py-0.5 rounded-full bg-gray-200">{statusCounts[s]}</span>
+                                <span className={`text-xs px-1.5 py-0.5 rounded-full ${statusFilter === s ? 'bg-orange-400' : 'bg-gray-200'}`}>{statusCounts[s]}</span>
                             )}
                         </button>
                     );
@@ -126,94 +105,90 @@ const AdminOrders = () => {
             </div>
 
             {/* Search */}
-            <div className="bg-white rounded-xl border border-gray-100 p-4 mb-6">
+            <div className="bg-white rounded-xl border border-gray-100 p-4 mb-6 shadow-sm">
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input type="text" value={search} onChange={e => setSearch(e.target.value)}
                         placeholder="Tìm theo mã đơn hoặc tên khách hàng..."
-                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-300 outline-none" />
+                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none" />
                 </div>
             </div>
 
             {/* Table */}
-            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 {loading ? (
                     <div className="p-12 text-center text-gray-400">
-                        <div className="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+                        <div className="animate-spin w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full mx-auto mb-2"></div>
                         Đang tải...
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
-                            <thead className="bg-gray-50 text-xs text-gray-500 uppercase">
+                            <thead className="bg-orange-50/50 text-xs text-gray-500 uppercase">
                                 <tr>
-                                    <th className="px-6 py-3">Mã đơn</th>
-                                    <th className="px-6 py-3">Khách hàng</th>
-                                    <th className="px-6 py-3">Sản phẩm</th>
-                                    <th className="px-6 py-3">Tổng tiền</th>
-                                    <th className="px-6 py-3">Trạng thái</th>
-                                    <th className="px-6 py-3">Ngày tạo</th>
-                                    <th className="px-6 py-3 text-center">Cập nhật</th>
+                                    <th className="px-6 py-4 font-semibold">Mã đơn</th>
+                                    <th className="px-6 py-4 font-semibold">Người mua</th>
+                                    <th className="px-6 py-4 font-semibold">Tổng mặt hàng</th>
+                                    <th className="px-6 py-4 font-semibold">Khách thanh toán</th>
+                                    <th className="px-6 py-4 font-semibold">Trạng thái</th>
+                                    <th className="px-6 py-4 font-semibold">Ngày Đặt</th>
+                                    <th className="px-6 py-4 text-center font-semibold">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
                                 {currentOrders.map(order => {
                                     const sc = statusConfig[order.status] || statusConfig.PENDING;
                                     const StatusIcon = sc.icon;
-                                    const isNew = isNewOrder(order);
                                     return (
-                                        <tr key={order.id} className={`hover:bg-gray-50/50 transition-colors ${isNew ? 'bg-red-50 border-l-4 border-red-500' : ''
-                                            }`}>
-                                            <td className="px-6 py-3">
+                                        <tr key={order.id} className={`hover:bg-orange-50/30 transition-colors`}>
+                                            <td className="px-6 py-4">
                                                 <span className="text-sm font-mono font-bold text-gray-800">
                                                     #{order.id}
-                                                    {isNew && (
-                                                        <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full animate-bounce">
-                                                            <Sparkles className="w-3 h-3" /> MỚI
-                                                        </span>
-                                                    )}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-3">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-7 h-7 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm">
                                                         {order.user?.username?.charAt(0).toUpperCase() || '?'}
                                                     </div>
-                                                    <span className="text-sm text-gray-700">{order.user?.username || 'N/A'}</span>
+                                                    <span className="text-sm font-medium text-gray-700">{order.user?.username || 'N/A'}</span>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-3 text-sm text-gray-500">
-                                                {order.orderItems?.length || 0} sản phẩm
+                                            <td className="px-6 py-4 text-sm text-gray-600">
+                                                <div className="flex items-center gap-1.5">
+                                                    <Package className="w-4 h-4 text-gray-400" />
+                                                    {order.orderItems?.length || 0} sản phẩm
+                                                </div>
                                             </td>
-                                            <td className="px-6 py-3">
+                                            <td className="px-6 py-4">
                                                 <div>
-                                                    <p className="text-sm font-bold text-gray-800">{formatPrice(order.finalPrice)}</p>
+                                                    <p className="text-sm font-bold text-orange-600">{formatPrice(order.finalPrice)}</p>
                                                     {order.totalPrice !== order.finalPrice && (
-                                                        <p className="text-xs text-gray-400 line-through">{formatPrice(order.totalPrice)}</p>
+                                                        <p className="text-xs text-gray-400 line-through mt-0.5">{formatPrice(order.totalPrice)}</p>
                                                     )}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-3">
-                                                <span className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full border ${sc.color}`}>
-                                                    <StatusIcon className="w-3 h-3" />
+                                            <td className="px-6 py-4">
+                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full border ${sc.color}`}>
+                                                    <StatusIcon className="w-3.5 h-3.5" />
                                                     {sc.label}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-3 text-sm text-gray-400">
+                                            <td className="px-6 py-4 text-sm text-gray-500">
                                                 {order.createdAt ? new Date(order.createdAt).toLocaleDateString('vi-VN') : '—'}
                                             </td>
-                                            <td className="px-6 py-3 text-center">
-                                                <div className="relative inline-block">
+                                            <td className="px-6 py-4 text-center">
+                                                <div className="relative inline-block w-full max-w-[140px]">
                                                     <select
                                                         value={order.status}
                                                         disabled={updating === order.id || order.status === 'DELIVERED' || order.status === 'CANCELLED'}
                                                         onChange={e => handleUpdateStatus(order.id, e.target.value)}
-                                                        className="appearance-none bg-gray-100 border border-gray-200 rounded-lg px-3 py-1.5 pr-8 text-xs font-medium focus:ring-2 focus:ring-blue-300 outline-none disabled:opacity-50 cursor-pointer">
+                                                        className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 pr-8 text-sm font-medium text-gray-700 hover:border-orange-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none disabled:opacity-50 disabled:bg-gray-50 cursor-pointer shadow-sm transition-all duration-200">
                                                         {allStatuses.map(s => (
                                                             <option key={s} value={s}>{statusConfig[s].label}</option>
                                                         ))}
                                                     </select>
-                                                    <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
+                                                    <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                                                 </div>
                                             </td>
                                         </tr>
@@ -222,9 +197,10 @@ const AdminOrders = () => {
                             </tbody>
                         </table>
                         {filtered.length === 0 && (
-                            <div className="p-8 text-center text-gray-400">
-                                <ShoppingCart className="w-12 h-12 mx-auto mb-3 text-gray-200" />
-                                <p>Không tìm thấy đơn hàng</p>
+                            <div className="p-12 text-center text-gray-400 bg-gray-50/50">
+                                <ShoppingCart className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                                <p className="text-lg font-medium text-gray-500">Không tìm thấy đơn hàng</p>
+                                <p className="text-sm mt-1">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
                             </div>
                         )}
                         <Pagination
@@ -235,7 +211,7 @@ const AdminOrders = () => {
                             startItem={indexOfFirstOrder + 1}
                             endItem={Math.min(indexOfLastOrder, filtered.length)}
                             itemLabel="đơn hàng"
-                            accentColor="blue"
+                            accentColor="orange"
                         />
                     </div>
                 )}
@@ -244,4 +220,4 @@ const AdminOrders = () => {
     );
 };
 
-export default AdminOrders;
+export default SellerOrders;

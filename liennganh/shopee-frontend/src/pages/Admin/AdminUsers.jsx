@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../api';
 import { Users, Search, Lock, Unlock, Shield, Sparkles } from 'lucide-react';
+import Pagination from '../../components/Pagination';
 import ConfirmModal from '../../components/Admin/ConfirmModal';
 
 const roleLabels = { USER: 'Người dùng', SELLER: 'Người bán', ADMIN: 'Quản trị viên' };
@@ -16,8 +17,14 @@ const AdminUsers = () => {
     const [search, setSearch] = useState('');
     const [roleFilter, setRoleFilter] = useState('ALL');
     const [lastSeenMaxId, setLastSeenMaxId] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const usersPerPage = 10;
 
     const [confirmModal, setConfirmModal] = useState({ isOpen: false, type: 'danger', title: '', message: '', action: null, targetId: null });
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [search, roleFilter]);
 
     useEffect(() => {
         const savedMaxId = parseInt(localStorage.getItem('admin_users_last_seen_max_id') || '0');
@@ -91,6 +98,13 @@ const AdminUsers = () => {
         return matchSearch && matchRole;
     });
 
+    const indexOfLastUser = currentPage * usersPerPage;
+    const indexOfFirstUser = indexOfLastUser - usersPerPage;
+    const currentUsers = filtered.slice(indexOfFirstUser, indexOfLastUser);
+    const totalPages = Math.ceil(filtered.length / usersPerPage);
+
+
+
     return (
         <div>
             <div className="flex items-center justify-between mb-6">
@@ -154,7 +168,7 @@ const AdminUsers = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
-                                {filtered.map(user => {
+                                {currentUsers.map(user => {
                                     const isLocked = user.isLocked || user.locked;
                                     const isNew = isNewUser(user);
                                     return (
@@ -218,6 +232,16 @@ const AdminUsers = () => {
                         {filtered.length === 0 && (
                             <div className="p-8 text-center text-gray-400">Không tìm thấy người dùng</div>
                         )}
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                            totalItems={filtered.length}
+                            startItem={indexOfFirstUser + 1}
+                            endItem={Math.min(indexOfLastUser, filtered.length)}
+                            itemLabel="người dùng"
+                            accentColor="blue"
+                        />
                     </div>
                 )}
             </div>

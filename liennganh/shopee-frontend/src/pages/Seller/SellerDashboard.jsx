@@ -1,14 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Package, Plus, DollarSign, ShoppingBag, Eye, Star, MessageSquare, RotateCcw, ShoppingCart, AlertTriangle } from 'lucide-react';
 import api from '../../api';
 import { getImageUrl } from '../../utils';
+import Pagination from '../../components/Pagination';
 
 const SellerDashboard = () => {
     const { user } = useAuth();
+    const { shopProfile } = useOutletContext();
     const [loading, setLoading] = useState(true);
     const [productDetailStats, setProductDetailStats] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 5;
     const [stats, setStats] = useState({
         totalProducts: 0,
         totalOrders: 0,
@@ -55,20 +59,28 @@ const SellerDashboard = () => {
 
     const formatPrice = (price) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
 
+    // Pagination Logic
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = productDetailStats.slice(indexOfFirstProduct, indexOfLastProduct);
+    const totalPages = Math.ceil(productDetailStats.length / productsPerPage);
+
+
+
     return (
         <div>
             {/* Welcome Banner */}
             <div className="bg-gradient-to-r from-orange-500 to-orange-400 rounded-2xl p-6 mb-8 text-white shadow-lg">
-                <h1 className="text-2xl font-bold mb-1">Xin chào, {user?.username}! 👋</h1>
+                <h1 className="text-2xl font-bold mb-1">Xin chào, {shopProfile?.name || user?.username}! 👋</h1>
                 <p className="text-orange-100">Chào mừng bạn đến Kênh Người Bán. Quản lý shop của bạn tại đây.</p>
                 <div className="flex gap-3 mt-4">
                     <Link to="/seller/add-product"
                         className="flex items-center gap-2 bg-white text-orange-500 px-5 py-2 rounded-lg font-medium hover:bg-orange-50 transition shadow-sm">
                         <Plus className="w-4 h-4" /> Thêm sản phẩm
                     </Link>
-                    <Link to="/seller/products"
+                    <Link to="/seller/product-analytics"
                         className="flex items-center gap-2 bg-white/20 text-white px-5 py-2 rounded-lg font-medium hover:bg-white/30 transition backdrop-blur-sm">
-                        <Package className="w-4 h-4" /> Quản lý sản phẩm
+                        <Package className="w-4 h-4" /> Thống kê sản phẩm
                     </Link>
                 </div>
             </div>
@@ -157,16 +169,16 @@ const SellerDashboard = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {productDetailStats.map((product) => (
-                                    <tr key={product.productId} className={`border-t border-gray-100 transition ${product.isBanned
-                                            ? 'bg-red-50 border-l-4 border-red-500 hover:bg-red-100/50'
-                                            : 'hover:bg-orange-50/30'
-                                        }`}>
+                                {currentProducts.map((product) => (
+                                    <tr key={product.productId} className={`border - t border - gray - 100 transition ${product.isBanned
+                                        ? 'bg-red-50 border-l-4 border-red-500 hover:bg-red-100/50'
+                                        : 'hover:bg-orange-50/30'
+                                        } `}>
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 relative">
                                                     {product.imageUrl ? (
-                                                        <img src={getImageUrl(product.imageUrl)} alt="" className={`w-full h-full object-cover ${product.isBanned ? 'grayscale opacity-60' : ''}`} />
+                                                        <img src={getImageUrl(product.imageUrl)} alt="" className={`w - full h - full object - cover ${product.isBanned ? 'grayscale opacity-60' : ''} `} />
                                                     ) : (
                                                         <Package className="w-4 h-4 text-gray-300 m-auto mt-3" />
                                                     )}
@@ -177,7 +189,7 @@ const SellerDashboard = () => {
                                                     )}
                                                 </div>
                                                 <div className="min-w-0">
-                                                    <p className={`font-medium text-sm truncate max-w-[200px] ${product.isBanned ? 'text-red-700' : 'text-gray-900'}`}>
+                                                    <p className={`font - medium text - sm truncate max - w - [200px] ${product.isBanned ? 'text-red-700' : 'text-gray-900'} `}>
                                                         {product.productName}
                                                         {product.isBanned && (
                                                             <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full animate-pulse">
@@ -198,7 +210,7 @@ const SellerDashboard = () => {
                                             <span className="font-semibold text-orange-600">{formatPrice(product.price)}</span>
                                         </td>
                                         <td className="px-4 py-3 text-center">
-                                            <span className={`font-medium ${product.stockQuantity <= 10 ? 'text-red-500' : 'text-gray-700'}`}>
+                                            <span className={`font - medium ${product.stockQuantity <= 10 ? 'text-red-500' : 'text-gray-700'} `}>
                                                 {product.stockQuantity}
                                             </span>
                                         </td>
@@ -210,12 +222,12 @@ const SellerDashboard = () => {
                                         </td>
                                         <td className="px-4 py-3 text-center">
                                             <div className="flex items-center justify-center gap-1">
-                                                <Star className={`w-3.5 h-3.5 ${product.averageRating > 0 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
+                                                <Star className={`w - 3.5 h - 3.5 ${product.averageRating > 0 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'} `} />
                                                 <span className="font-medium text-gray-700">{product.averageRating.toFixed(1)}</span>
                                             </div>
                                         </td>
                                         <td className="px-4 py-3 text-center">
-                                            <Link to={`/seller/edit-product/${product.productId}`}
+                                            <Link to={`/ seller / edit - product / ${product.productId} `}
                                                 className="p-1.5 text-gray-400 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition inline-block">
                                                 <Eye className="w-4 h-4" />
                                             </Link>
@@ -250,7 +262,7 @@ const SellerDashboard = () => {
                                     <td className="px-4 py-3 text-center">
                                         <div className="flex items-center justify-center gap-1 text-sm">
                                             <RotateCcw className="w-3.5 h-3.5 text-red-400" />
-                                            <span className={`${stats.returnRate > 5 ? 'text-red-500' : 'text-green-600'}`}>
+                                            <span className={`${stats.returnRate > 5 ? 'text-red-500' : 'text-green-600'} `}>
                                                 {stats.returnRate}%
                                             </span>
                                         </div>
@@ -258,6 +270,17 @@ const SellerDashboard = () => {
                                 </tr>
                             </tfoot>
                         </table>
+
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                            totalItems={productDetailStats.length}
+                            startItem={indexOfFirstProduct + 1}
+                            endItem={Math.min(indexOfLastProduct, productDetailStats.length)}
+                            itemLabel="sản phẩm"
+                            accentColor="orange"
+                        />
                     </div>
                 ) : (
                     <div className="p-8 text-center text-gray-400">

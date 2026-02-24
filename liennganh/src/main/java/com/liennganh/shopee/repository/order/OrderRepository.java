@@ -39,6 +39,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         // ========== Thống kê doanh thu (Statistics) ==========
 
         /**
+         * Lấy danh sách kết hợp đơn hàng của một Shop cụ thể
+         */
+        @Query("SELECT DISTINCT o FROM Order o JOIN o.orderItems oi JOIN oi.product p WHERE p.shop.id = :shopId ORDER BY o.createdAt DESC")
+        List<Order> findByShopId(@Param("shopId") Long shopId);
+
+        /**
          * Thống kê doanh thu toàn hệ thống theo ngày (Admin)
          * Chỉ tính các đơn hàng đã giao thành công (DELIVERED)
          */

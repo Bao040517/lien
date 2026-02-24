@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import api from '../api';
 import { MapPin, CreditCard, Store, Truck, Tag, Coins, X, ChevronRight } from 'lucide-react';
+import Breadcrumb from '../components/Breadcrumb';
 
 const Checkout = () => {
     const { state } = useLocation();
@@ -338,6 +339,13 @@ const Checkout = () => {
     return (
         <div className="bg-gray-100 min-h-screen pb-36">
             <div className="container mx-auto px-4 pt-6">
+                <div className="mb-4">
+                    <Breadcrumb items={[
+                        { label: 'Trang chủ', path: '/' },
+                        { label: 'Giỏ hàng', path: '/cart' },
+                        { label: 'Thanh toán' }
+                    ]} />
+                </div>
                 <div className="flex items-center gap-4 mb-6 text-orange-500">
                     <div className="text-2xl font-medium border-r border-orange-500 pr-4">Thanh Toán</div>
                     <div className="text-lg">Shopee Clone</div>

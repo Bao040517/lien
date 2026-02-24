@@ -19,4 +19,9 @@ public interface ShopRepository extends JpaRepository<Shop, Long> {
      * Tìm Shop thuộc sở hữu của một User
      */
     Optional<Shop> findByOwner(User owner);
+
+    /**
+     * Tìm kiếm Shop theo tên (gần đúng, không phân biệt hoa thường)
+     */
+    java.util.List<Shop> findByNameContainingIgnoreCase(String name);
 }

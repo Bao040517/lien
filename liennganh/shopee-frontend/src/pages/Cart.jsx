@@ -4,6 +4,7 @@ import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { Trash2, Minus, Plus, ShoppingBag, Store } from 'lucide-react';
+import Breadcrumb from '../components/Breadcrumb';
 import { getImageUrl } from '../utils';
 
 const Cart = () => {
@@ -131,8 +132,13 @@ const Cart = () => {
     return (
         <div className="bg-gray-100 min-h-screen pb-24">
             <div className="container mx-auto px-4 pt-6">
-                {/* Header */}
-                <h1 className="text-xl text-gray-700 mb-4">Giỏ Hàng</h1>
+                {/* Breadcrumb */}
+                <div className="mb-4">
+                    <Breadcrumb items={[
+                        { label: 'Trang chủ', path: '/' },
+                        { label: 'Giỏ Hàng' }
+                    ]} />
+                </div>
 
                 {cartItems.length === 0 ? (
                     <div className="bg-white rounded shadow-sm p-16 text-center">
