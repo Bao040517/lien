@@ -19,7 +19,7 @@ const Cart = () => {
 
     useEffect(() => {
         if (!user) {
-            navigate('/login');
+            navigate('/login', { state: { from: { pathname: '/cart' } }, replace: true });
             return;
         }
         fetchCart();

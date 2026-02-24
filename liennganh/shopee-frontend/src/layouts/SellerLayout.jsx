@@ -18,6 +18,13 @@ const SellerLayout = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
+    // Redirect về login nếu chưa đăng nhập
+    useEffect(() => {
+        if (!user) {
+            navigate('/login', { state: { from: location }, replace: true });
+        }
+    }, [user, navigate, location]);
+
     const handleLogout = () => {
         logout();
         navigate('/login');
@@ -103,11 +110,8 @@ const SellerLayout = () => {
             <div className="min-h-screen flex items-center justify-center bg-orange-50">
                 <div className="text-center">
                     <Store className="w-16 h-16 mx-auto mb-4 text-orange-400" />
-                    <h1 className="text-2xl font-bold mb-2 text-gray-800">Truy cập bị từ chối</h1>
+                    <h1 className="text-2xl font-bold mb-2 text-gray-800">Đang chuyển hướng...</h1>
                     <p className="text-gray-500 mb-6">Bạn cần đăng nhập để truy cập trang này.</p>
-                    <Link to="/login" className="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 transition">
-                        Đăng nhập
-                    </Link>
                 </div>
             </div>
         );
