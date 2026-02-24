@@ -3,7 +3,8 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { Star, ShoppingCart, Minus, Plus, MessageSquare, Store } from 'lucide-react';
+import { Star, ShoppingCart, Minus, Plus, MessageSquare, Store, ChevronLeft, ChevronRight } from 'lucide-react';
+import { getImageUrl } from '../utils';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -18,6 +19,10 @@ const ProductDetail = () => {
     const [addingToCart, setAddingToCart] = useState(false);
     const [selectedVariant, setSelectedVariant] = useState(null);
     const [selectedOptions, setSelectedOptions] = useState({});
+
+    // States cho sản phẩm liên quan
+    const [relatedProducts, setRelatedProducts] = useState([]);
+    const relatedRef = React.useRef(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -38,6 +43,18 @@ const ProductDetail = () => {
                         setSelectedOptions(attrs);
                     } catch (e) { /* ignore */ }
                 }
+
+                // Gọi API lấy sản phẩm liên quan (cùng danh mục)
+                if (productData.category?.id) {
+                    api.get(`/products/category/${productData.category.id}`)
+                        .then(res => {
+                            const relatedData = res.data.data || res.data;
+                            // Lọc bỏ sản phẩm hiện tại
+                            setRelatedProducts(relatedData.filter(p => p.id !== productData.id));
+                        })
+                        .catch(err => console.error("Error fetching related products", err));
+                }
+
             } catch (error) {
                 console.error("Error fetching product details:", error);
             } finally {
@@ -45,7 +62,20 @@ const ProductDetail = () => {
             }
         };
         fetchData();
+
+        // Reset state khi ID sản phẩm thay đổi
+        setQuantity(1);
+        setSelectedVariant(null);
+        setSelectedOptions({});
     }, [id]);
+
+    // Slider cuộn cho sản phẩm liên quan
+    const scrollRelated = (direction) => {
+        if (relatedRef.current) {
+            const scrollAmount = 300; // Cuộn khoảng 3 sản phẩm mỗi lần
+            relatedRef.current.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
+        }
+    };
 
     // Parse variants into attribute groups
     const getAttributeGroups = () => {
@@ -372,7 +402,7 @@ const ProductDetail = () => {
                     {reviews.length === 0 ? (
                         <div className="text-center py-8 text-gray-500">Chưa có đánh giá nào.</div>
                     ) : (
-                        <div className="space-y-0">
+                        <div className="space-y-0 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                             {reviews.map((review) => (
                                 <div key={review.id} className="border-b border-gray-100 py-4 last:border-0">
                                     <div className="flex gap-3">
@@ -407,6 +437,63 @@ const ProductDetail = () => {
                         </div>
                     )}
                 </div>
+
+                {/* 5. RELATED PRODUCTS SECTION */}
+                {relatedProducts.length > 0 && (
+                    <div className="bg-white rounded shadow-sm overflow-hidden mb-8 mt-4 group/related relative">
+                        <div className="bg-gray-50 p-4 border-b">
+                            <h2 className="text-gray-700 uppercase font-medium text-lg">Sản Phẩm Cùng Danh Mục</h2>
+                        </div>
+
+                        {/* Left Arrow */}
+                        <button
+                            onClick={() => scrollRelated('left')}
+                            className="absolute left-2 top-[60%] -translate-y-1/2 z-20 w-10 h-10 bg-white/90 shadow-md border hover:border-orange-500 hover:text-orange-500 rounded-full flex items-center justify-center opacity-0 group-hover/related:opacity-100 transition-all"
+                        >
+                            <ChevronLeft className="w-6 h-6" />
+                        </button>
+
+                        {/* Right Arrow */}
+                        <button
+                            onClick={() => scrollRelated('right')}
+                            className="absolute right-2 top-[60%] -translate-y-1/2 z-20 w-10 h-10 bg-white/90 shadow-md border hover:border-orange-500 hover:text-orange-500 rounded-full flex items-center justify-center opacity-0 group-hover/related:opacity-100 transition-all"
+                        >
+                            <ChevronRight className="w-6 h-6" />
+                        </button>
+
+                        <div ref={relatedRef} className="overflow-x-auto snap-x flex scroll-smooth p-4 gap-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                            {relatedProducts.map((item) => (
+                                <Link
+                                    to={`/product/${item.id}`}
+                                    key={item.id}
+                                    className="min-w-[180px] max-w-[180px] flex-shrink-0 border border-gray-100 hover:border-orange-400 rounded-lg overflow-hidden cursor-pointer block transition-all hover:shadow-md group bg-white snap-start"
+                                >
+                                    <div className="relative aspect-square bg-gray-50">
+                                        {item.imageUrl ? (
+                                            <img
+                                                src={getImageUrl(item.imageUrl)}
+                                                alt={item.name}
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center">
+                                                <ShoppingCart className="text-gray-300 w-10 h-10" />
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="p-3">
+                                        <h3 className="text-sm text-gray-800 line-clamp-2 min-h-[40px] mb-2">{item.name}</h3>
+                                        <div className="flex justify-between items-end">
+                                            <div className="text-orange-500 font-medium text-sm">
+                                                {formatPrice(item.price)}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
