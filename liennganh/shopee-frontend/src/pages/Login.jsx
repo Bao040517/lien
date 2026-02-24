@@ -1,26 +1,45 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const { login } = useAuth();
+    const { login, user } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Nếu đã đăng nhập rồi, redirect về trang phù hợp
+    useEffect(() => {
+        if (user) {
+            const from = location.state?.from?.pathname || '/';
+            if (user.role === 'ADMIN') {
+                navigate('/admin', { replace: true });
+            } else if (user.role === 'SELLER') {
+                navigate('/seller', { replace: true });
+            } else {
+                navigate(from, { replace: true });
+            }
+        }
+    }, [user, navigate, location]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         const result = await login(username, password);
         if (result.success) {
+            // Lấy đường dẫn mà user muốn truy cập trước khi đăng nhập
+            const from = location.state?.from?.pathname || '/';
             const role = result.user?.role;
+            
             if (role === 'ADMIN') {
                 navigate('/admin');
             } else if (role === 'SELLER') {
                 navigate('/seller');
             } else {
-                navigate('/');
+                // Nếu là USER và có trang redirect, quay về trang đó
+                navigate(from);
             }
         } else {
             setError(result.message);

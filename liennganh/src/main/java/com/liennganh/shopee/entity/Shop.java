@@ -51,6 +51,10 @@ public class Shop {
         this.owner = owner;
     }
 
+    public String getOwnerUsername() {
+        return owner != null ? owner.getUsername() : null;
+    }
+
     public Long getId() {
         return id;
     }

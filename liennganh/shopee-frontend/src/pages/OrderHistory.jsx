@@ -41,7 +41,7 @@ const OrderHistory = () => {
 
     useEffect(() => {
         if (!user) {
-            navigate('/login');
+            navigate('/login', { state: { from: { pathname: '/purchase' } }, replace: true });
             return;
         }
         fetchOrders();

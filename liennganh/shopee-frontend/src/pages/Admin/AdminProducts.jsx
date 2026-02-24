@@ -226,7 +226,12 @@ const AdminProducts = () => {
                                             <td className="px-6 py-3">
                                                 <div className="flex flex-col">
                                                     <span className="text-sm text-gray-800">{product.category?.name || '—'}</span>
-                                                    <span className="text-xs text-gray-500">{product.shop?.name || '—'}</span>
+                                                    <span className="text-xs text-gray-500">
+                                                        {product.shop?.name || '—'}
+                                                        {product.shop?.ownerUsername && (
+                                                            <span className="text-gray-400"> ({product.shop.ownerUsername})</span>
+                                                        )}
+                                                    </span>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-3">

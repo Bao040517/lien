@@ -10,6 +10,13 @@ const AdminLayout = () => {
     const navigate = useNavigate();
     const [badges, setBadges] = useState({});
 
+    // Redirect về login nếu chưa đăng nhập
+    useEffect(() => {
+        if (!user) {
+            navigate('/login', { state: { from: location }, replace: true });
+        }
+    }, [user, navigate, location]);
+
     // Lấy baseline đã lưu từ localStorage
     const getBaseline = () => {
         try {
@@ -108,10 +115,14 @@ const AdminLayout = () => {
                 <div className="text-center">
                     <ShieldCheck className="w-16 h-16 mx-auto mb-4 text-red-400" />
                     <h1 className="text-2xl font-bold mb-2">Truy cập bị từ chối</h1>
-                    <p className="text-gray-400 mb-6">Bạn không có quyền truy cập trang quản trị.</p>
-                    <Link to="/" className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
-                        Về trang chủ
-                    </Link>
+                    <p className="text-gray-400 mb-6">
+                        {!user ? 'Đang chuyển hướng đến trang đăng nhập...' : 'Bạn không có quyền truy cập trang quản trị.'}
+                    </p>
+                    {user && (
+                        <Link to="/" className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
+                            Về trang chủ
+                        </Link>
+                    )}
                 </div>
             </div>
         );
