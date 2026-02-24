@@ -22,14 +22,14 @@ const AdminProducts = () => {
 
     const fetchData = () => {
         Promise.all([
-            api.get('/products/all'),
-            api.get('/categories')
+            api.get('/products/all', { params: { size: 1000 } }), // Fetch virtually all for client-side pagination or increase size
+            api.get('/categories', { params: { size: 1000 } })
         ]).then(([pRes, cRes]) => {
-            const allProducts = pRes.data.data || [];
+            const allProducts = pRes.data.data?.content || pRes.data.data || [];
             // Sắp xếp theo ID giảm dần → sản phẩm mới nhất lên đầu
             allProducts.sort((a, b) => b.id - a.id);
             setProducts(allProducts);
-            setCategories(cRes.data.data || []);
+            setCategories(cRes.data.data?.content || cRes.data.data || []);
 
             // Lưu maxId hiện tại vào localStorage để lần sau biết đâu là "mới"
             if (allProducts.length > 0) {

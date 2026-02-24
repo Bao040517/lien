@@ -20,8 +20,8 @@ const AdminCategories = () => {
 
     const fetchCategories = async () => {
         try {
-            const res = await api.get('/categories');
-            setCategories(res.data.data || []);
+            const res = await api.get('/categories', { params: { size: 1000 } });
+            setCategories(res.data.data?.content || res.data.data || []);
         } catch (e) { console.error(e); }
         finally { setLoading(false); }
     };

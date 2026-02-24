@@ -31,8 +31,11 @@ public class ProductController {
      * Quyá»n háº¡n: Public
      */
     @GetMapping
-    public ApiResponse<List<Product>> getAllProducts() {
-        return ApiResponse.success(productService.getAllProducts(), "Láº¥y danh sÃ¡ch sáº£n pháº©m thÃ nh cÃ´ng");
+    public ApiResponse<org.springframework.data.domain.Page<Product>> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ApiResponse.success(productService.getAllProducts(page, size),
+                "Láº¥y danh sÃ¡ch sáº£n pháº©m thÃ nh cÃ´ng");
     }
 
     /**
@@ -41,8 +44,10 @@ public class ProductController {
      */
     @GetMapping("/all")
     @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<List<Product>> getAllProductsAdmin() {
-        return ApiResponse.success(productService.getAllProductsIncludingBanned(),
+    public ApiResponse<org.springframework.data.domain.Page<Product>> getAllProductsAdmin(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "100") int size) {
+        return ApiResponse.success(productService.getAllProductsIncludingBanned(page, size),
                 "Láº¥y táº¥t cáº£ sáº£n pháº©m thÃ nh cÃ´ng");
     }
 
@@ -101,8 +106,11 @@ public class ProductController {
      * 
      */
     @GetMapping("/shop/{shopId}")
-    public ApiResponse<List<Product>> getProductsByShop(@PathVariable Long shopId) {
-        return ApiResponse.success(productService.getProductsByShopId(shopId),
+    public ApiResponse<org.springframework.data.domain.Page<Product>> getProductsByShop(
+            @PathVariable Long shopId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ApiResponse.success(productService.getProductsByShopId(shopId, page, size),
                 "Láº¥y danh sÃ¡ch sáº£n pháº©m cá»§a shop thÃ nh cÃ´ng");
     }
 
@@ -112,8 +120,11 @@ public class ProductController {
      * 
      */
     @GetMapping("/category/{categoryId}")
-    public ApiResponse<List<Product>> getProductsByCategory(@PathVariable Long categoryId) {
-        return ApiResponse.success(productService.getProductsByCategory(categoryId),
+    public ApiResponse<org.springframework.data.domain.Page<Product>> getProductsByCategory(
+            @PathVariable Long categoryId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ApiResponse.success(productService.getProductsByCategory(categoryId, page, size),
                 "Láº¥y danh sÃ¡ch sáº£n pháº©m theo danh má»¥c thÃ nh cÃ´ng");
     }
 
@@ -123,8 +134,12 @@ public class ProductController {
      * 
      */
     @GetMapping("/search")
-    public ApiResponse<List<Product>> searchProducts(@RequestParam String keyword) {
-        return ApiResponse.success(productService.searchProducts(keyword), "TÃ¬m kiáº¿m sáº£n pháº©m thÃ nh cÃ´ng");
+    public ApiResponse<org.springframework.data.domain.Page<Product>> searchProducts(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ApiResponse.success(productService.searchProducts(keyword, page, size),
+                "TÃ¬m kiáº¿m sáº£n pháº©m thÃ nh cÃ´ng");
     }
 
     /**
@@ -134,13 +149,15 @@ public class ProductController {
      * rating_desc, best_selling)
      */
     @GetMapping("/filter")
-    public ApiResponse<List<Product>> filterProducts(
+    public ApiResponse<org.springframework.data.domain.Page<Product>> filterProducts(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
-            @RequestParam(required = false) String sortBy) {
-        return ApiResponse.success(productService.filterProducts(keyword, categoryId, minPrice, maxPrice, sortBy),
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ApiResponse.success(productService.filterProducts(keyword, categoryId, minPrice, maxPrice, sortBy, page, size),
                 "Lá»c sáº£n pháº©m thÃ nh cÃ´ng");
     }
 
@@ -214,10 +231,13 @@ public class ProductController {
      */
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
     @GetMapping("/my-shop")
-    public ApiResponse<List<Product>> getProductsByOwner(@RequestParam Long userId) {
+    public ApiResponse<org.springframework.data.domain.Page<Product>> getProductsByOwner(
+            @RequestParam Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
         User user = new User();
         user.setId(userId);
-        return ApiResponse.success(productService.getProductsByOwner(user),
+        return ApiResponse.success(productService.getProductsByOwner(user, page, size),
                 "Láº¥y danh sÃ¡ch sáº£n pháº©m cá»§a shop thÃ nh cÃ´ng");
     }
 
@@ -408,7 +428,9 @@ public class ProductController {
         if (files == null || files.length == 0)
             return ApiResponse.error(404, "No images");
 
-        List<Product> products = productService.getAllProductsIncludingBanned();
+        org.springframework.data.domain.Page<Product> productPage = productService.getAllProductsIncludingBanned(0,
+                Integer.MAX_VALUE);
+        List<Product> products = productPage.getContent();
         java.util.Random rand = new java.util.Random();
         for (Product p : products) {
             String randomImg = files[rand.nextInt(files.length)];

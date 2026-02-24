@@ -24,7 +24,7 @@ const CategoryProducts = () => {
                         sortBy: sortBy === 'relevance' ? null : sortBy
                     }
                 });
-                setProducts(res.data.data || []);
+                setProducts(res.data.data?.content || res.data.data || []);
             } catch (error) {
                 console.error("Error fetching category products:", error);
             } finally {

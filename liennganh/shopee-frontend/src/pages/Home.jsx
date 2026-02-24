@@ -101,12 +101,14 @@ const Home = () => {
                 ]);
 
                 if (productsRes.status === 'fulfilled') {
-                    const productData = productsRes.value.data.data || productsRes.value.data;
+                    const responseData = productsRes.value.data.data || productsRes.value.data;
+                    const productData = responseData.content || responseData;
                     setProducts(Array.isArray(productData) ? productData : []);
                 }
 
                 if (categoriesRes.status === 'fulfilled') {
-                    const categoryData = categoriesRes.value.data.data || categoriesRes.value.data;
+                    const responseData = categoriesRes.value.data.data || categoriesRes.value.data;
+                    const categoryData = responseData.content || responseData;
                     setCategories(Array.isArray(categoryData) ? categoryData : []);
                 }
 
@@ -255,7 +257,7 @@ const Home = () => {
                 {/* 1. CATEGORIES SECTION */}
                 <div className="bg-white p-4 rounded shadow-sm relative group/cats">
                     <h2 className="text-gray-500 uppercase font-medium mb-4 text-sm">Danh Mục</h2>
-                    
+
                     {/* Left Arrow */}
                     <button
                         onClick={() => scrollCategory('left')}

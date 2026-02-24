@@ -69,8 +69,11 @@ public class SellerController {
      * 
      */
     @GetMapping("/products")
-    public ApiResponse<List<Product>> getMyProducts(@RequestParam Long sellerId) {
-        List<Product> products = sellerService.getMyProducts(sellerId);
+    public ApiResponse<org.springframework.data.domain.Page<Product>> getMyProducts(
+            @RequestParam Long sellerId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        org.springframework.data.domain.Page<Product> products = sellerService.getMyProducts(sellerId, page, size);
         return ApiResponse.success(products, "Láº¥y danh sÃ¡ch sáº£n pháº©m thÃ nh cÃ´ng");
     }
 
@@ -124,4 +127,3 @@ public class SellerController {
         return ApiResponse.success(stats, "Láº¥y thá»‘ng kÃª thÃ nh cÃ´ng");
     }
 }
-

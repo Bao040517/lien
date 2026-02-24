@@ -51,7 +51,7 @@ public class StatisticsService {
                 stats.setTotalProducts(totalProducts);
 
                 // Get all orders containing products from this shop
-                List<Product> shopProducts = productRepository.findByShop(shop);
+                List<Product> shopProducts = productRepository.findAllByShop(shop);
                 List<Long> productIds = shopProducts.stream().map(Product::getId).collect(Collectors.toList());
 
                 if (productIds.isEmpty()) {
@@ -236,7 +236,7 @@ public class StatisticsService {
                 List<TopSellerDTO> topSellers = new ArrayList<>();
 
                 for (Shop shop : allShops) {
-                        List<Product> shopProducts = productRepository.findByShop(shop);
+                        List<Product> shopProducts = productRepository.findAllByShop(shop);
                         List<Long> productIds = shopProducts.stream().map(Product::getId).collect(Collectors.toList());
 
                         if (!productIds.isEmpty()) {
