@@ -5,8 +5,10 @@ import Pagination from '../../components/Pagination';
 import ConfirmModal from '../../components/Admin/ConfirmModal';
 import PromptModal from '../../components/Admin/PromptModal';
 import { getImageUrl } from '../../utils';
+import { useToast } from '../../context/ToastContext';
 
 const AdminProducts = () => {
+    const toast = useToast();
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -64,7 +66,7 @@ const AdminProducts = () => {
         try {
             await api.delete(`/products/${id}`);
             setProducts(prev => prev.filter(p => p.id !== id));
-        } catch { alert('Xoá thất bại!'); }
+        } catch { toast.error('Xoá thất bại!'); }
         setConfirmModal(prev => ({ ...prev, isOpen: false }));
     };
 
@@ -86,7 +88,7 @@ const AdminProducts = () => {
                 p.id === id ? { ...p, banned: true, isBanned: true, violationReason: reason } : p
             ));
         } catch (e) {
-            alert('Khóa thất bại: ' + (e.response?.data?.message || e.message));
+            toast.error('Khóa thất bại: ' + (e.response?.data?.message || e.message));
         }
         setPromptModal(prev => ({ ...prev, isOpen: false }));
     };
@@ -109,7 +111,7 @@ const AdminProducts = () => {
                 p.id === id ? { ...p, banned: false, isBanned: false, violationReason: null } : p
             ));
         } catch (e) {
-            alert('Mở khóa thất bại: ' + (e.response?.data?.message || e.message));
+            toast.error('Mở khóa thất bại: ' + (e.response?.data?.message || e.message));
         }
         setConfirmModal(prev => ({ ...prev, isOpen: false }));
     };

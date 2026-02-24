@@ -3,8 +3,10 @@ import api from '../../api';
 import { Plus, Edit, Trash2, Save, X, FolderOpen, Sparkles } from 'lucide-react';
 import Pagination from '../../components/Pagination';
 import ConfirmModal from '../../components/Admin/ConfirmModal';
+import { useToast } from '../../context/ToastContext';
 
 const AdminCategories = () => {
+    const toast = useToast();
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
@@ -84,7 +86,7 @@ const AdminCategories = () => {
             resetForm();
         } catch (err) {
             console.error(err);
-            alert(editingId ? 'Cập nhật danh mục thất bại!' : 'Tạo danh mục thất bại!');
+            toast.error(editingId ? 'Cập nhật danh mục thất bại!' : 'Tạo danh mục thất bại!');
         }
         finally { setSaving(false); }
     };
@@ -103,7 +105,7 @@ const AdminCategories = () => {
         try {
             await api.delete(`/categories/${id}`);
             setCategories(prev => prev.filter(c => c.id !== id));
-        } catch { alert('Xoá danh mục thất bại!'); }
+        } catch { toast.error('Xoá danh mục thất bại!'); }
         setConfirmModal({ ...confirmModal, isOpen: false });
     };
 

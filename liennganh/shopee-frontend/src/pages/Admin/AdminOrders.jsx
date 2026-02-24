@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../../api';
 import { ShoppingCart, Search, Clock, Package, Truck, CheckCircle, XCircle, AlertCircle, ChevronDown, Sparkles } from 'lucide-react';
 import Pagination from '../../components/Pagination';
+import { useToast } from '../../context/ToastContext';
 
 const statusConfig = {
     PENDING: { label: 'Chờ xác nhận', icon: Clock, color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
@@ -14,6 +15,7 @@ const statusConfig = {
 const allStatuses = ['PENDING', 'SHIPPING', 'DELIVERING', 'DELIVERED', 'CANCELLED'];
 
 const AdminOrders = () => {
+    const toast = useToast();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [statusFilter, setStatusFilter] = useState('ALL');
@@ -55,7 +57,7 @@ const AdminOrders = () => {
         try {
             await api.put(`/ admin / orders / ${orderId}/status?status=${newStatus}`);
             setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
-        } catch { alert('Cập nhật trạng thái thất bại!'); }
+        } catch { toast.error('Cập nhật trạng thái thất bại!'); }
         finally { setUpdating(null); }
     };
 

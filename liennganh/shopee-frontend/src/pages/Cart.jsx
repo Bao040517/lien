@@ -5,12 +5,14 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { Trash2, Minus, Plus, ShoppingBag, Store } from 'lucide-react';
 import Breadcrumb from '../components/Breadcrumb';
+import { useToast } from '../context/ToastContext';
 import { getImageUrl } from '../utils';
 
 const Cart = () => {
     const { user } = useAuth();
     const { refreshCart } = useCart();
     const navigate = useNavigate();
+    const toast = useToast();
 
     const [cartItems, setCartItems] = useState([]);
     const [selectedItems, setSelectedItems] = useState(new Set());
@@ -103,16 +105,16 @@ const Cart = () => {
         try {
             const orderValue = getSelectedTotal();
             if (orderValue === 0) {
-                alert('Vui lòng chọn sản phẩm để áp dụng mã.');
+                toast.warning('Vui lòng chọn sản phẩm để áp dụng mã.');
                 return;
             }
             const res = await api.post(`/vouchers/apply?code=${voucherCode}&orderValue=${orderValue}`);
             setDiscountAmount(res.data.data);
             setAppliedVoucher(voucherCode);
-            alert('Áp mã giảm giá thành công! Giảm: ' + formatPrice(res.data.data));
+            toast.success('Áp mã giảm giá thành công! Giảm: ' + formatPrice(res.data.data));
         } catch (error) {
             console.error(error);
-            alert(error.response?.data?.message || 'Không thể áp dụng mã');
+            toast.error(error.response?.data?.message || 'Không thể áp dụng mã');
             setDiscountAmount(0);
             setAppliedVoucher(null);
         }

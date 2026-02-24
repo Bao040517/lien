@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import Breadcrumb from '../components/Breadcrumb';
+import { useToast } from '../context/ToastContext';
 import api from '../api';
 import { Package, Truck, CheckCircle, Clock, XCircle, ChevronDown, ChevronUp, MapPin, Star } from 'lucide-react';
 import ReviewModal from '../components/ReviewModal';
@@ -30,6 +31,7 @@ const STEPS = ['PENDING', 'SHIPPING', 'DELIVERING', 'DELIVERED'];
 const OrderHistory = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
+    const toast = useToast();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('ALL');
@@ -76,11 +78,11 @@ const OrderHistory = () => {
                 rating,
                 comment
             });
-            alert('Cảm ơn bạn đã đánh giá sản phẩm!');
+            toast.success('Cảm ơn bạn đã đánh giá sản phẩm!');
             setIsReviewOpen(false);
         } catch (error) {
             console.error(error);
-            alert('Gửi đánh giá thất bại: ' + (error.response?.data?.message || 'Lỗi không xác định'));
+            toast.error('Gửi đánh giá thất bại: ' + (error.response?.data?.message || 'Lỗi không xác định'));
         }
     };
 

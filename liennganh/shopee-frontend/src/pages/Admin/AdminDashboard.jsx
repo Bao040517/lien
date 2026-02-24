@@ -5,6 +5,7 @@ import {
     Users, Store, Package, ShoppingCart, DollarSign, UserCheck, TrendingUp, AlertCircle,
     ArrowUpRight, Clock, CheckCircle, Truck, XCircle
 } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
 
 const statusColors = {
     PENDING: { bg: 'bg-yellow-50', text: 'text-yellow-700', icon: Clock },
@@ -25,6 +26,7 @@ const statusLabels = {
 };
 
 const AdminDashboard = () => {
+    const toast = useToast();
     const [stats, setStats] = useState(null);
     const [pendingSellers, setPendingSellers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -71,7 +73,7 @@ const AdminDashboard = () => {
             await api.put(`/admin/sellers/${id}/approve`);
             setPendingSellers(prev => prev.filter(s => s.id !== id));
             setStats(prev => prev ? { ...prev, pendingSellers: (prev.pendingSellers || 1) - 1 } : prev);
-        } catch { alert('Duyệt thất bại!'); }
+        } catch { toast.error('Duyệt thất bại!'); }
     };
 
     const handleReject = async (id) => {
@@ -80,7 +82,7 @@ const AdminDashboard = () => {
             await api.put(`/admin/sellers/${id}/reject`);
             setPendingSellers(prev => prev.filter(s => s.id !== id));
             setStats(prev => prev ? { ...prev, pendingSellers: (prev.pendingSellers || 1) - 1 } : prev);
-        } catch { alert('Từ chối thất bại!'); }
+        } catch { toast.error('Từ chối thất bại!'); }
     };
 
     if (loading) return (

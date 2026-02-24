@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../api';
 import { LayoutDashboard, Package, ShoppingBag, BarChart3, Settings, LogOut, Store, ImagePlus, Bell, Ticket, AlertTriangle, MessageCircle } from 'lucide-react';
 import Breadcrumb from '../components/Breadcrumb';
+import { useToast } from '../context/ToastContext';
 
 const menuItems = [
     { path: '/seller', label: 'Dashboard', icon: LayoutDashboard },
@@ -20,6 +21,7 @@ const SellerLayout = () => {
     const { user, logout, requestSellerUpgrade } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
+    const toast = useToast();
 
     // Redirect về login nếu chưa đăng nhập
     useEffect(() => {
@@ -81,7 +83,7 @@ const SellerLayout = () => {
     const handleShopSetupSubmit = async (e) => {
         e.preventDefault();
         if (!shopName.trim()) {
-            alert("Vui lòng nhập tên Shop của bạn!");
+            toast.warning('Vui lòng nhập tên Shop của bạn!');
             return;
         }
 
@@ -97,7 +99,7 @@ const SellerLayout = () => {
             setShopProfile(prev => ({ ...prev, name: shopName, description: shopDescription }));
         } catch (error) {
             console.error("Lỗi cập nhật Shop:", error);
-            alert("Cập nhật thông tin Shop thất bại. Vui lòng thử lại!");
+            toast.error('Cập nhật thông tin Shop thất bại. Vui lòng thử lại!');
         } finally {
             setIsUpdatingShop(false);
         }

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
 import { Ticket, Plus, Trash2, Calendar, DollarSign, Percent } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
 import { format } from 'date-fns';
 
 const SellerVouchers = () => {
@@ -21,6 +22,7 @@ const SellerVouchers = () => {
     });
 
     const { user } = useAuth(); // Get user from context
+    const toast = useToast();
 
     const fetchVouchers = async () => {
         if (!user) return;
@@ -69,13 +71,13 @@ const SellerVouchers = () => {
 
         // Validations
         if (!formData.code || !formData.discountValue || !formData.startDate || !formData.endDate) {
-            alert("Vui lòng điền đầy đủ thông tin bắt buộc");
+            toast.warning('Vui lòng điền đầy đủ thông tin bắt buộc');
             return;
         }
 
         // Date Validation: Start must be BEFORE End
         if (new Date(formData.startDate) >= new Date(formData.endDate)) {
-            alert("Ngày kết thúc phải sau ngày bắt đầu. (Lưu ý: 12:00 PM là 12 giờ trưa, không phải đêm)");
+            toast.warning('Ngày kết thúc phải sau ngày bắt đầu. (Lưu ý: 12:00 PM là 12 giờ trưa, không phải đêm)');
             return;
         }
 
@@ -106,7 +108,7 @@ const SellerVouchers = () => {
             });
         } catch (error) {
             console.error('Failed to create voucher:', error);
-            alert(error.response?.data?.message || 'Tạo mã giảm giá thất bại. Kiểm tra lại thông tin.');
+            toast.error(error.response?.data?.message || 'Tạo mã giảm giá thất bại. Kiểm tra lại thông tin.');
         }
     };
 
@@ -120,7 +122,7 @@ const SellerVouchers = () => {
             setVouchers(prev => prev.filter(v => v.id !== id));
         } catch (error) {
             console.error('Failed to delete voucher:', error);
-            alert('Xóa mã giảm giá thất bại.');
+            toast.error('Xóa mã giảm giá thất bại.');
         }
     };
 

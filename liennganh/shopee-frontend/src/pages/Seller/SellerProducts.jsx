@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Package, Plus, Search, Trash2, Edit3, Eye, AlertTriangle } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
 import Pagination from '../../components/Pagination';
 import api from '../../api';
 import { getImageUrl } from '../../utils';
 
 const SellerProducts = () => {
     const { user } = useAuth();
+    const toast = useToast();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -47,7 +49,7 @@ const SellerProducts = () => {
             setProducts(prev => prev.filter(p => p.id !== productId));
         } catch (error) {
             console.error("Failed to delete:", error);
-            alert('Xoá sản phẩm thất bại!');
+            toast.error('Xoá sản phẩm thất bại!');
         } finally {
             setDeleting(null);
         }

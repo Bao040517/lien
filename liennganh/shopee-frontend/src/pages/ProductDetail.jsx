@@ -4,6 +4,7 @@ import Breadcrumb from '../components/Breadcrumb';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useToast } from '../context/ToastContext';
 import { Star, ShoppingCart, Minus, Plus, MessageSquare, Store, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getImageUrl } from '../utils';
 
@@ -12,6 +13,7 @@ const ProductDetail = () => {
     const navigate = useNavigate();
     const { user } = useAuth();
     const { refreshCart } = useCart();
+    const toast = useToast();
 
     const [product, setProduct] = useState(null);
     const [reviews, setReviews] = useState([]);
@@ -124,11 +126,11 @@ const ProductDetail = () => {
             await api.post(`/cart/${user.id}/add`, null, {
                 params: { productId: id, quantity }
             });
-            alert("Đã thêm vào giỏ hàng!");
+            toast.success('Đã thêm vào giỏ hàng!');
             refreshCart();
         } catch (error) {
             console.error("Error adding to cart:", error);
-            alert("Thêm vào giỏ hàng thất bại.");
+            toast.error('Thêm vào giỏ hàng thất bại.');
         } finally {
             setAddingToCart(false);
         }
@@ -156,7 +158,7 @@ const ProductDetail = () => {
             return;
         }
         if (!product.shop?.id) {
-            alert('Không tìm thấy thông tin shop');
+            toast.error('Không tìm thấy thông tin shop');
             return;
         }
         try {
@@ -164,7 +166,7 @@ const ProductDetail = () => {
             const ownerRes = await api.get(`/shops/${product.shop.id}/owner-id`);
             const ownerId = ownerRes.data.data;
             if (ownerId === user.id) {
-                alert('Bạn không thể nhắn tin cho chính mình!');
+                toast.warning('Bạn không thể nhắn tin cho chính mình!');
                 return;
             }
             // Tạo/tìm hội thoại
@@ -175,7 +177,7 @@ const ProductDetail = () => {
             navigate('/messages', { state: { openConv: { id: conv.id, otherUser } } });
         } catch (e) {
             console.error('Lỗi mở chat:', e);
-            alert('Không thể mở chat. Vui lòng thử lại!');
+            toast.error('Không thể mở chat. Vui lòng thử lại!');
         }
     };
 

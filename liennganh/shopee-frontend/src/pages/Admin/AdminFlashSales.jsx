@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import api from '../../api';
 import { Zap, Plus, Trash2, Calendar, ShoppingBag } from 'lucide-react';
 import { getImageUrl } from '../../utils';
+import { useToast } from '../../context/ToastContext';
 
 const AdminFlashSales = () => {
+    const toast = useToast();
     const [flashSales, setFlashSales] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -62,7 +64,7 @@ const AdminFlashSales = () => {
         e.preventDefault();
         try {
             if (!form.startDate || !form.endDate) {
-                alert('Vui lòng chọn thời gian bắt đầu và kết thúc');
+                toast.warning('Vui lòng chọn thời gian bắt đầu và kết thúc');
                 return;
             }
 
@@ -98,7 +100,7 @@ const AdminFlashSales = () => {
 
         } catch (error) {
             console.error(error);
-            alert('Thất bại: ' + (error.response?.data?.message || 'Lỗi không xác định'));
+            toast.error('Thất bại: ' + (error.response?.data?.message || 'Lỗi không xác định'));
         }
     };
 
