@@ -48,17 +48,37 @@ const AdminProducts = () => {
     // Kiểm tra sản phẩm có phải mới tạo không (ID > lastSeenMaxId)
     const isNewProduct = (product) => lastSeenMaxId > 0 && product.id > lastSeenMaxId;
 
-    const handleDelete = async (id, name) => {
-        if (!window.confirm(`Xoá sản phẩm "${name}"? Hành động này không thể hoàn tác.`)) return;
+    const handleDelete = (id, name) => {
+        setConfirmModal({
+            isOpen: true,
+            type: 'danger',
+            title: `Xoá sản phẩm "${name}"?`,
+            message: 'Hành động này không thể hoàn tác.',
+            targetId: id,
+            action: 'delete'
+        });
+    };
+
+    const confirmDelete = async (id) => {
         try {
             await api.delete(`/products/${id}`);
             setProducts(prev => prev.filter(p => p.id !== id));
         } catch { alert('Xoá thất bại!'); }
+        setConfirmModal(prev => ({ ...prev, isOpen: false }));
     };
 
-    const handleBan = async (id, name) => {
-        const reason = window.prompt(`Nhập lý do khóa sản phẩm "${name}":`, "Vi phạm tiêu chuẩn cộng đồng");
-        if (!reason) return;
+    const handleBan = (id, name) => {
+        setPromptModal({
+            isOpen: true,
+            title: `Khóa sản phẩm "${name}"`,
+            message: 'Vui lòng nhập lý do khóa sản phẩm:',
+            targetId: id,
+            targetName: name
+        });
+    };
+
+    const confirmBan = async (reason) => {
+        const id = promptModal.targetId;
         try {
             await api.put(`/products/${id}/ban`, null, { params: { reason } });
             setProducts(prev => prev.map(p =>
@@ -67,10 +87,21 @@ const AdminProducts = () => {
         } catch (e) {
             alert('Khóa thất bại: ' + (e.response?.data?.message || e.message));
         }
+        setPromptModal(prev => ({ ...prev, isOpen: false }));
     };
 
-    const handleUnban = async (id, name) => {
-        if (!window.confirm(`Mở khóa cho sản phẩm "${name}"?`)) return;
+    const handleUnban = (id, name) => {
+        setConfirmModal({
+            isOpen: true,
+            type: 'success',
+            title: `Mở khóa sản phẩm "${name}"?`,
+            message: 'Sản phẩm sẽ được hiển thị trở lại bình thường.',
+            targetId: id,
+            action: 'unban'
+        });
+    };
+
+    const confirmUnban = async (id) => {
         try {
             await api.put(`/products/${id}/unban`);
             setProducts(prev => prev.map(p =>
@@ -79,6 +110,7 @@ const AdminProducts = () => {
         } catch (e) {
             alert('Mở khóa thất bại: ' + (e.response?.data?.message || e.message));
         }
+        setConfirmModal(prev => ({ ...prev, isOpen: false }));
     };
 
     const formatPrice = (p) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p);
@@ -315,6 +347,29 @@ const AdminProducts = () => {
                     </div>
                 )}
             </div>
+
+            {/* Modals */}
+            <ConfirmModal
+                isOpen={confirmModal.isOpen}
+                type={confirmModal.type}
+                title={confirmModal.title}
+                message={confirmModal.message}
+                onConfirm={() => {
+                    if (confirmModal.action === 'delete') confirmDelete(confirmModal.targetId);
+                    else if (confirmModal.action === 'unban') confirmUnban(confirmModal.targetId);
+                }}
+                onCancel={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+            />
+
+            <PromptModal
+                isOpen={promptModal.isOpen}
+                title={promptModal.title}
+                message={promptModal.message}
+                defaultValue="Vi phạm tiêu chuẩn cộng đồng"
+                placeholder="Nhập lý do..."
+                onConfirm={confirmBan}
+                onCancel={() => setPromptModal(prev => ({ ...prev, isOpen: false }))}
+            />
         </div>
     );
 };
