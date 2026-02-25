@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Controller quáº£n lÃ½ Ä‘Æ¡n hÃ ng
- * User/Seller chá»‰ xem Ä‘Æ°á»£c Ä‘Æ¡n hÃ ng cá»§a mÃ¬nh, Admin xem Ä‘Æ°á»£c táº¥t cáº£
+ * Controller quản lý đơn hàng
+ * User/Seller chỉ xem được đơn hàng của mình, Admin xem được tất cả
  */
 @RestController
 @RequestMapping("/api/orders")
@@ -25,8 +25,8 @@ public class OrderController {
     private JwtService jwtService;
 
     /**
-     * Táº¡o Ä‘Æ¡n hÃ ng má»›i
-     * Quyá»n háº¡n: USER, SELLER
+     * Tạo đơn hàng mới
+     * Quyền hạn: USER, SELLER
      */
     @PreAuthorize("hasAnyRole('USER', 'SELLER')")
     @PostMapping
@@ -41,7 +41,7 @@ public class OrderController {
                     com.liennganh.shopee.exception.ErrorCode.INVALID_INPUT);
         }
 
-        // Äáº£m báº£o user chá»‰ táº¡o Ä‘Æ¡n cho chÃ­nh mÃ¬nh
+        // Đảm bảo user chỉ tạo đơn cho chính mình
         Long currentUserId = SecurityUtils.getCurrentUserId(jwtService);
         SecurityUtils.validateOwnership(orderRequest.getUserId(), currentUserId);
 
@@ -68,38 +68,38 @@ public class OrderController {
                 orderRequest.getVoucherCode(),
                 orderRequest.getAddressId(),
                 orderRequest.getPaymentMethod()),
-                "Táº¡o Ä‘Æ¡n hÃ ng thÃ nh cÃ´ng");
+                "Tạo đơn hàng thành công");
     }
 
     /**
-     * Xem lá»‹ch sá»­ Ä‘Æ¡n hÃ ng
-     * User/Seller chá»‰ xem Ä‘Æ°á»£c Ä‘Æ¡n cá»§a mÃ¬nh, Admin xem Ä‘Æ°á»£c táº¥t cáº£
+     * Xem lịch sử đơn hàng
+     * User/Seller chỉ xem được đơn của mình, Admin xem được tất cả
      */
     @PreAuthorize("hasAnyRole('USER', 'SELLER', 'ADMIN')")
     @GetMapping("/user/{userId}")
     public ApiResponse<List<Order>> getOrderHistory(@PathVariable Long userId) {
         Long currentUserId = SecurityUtils.getCurrentUserId(jwtService);
         SecurityUtils.validateOwnership(userId, currentUserId);
-        return ApiResponse.success(orderService.getOrdersByUser(userId), "Láº¥y lá»‹ch sá»­ Ä‘Æ¡n hÃ ng thÃ nh cÃ´ng");
+        return ApiResponse.success(orderService.getOrdersByUser(userId), "Lấy lịch sử đơn hàng thành công");
     }
 
     /**
-     * Xem chi tiáº¿t má»™t Ä‘Æ¡n hÃ ng
-     * User chá»‰ xem Ä‘Æ°á»£c Ä‘Æ¡n cá»§a mÃ¬nh, Admin xem Ä‘Æ°á»£c táº¥t cáº£
+     * Xem chi tiết một đơn hàng
+     * User chỉ xem được đơn của mình, Admin xem được tất cả
      */
     @PreAuthorize("hasAnyRole('USER', 'SELLER', 'ADMIN')")
     @GetMapping("/{orderId}")
     public ApiResponse<Order> getOrderById(@PathVariable Long orderId) {
         Order order = orderService.getOrderById(orderId);
-        // Kiá»ƒm tra quyá»n sá»Ÿ há»¯u Ä‘Æ¡n hÃ ng
+        // Kiểm tra quyền sở hữu đơn hàng
         Long currentUserId = SecurityUtils.getCurrentUserId(jwtService);
         SecurityUtils.validateOwnership(order.getUser().getId(), currentUserId);
-        return ApiResponse.success(order, "Láº¥y thÃ´ng tin Ä‘Æ¡n hÃ ng thÃ nh cÃ´ng");
+        return ApiResponse.success(order, "Lấy thông tin đơn hàng thành công");
     }
 
     /**
-     * Cáº­p nháº­t tráº¡ng thÃ¡i Ä‘Æ¡n hÃ ng
-     * Quyá»n háº¡n: SELLER, ADMIN
+     * Cập nhật trạng thái đơn hàng
+     * Quyền hạn: SELLER, ADMIN
      */
     @PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
     @PutMapping("/{orderId}/status")
@@ -108,7 +108,7 @@ public class OrderController {
         String status = request.get("status");
         return ApiResponse.success(
                 orderService.updateStatus(orderId, Order.OrderStatus.valueOf(status)),
-                "Cáº­p nháº­t tráº¡ng thÃ¡i Ä‘Æ¡n hÃ ng thÃ nh cÃ´ng");
+                "Cập nhật trạng thái đơn hàng thành công");
     }
 }
 

@@ -348,7 +348,7 @@ const Checkout = () => {
                 </div>
                 <div className="flex items-center gap-4 mb-6 text-primary-dark">
                     <div className="text-2xl font-medium border-r border-primary-dark pr-4">Thanh Toán</div>
-                    <div className="text-lg">Shopee Clone</div>
+                    <div className="text-lg">Nikki</div>
                 </div>
 
                 {/* Address Section */}

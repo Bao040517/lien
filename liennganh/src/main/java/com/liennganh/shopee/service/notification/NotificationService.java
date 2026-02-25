@@ -44,7 +44,7 @@ public class NotificationService {
     }
 
     /**
-     * Đánh dấu một thông báo là đã đọc
+     * ��nh d?u m?t th�ng b�o l� d� d?c
      * 
      * @throws AppException NOTIFICATION_NOT_FOUND nếu không tìm thấy
      */

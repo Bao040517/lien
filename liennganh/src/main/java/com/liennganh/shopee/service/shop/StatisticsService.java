@@ -164,7 +164,7 @@ public class StatisticsService {
                 }
                 stats.setProductDetailStats(detailStats);
 
-                // Tổng số lượng đã bán
+                // T?ng s? lu?ng d� b�n
                 long totalSold = orderItems.stream()
                                 .filter(item -> item.getOrder().getStatus() == Order.OrderStatus.DELIVERED)
                                 .mapToLong(OrderItem::getQuantity)

@@ -141,7 +141,7 @@ const AdminLayout = () => {
                         </div>
                         <div>
                             <h1 className="font-bold text-lg leading-tight">Admin Panel</h1>
-                            <p className="text-xs text-slate-400">Shopee Clone</p>
+                            <p className="text-xs text-slate-400">Nikki</p>
                         </div>
                     </div>
                 </div>

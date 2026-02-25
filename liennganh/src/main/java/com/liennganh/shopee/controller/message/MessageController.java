@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Controller xá»­ lÃ½ API Tin nháº¯n (Messaging)
- * Há»— trá»£ nháº¯n tin qua láº¡i giá»¯a USER, SELLER vÃ  ADMIN
+ * Controller xử lý API Tin nhắn (Messaging)
+ * Hỗ trợ nhắn tin qua lại giữa USER, SELLER và ADMIN
  */
 @RestController
 @RequestMapping("/api/messages")
@@ -25,7 +25,7 @@ public class MessageController {
     private final MessageService messageService;
 
     /**
-     * Láº¥y danh sÃ¡ch há»™i thoáº¡i cá»§a user hiá»‡n táº¡i
+     * Lấy danh sách hội thoại của user hiện tại
      */
     @GetMapping("/conversations")
     public ResponseEntity<?> getConversations(@RequestParam Long userId) {
@@ -49,11 +49,11 @@ public class MessageController {
             return map;
         }).toList();
 
-        return ResponseEntity.ok(ApiResponse.success(result, "Láº¥y danh sÃ¡ch há»™i thoáº¡i thÃ nh cÃ´ng"));
+        return ResponseEntity.ok(ApiResponse.success(result, "Lấy danh sách hội thoại thành công"));
     }
 
     /**
-     * Táº¡o hoáº·c tÃ¬m há»™i thoáº¡i giá»¯a 2 user
+     * Tạo hoặc tìm hội thoại giữa 2 user
      */
     @PostMapping("/conversations")
     public ResponseEntity<?> getOrCreateConversation(
@@ -76,11 +76,11 @@ public class MessageController {
         u2.put("role", conv.getUser2().getRole().name());
         result.put("user2", u2);
 
-        return ResponseEntity.ok(ApiResponse.success(result, "Táº¡o há»™i thoáº¡i thÃ nh cÃ´ng"));
+        return ResponseEntity.ok(ApiResponse.success(result, "Tạo hội thoại thành công"));
     }
 
     /**
-     * Láº¥y tin nháº¯n trong há»™i thoáº¡i
+     * Lấy tin nhắn trong hội thoại
      */
     @GetMapping("/{conversationId}")
     public ResponseEntity<?> getMessages(
@@ -102,11 +102,11 @@ public class MessageController {
             return map;
         }).toList();
 
-        return ResponseEntity.ok(ApiResponse.success(result, "Láº¥y tin nháº¯n thÃ nh cÃ´ng"));
+        return ResponseEntity.ok(ApiResponse.success(result, "Lấy tin nhắn thành công"));
     }
 
     /**
-     * Gá»­i tin nháº¯n
+     * Gửi tin nhắn
      */
     @PostMapping("/{conversationId}")
     public ResponseEntity<?> sendMessage(
@@ -115,7 +115,7 @@ public class MessageController {
             @RequestBody Map<String, String> body) {
         String content = body.get("content");
         if (content == null || content.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body(ApiResponse.error(400, "Ná»™i dung tin nháº¯n khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng"));
+            return ResponseEntity.badRequest().body(ApiResponse.error(400, "Nội dung tin nhắn không được để trống"));
         }
 
         Message message = messageService.sendMessage(conversationId, senderId, content.trim());
@@ -127,31 +127,31 @@ public class MessageController {
         result.put("senderName", message.getSender().getUsername());
         result.put("createdAt", message.getCreatedAt());
 
-        return ResponseEntity.ok(ApiResponse.success(result, "Gá»­i tin nháº¯n thÃ nh cÃ´ng"));
+        return ResponseEntity.ok(ApiResponse.success(result, "Gửi tin nhắn thành công"));
     }
 
     /**
-     * ÄÃ¡nh dáº¥u Ä‘Ã£ Ä‘á»c
+     * Đánh dấu đã đọc
      */
     @PutMapping("/{conversationId}/read")
     public ResponseEntity<?> markAsRead(
             @PathVariable Long conversationId,
             @RequestParam Long userId) {
         messageService.markAsRead(conversationId, userId);
-        return ResponseEntity.ok(ApiResponse.success(null, "ÄÃ£ Ä‘Ã¡nh dáº¥u Ä‘á»c"));
+        return ResponseEntity.ok(ApiResponse.success(null, "Đã đánh dấu đọc"));
     }
 
     /**
-     * Láº¥y sá»‘ tin chÆ°a Ä‘á»c
+     * Lấy số tin chưa đọc
      */
     @GetMapping("/unread-count")
     public ResponseEntity<?> getUnreadCount(@RequestParam Long userId) {
         int count = messageService.getUnreadCount(userId);
-        return ResponseEntity.ok(ApiResponse.success(count, "Láº¥y sá»‘ tin chÆ°a Ä‘á»c thÃ nh cÃ´ng"));
+        return ResponseEntity.ok(ApiResponse.success(count, "Lấy số tin chưa đọc thành công"));
     }
 
     /**
-     * TÃ¬m kiáº¿m user Ä‘á»ƒ báº¯t Ä‘áº§u há»™i thoáº¡i má»›i
+     * Tìm kiếm user để bắt đầu hội thoại mới
      */
     @GetMapping("/users/search")
     public ResponseEntity<?> searchUsers(
@@ -168,7 +168,7 @@ public class MessageController {
             return map;
         }).toList();
 
-        return ResponseEntity.ok(ApiResponse.success(result, "TÃ¬m kiáº¿m user thÃ nh cÃ´ng"));
+        return ResponseEntity.ok(ApiResponse.success(result, "Tìm kiếm user thành công"));
     }
 }
 

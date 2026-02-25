@@ -31,7 +31,7 @@ public class Notification {
 
     private Long referenceId; // ID tham chiếu (ví dụ: ID đơn hàng, ID sản phẩm...)
 
-    private boolean isRead = false; // Trạng thái đã đọc
+    private boolean isRead = false; // Tr?ng th�i d� d?c
     private LocalDateTime createdAt;
 
     @PrePersist

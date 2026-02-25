@@ -12,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Controller xá»­ lÃ½ authentication (Ä‘Äƒng kÃ½, Ä‘Äƒng nháº­p)
- * Endpoints cÃ´ng khai, khÃ´ng cáº§n JWT token
+ * Controller xử lý authentication (đăng ký, đăng nhập)
+ * Endpoints công khai, không cần JWT token
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -24,32 +24,32 @@ public class AuthController {
     private final JwtService jwtService;
 
     /**
-     * ÄÄƒng kÃ½ tÃ i khoáº£n USER (khÃ¡ch hÃ ng)
+     * Đăng ký tài khoản USER (khách hàng)
      */
     @PostMapping("/register")
     public ApiResponse<UserResponse> register(@RequestBody RegisterRequest request) {
         UserResponse user = authService.register(request);
-        return ApiResponse.success(user, "ÄÄƒng kÃ½ thÃ nh cÃ´ng");
+        return ApiResponse.success(user, "Đăng ký thành công");
     }
 
     /**
-     * ÄÄƒng nháº­p
+     * Đăng nhập
      */
     @PostMapping("/login")
     public ApiResponse<LoginResponse> login(@RequestBody LoginRequest request) {
         LoginResponse response = authService.login(request);
-        return ApiResponse.success(response, "ÄÄƒng nháº­p thÃ nh cÃ´ng");
+        return ApiResponse.success(response, "Đăng nhập thành công");
     }
 
     /**
-     * Láº¥y thÃ´ng tin user hiá»‡n táº¡i (tá»« JWT token)
-     * KhÃ´ng cáº§n truyá»n userId - tá»± láº¥y tá»« token
+     * Lấy thông tin user hiện tại (từ JWT token)
+     * Không cần truyền userId - tự lấy từ token
      */
     @GetMapping("/me")
     public ApiResponse<UserResponse> getCurrentUser() {
         Long userId = SecurityUtils.getCurrentUserId(jwtService);
         UserResponse user = authService.getUserResponseById(userId);
-        return ApiResponse.success(user, "Láº¥y thÃ´ng tin ngÆ°á»i dÃ¹ng thÃ nh cÃ´ng");
+        return ApiResponse.success(user, "Lấy thông tin người dùng thành công");
     }
 }
 

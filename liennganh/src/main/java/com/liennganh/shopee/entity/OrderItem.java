@@ -33,7 +33,7 @@ public class OrderItem {
     private BigDecimal price; // Giá tại thời điểm mua
 
     @Transient
-    private boolean isReviewed; // Cờ kiểm tra đã đánh giá chưa (không lưu DB)
+    private boolean isReviewed; // C? ki?m tra d� d�nh gi� chua (kh�ng luu DB)
 
     public Long getId() {
         return id;

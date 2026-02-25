@@ -12,8 +12,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.List;
 
 /**
- * Controller quáº£n lÃ½ thÃ´ng bÃ¡o
- * User/Seller chá»‰ xem Ä‘Æ°á»£c thÃ´ng bÃ¡o cá»§a mÃ¬nh, Admin xem Ä‘Æ°á»£c táº¥t cáº£
+ * Controller quản lý thông báo
+ * User/Seller chỉ xem được thông báo của mình, Admin xem được tất cả
  */
 @RestController
 @RequestMapping("/api/notifications")
@@ -26,34 +26,34 @@ public class NotificationController {
     private JwtService jwtService;
 
     /**
-     * Láº¥y danh sÃ¡ch thÃ´ng bÃ¡o cá»§a ngÆ°á»i dÃ¹ng hiá»‡n táº¡i
-     * User/Seller chá»‰ xem Ä‘Æ°á»£c thÃ´ng bÃ¡o cá»§a mÃ¬nh, Admin xem Ä‘Æ°á»£c táº¥t cáº£
+     * Lấy danh sách thông báo của người dùng hiện tại
+     * User/Seller chỉ xem được thông báo của mình, Admin xem được tất cả
      */
     @GetMapping
     public ApiResponse<List<Notification>> getMyNotifications(@RequestParam Long userId) {
         Long currentUserId = SecurityUtils.getCurrentUserId(jwtService);
         SecurityUtils.validateOwnership(userId, currentUserId);
         return ApiResponse.success(notificationService.getUserNotifications(userId),
-                "Láº¥y danh sÃ¡ch thÃ´ng bÃ¡o thÃ nh cÃ´ng");
+                "Lấy danh sách thông báo thành công");
     }
 
     /**
-     * ÄÃ¡nh dáº¥u má»™t thÃ´ng bÃ¡o lÃ  Ä‘Ã£ Ä‘á»c
+     * Đánh dấu một thông báo là đã đọc
      */
     @PutMapping("/{id}/read")
     public ApiResponse<Notification> markAsRead(@PathVariable Long id) {
-        return ApiResponse.success(notificationService.markAsRead(id), "ÄÃ¡nh dáº¥u Ä‘Ã£ Ä‘á»c thÃ nh cÃ´ng");
+        return ApiResponse.success(notificationService.markAsRead(id), "Đánh dấu đã đọc thành công");
     }
 
     /**
-     * Láº¥y sá»‘ lÆ°á»£ng thÃ´ng bÃ¡o chÆ°a Ä‘á»c
-     * User/Seller chá»‰ xem Ä‘Æ°á»£c cá»§a mÃ¬nh, Admin xem Ä‘Æ°á»£c táº¥t cáº£
+     * Lấy số lượng thông báo chưa đọc
+     * User/Seller chỉ xem được của mình, Admin xem được tất cả
      */
     @GetMapping("/unread-count")
     public ApiResponse<Long> getUnreadCount(@RequestParam Long userId) {
         Long currentUserId = SecurityUtils.getCurrentUserId(jwtService);
         SecurityUtils.validateOwnership(userId, currentUserId);
-        return ApiResponse.success(notificationService.getUnreadCount(userId), "Láº¥y sá»‘ lÆ°á»£ng tin chÆ°a Ä‘á»c thÃ nh cÃ´ng");
+        return ApiResponse.success(notificationService.getUnreadCount(userId), "Lấy số lượng tin chưa đọc thành công");
     }
 }
 

@@ -67,16 +67,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     // Tạo đối tượng Authentication
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             username,
-                            null, // Không cần credentials (pwd) vì đã xác thực bằng token
+                            null, // Kh�ng c?n credentials (pwd) v� d� x�c th?c b?ng token
                             Collections.singletonList(authority));
 
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     // Lưu thông tin authentication vào SecurityContext để Spring Security biết user
-                    // đã đăng nhập
+                    // d� dang nh?p
                     SecurityContextHolder.getContext().setAuthentication(authToken);
 
-                    log.debug("Đã xác thực user '{}' với role '{}'", username, role);
+                    log.debug("�� x�c th?c user '{}' v?i role '{}'", username, role);
                 }
             }
         } catch (Exception e) {

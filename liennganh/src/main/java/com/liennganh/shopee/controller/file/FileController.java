@@ -13,8 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 /**
- * Controller quáº£n lÃ½ File vÃ  áº¢nh
- * Cho phÃ©p upload vÃ  xem/download file
+ * Controller quản lý File và Ảnh
+ * Cho phép upload và xem/download file
  */
 @RestController
 @RequestMapping("/api/files")
@@ -24,45 +24,45 @@ public class FileController {
     private FileStorageService fileStorageService;
 
     /**
-     * Upload má»™t file duy nháº¥t
-     * Quyá»n háº¡n: USER, SELLER, ADMIN
+     * Upload một file duy nhất
+     * Quyền hạn: USER, SELLER, ADMIN
      * 
      */
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('USER', 'SELLER', 'ADMIN')")
     @PostMapping("/upload")
     public ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file) {
         String fileName = fileStorageService.storeFile(file);
-        return ApiResponse.success(fileName, "Upload file thÃ nh cÃ´ng");
+        return ApiResponse.success(fileName, "Upload file thành công");
     }
 
     /**
-     * Upload nhiá»u file cÃ¹ng lÃºc (tá»‘i Ä‘a 5 file)
-     * Quyá»n háº¡n: USER, SELLER, ADMIN
+     * Upload nhiều file cùng lúc (tối đa 5 file)
+     * Quyền hạn: USER, SELLER, ADMIN
      * 
      */
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('USER', 'SELLER', 'ADMIN')")
     @PostMapping("/uploads")
     public ApiResponse<java.util.List<String>> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
         if (files.length > 5) {
-            throw new IllegalArgumentException("KhÃ´ng thá»ƒ upload quÃ¡ 5 file cÃ¹ng lÃºc");
+            throw new IllegalArgumentException("Không thể upload quá 5 file cùng lúc");
         }
         java.util.List<String> fileNames = java.util.Arrays.stream(files)
                 .map(fileStorageService::storeFile)
                 .collect(java.util.stream.Collectors.toList());
-        return ApiResponse.success(fileNames, "Upload nhiá»u file thÃ nh cÃ´ng");
+        return ApiResponse.success(fileNames, "Upload nhiều file thành công");
     }
 
     /**
-     * Xem hoáº·c táº£i xuá»‘ng file
-     * Quyá»n háº¡n: Public
+     * Xem hoặc tải xuống file
+     * Quyền hạn: Public
      * 
      */
     @GetMapping("/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
-        // Táº£i file dÆ°á»›i dáº¡ng Resource
+        // Tải file dưới dạng Resource
         Resource resource = fileStorageService.loadFileAsResource(fileName);
 
-        // Cá»‘ gáº¯ng xÃ¡c Ä‘á»‹nh content type
+        // Cố gắng xác định content type
         String contentType = null;
         try {
             contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
@@ -70,7 +70,7 @@ public class FileController {
             // logger.info("Could not determine file type.");
         }
 
-        // Náº¿u khÃ´ng xÃ¡c Ä‘á»‹nh Ä‘Æ°á»£c, dÃ¹ng máº·c Ä‘á»‹nh
+        // Nếu không xác định được, dùng mặc định
         if (contentType == null) {
             contentType = "application/octet-stream";
         }

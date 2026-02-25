@@ -56,7 +56,7 @@ const SellerRegister = () => {
     return (
         <div className="max-w-2xl mx-auto bg-white p-10 rounded-lg shadow mt-10 text-center">
             <Store className="w-16 h-16 mx-auto text-primary-dark mb-6" />
-            <h1 className="text-3xl font-bold mb-4 text-gray-800">Đăng ký bán hàng trên Shopee Clone</h1>
+            <h1 className="text-3xl font-bold mb-4 text-gray-800">Đăng ký bán hàng trên Nikki</h1>
             <p className="text-gray-600 mb-8 max-w-lg mx-auto">
                 Bắt đầu kinh doanh sản phẩm cho hàng triệu người dùng.
                 Đăng ký ngay để tạo shop và quản lý kho hàng của bạn.

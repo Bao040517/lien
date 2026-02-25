@@ -16,43 +16,43 @@ public class SliderController {
 
     private final ISliderService sliderService;
 
-    // Public: Láº¥y slider active cho trang Home
+    // Public: Lấy slider active cho trang Home
     @GetMapping("/active")
     public ApiResponse<List<Slider>> getActiveSliders() {
         List<Slider> sliders = sliderService.getActiveSliders();
-        return ApiResponse.success(sliders, "Láº¥y danh sÃ¡ch slider thÃ nh cÃ´ng");
+        return ApiResponse.success(sliders, "Lấy danh sách slider thành công");
     }
 
-    // Admin: Láº¥y táº¥t cáº£ slider
+    // Admin: Lấy tất cả slider
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ApiResponse<List<Slider>> getAllSliders() {
-        return ApiResponse.success(sliderService.getAllSliders(), "Láº¥y táº¥t cáº£ slider thÃ nh cÃ´ng");
+        return ApiResponse.success(sliderService.getAllSliders(), "Lấy tất cả slider thành công");
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ApiResponse<Slider> getSliderById(@PathVariable Long id) {
-        return ApiResponse.success(sliderService.getSliderById(id), "Láº¥y chi tiáº¿t slider thÃ nh cÃ´ng");
+        return ApiResponse.success(sliderService.getSliderById(id), "Lấy chi tiết slider thành công");
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ApiResponse<Slider> createSlider(@RequestBody Slider slider) {
-        return ApiResponse.success(sliderService.createSlider(slider), "ThÃªm slider thÃ nh cÃ´ng");
+        return ApiResponse.success(sliderService.createSlider(slider), "Thêm slider thành công");
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ApiResponse<Slider> updateSlider(@PathVariable Long id, @RequestBody Slider slider) {
-        return ApiResponse.success(sliderService.updateSlider(id, slider), "Cáº­p nháº­t slider thÃ nh cÃ´ng");
+        return ApiResponse.success(sliderService.updateSlider(id, slider), "Cập nhật slider thành công");
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteSlider(@PathVariable Long id) {
         sliderService.deleteSlider(id);
-        return ApiResponse.success(null, "XÃ³a slider thÃ nh cÃ´ng");
+        return ApiResponse.success(null, "Xóa slider thành công");
     }
 }
 

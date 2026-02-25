@@ -81,7 +81,7 @@ const Navbar = () => {
                     {/* Logo */}
                     <Link to="/" className="flex items-center gap-2 shrink-0">
                         <Store className="w-10 h-10" />
-                        <span className="text-2xl font-bold">Shopee Clone</span>
+                        <span className="text-2xl font-bold">Nikki</span>
                     </Link>
 
                     {/* Search Bar */}

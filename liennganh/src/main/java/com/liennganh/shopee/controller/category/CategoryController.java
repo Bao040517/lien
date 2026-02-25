@@ -14,7 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.List;
 
 /**
- * Controller quáº£n lÃ½ danh má»¥c sáº£n pháº©m
+ * Controller quản lý danh mục sản phẩm
  * GET: Public | POST/PUT/DELETE: ADMIN
  */
 @RestController
@@ -26,30 +26,30 @@ public class CategoryController {
     private FileStorageService fileStorageService;
 
     /**
-     * Láº¥y danh sÃ¡ch táº¥t cáº£ danh má»¥c
-     * Quyá»n háº¡n: Public
+     * Lấy danh sách tất cả danh mục
+     * Quyền hạn: Public
      */
     @GetMapping
     public ApiResponse<org.springframework.data.domain.Page<Category>> getAllCategories(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "100") int size) {
         return ApiResponse.success(categoryService.getAllCategories(page, size),
-                "Láº¥y danh sÃ¡ch danh má»¥c thÃ nh cÃ´ng");
+                "Lấy danh sách danh mục thành công");
     }
 
     /**
-     * Táº¡o danh má»¥c má»›i (JSON, khÃ´ng áº£nh)
-     * Quyá»n háº¡n: ADMIN
+     * Tạo danh mục mới (JSON, không ảnh)
+     * Quyền hạn: ADMIN
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ApiResponse<Category> createCategory(@RequestBody Category category) {
-        return ApiResponse.success(categoryService.createCategory(category), "Táº¡o danh má»¥c thÃ nh cÃ´ng");
+        return ApiResponse.success(categoryService.createCategory(category), "Tạo danh mục thành công");
     }
 
     /**
-     * Táº¡o danh má»¥c má»›i kÃ¨m upload áº£nh
-     * Quyá»n háº¡n: ADMIN
+     * Tạo danh mục mới kèm upload ảnh
+     * Quyền hạn: ADMIN
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/with-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -72,15 +72,15 @@ public class CategoryController {
             }
 
             return ApiResponse.success(categoryService.createCategory(category),
-                    "Táº¡o danh má»¥c kÃ¨m áº£nh thÃ nh cÃ´ng");
+                    "Tạo danh mục kèm ảnh thành công");
         } catch (Exception e) {
-            return ApiResponse.error(500, "Lá»—i khi táº¡o danh má»¥c: " + e.getMessage());
+            return ApiResponse.error(500, "Lỗi khi tạo danh mục: " + e.getMessage());
         }
     }
 
     /**
-     * Cáº­p nháº­t danh má»¥c (kÃ¨m áº£nh náº¿u cÃ³)
-     * Quyá»n háº¡n: ADMIN
+     * Cập nhật danh mục (kèm ảnh nếu có)
+     * Quyền hạn: ADMIN
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -100,20 +100,20 @@ public class CategoryController {
             }
 
             Category updated = categoryService.updateCategory(id, name, description, imageUrl);
-            return ApiResponse.success(updated, "Cáº­p nháº­t danh má»¥c thÃ nh cÃ´ng");
+            return ApiResponse.success(updated, "Cập nhật danh mục thành công");
         } catch (Exception e) {
-            return ApiResponse.error(500, "Lá»—i khi cáº­p nháº­t danh má»¥c: " + e.getMessage());
+            return ApiResponse.error(500, "Lỗi khi cập nhật danh mục: " + e.getMessage());
         }
     }
 
     /**
-     * XoÃ¡ danh má»¥c
-     * Quyá»n háº¡n: ADMIN
+     * Xoá danh mục
+     * Quyền hạn: ADMIN
      */
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
-        return ApiResponse.success(null, "XoÃ¡ danh má»¥c thÃ nh cÃ´ng");
+        return ApiResponse.success(null, "Xoá danh mục thành công");
     }
 }

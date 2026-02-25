@@ -72,7 +72,7 @@ public class ReviewService {
 
     /**
      * Thêm đánh giá mới (Review)
-     * Yêu cầu: User phải mua sản phẩm và đơn hàng đã giao thành công
+     * Y�u c?u: User ph?i mua s?n ph?m v� don h�ng d� giao th�nh c�ng
      * 
      * @throws AppException USER_NOT_FOUND, ORDER_NOT_FOUND, NOT_ORDER_OWNER,
      *                      ORDER_NOT_DELIVERED
@@ -107,7 +107,7 @@ public class ReviewService {
                 throw new AppException(ErrorCode.INVALID_PRODUCT_DATA);
             }
         } else {
-            // 2b. Tự động tìm đơn hàng hợp lệ gần nhất đã giao
+            // 2b. T? d?ng t�m don h�ng h?p l? g?n nh?t d� giao
             order = orderRepository.findFirstByUserIdAndOrderItemsProductIdAndStatusOrderByCreatedAtDesc(
                     userId, productId, Order.OrderStatus.DELIVERED)
                     .orElseThrow(() -> new AppException(ErrorCode.CANNOT_REVIEW_PRODUCT));
@@ -140,7 +140,7 @@ public class ReviewService {
                 notificationService.createNotification(
                         product.getShop().getOwner(),
                         "Đánh giá mới: " + product.getName(),
-                        user.getUsername() + " đã đánh giá " + rating + " sao cho sản phẩm của bạn.",
+                        user.getUsername() + " d� d�nh gi� " + rating + " sao cho s?n ph?m c?a b?n.",
                         Notification.NotificationType.REVIEW,
                         savedReview.getId());
             }

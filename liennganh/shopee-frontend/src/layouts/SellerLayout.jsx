@@ -281,7 +281,7 @@ const SellerLayout = () => {
                         </div>
                         <div>
                             <h1 className="font-bold text-lg leading-tight text-gray-800">Kênh Người Bán</h1>
-                            <p className="text-xs text-gray-400">Shopee Clone</p>
+                            <p className="text-xs text-gray-400">Nikki</p>
                         </div>
                     </div>
                 </div>

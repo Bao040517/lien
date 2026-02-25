@@ -65,7 +65,7 @@ public class Product {
 
     // Thống kê bán hàng
     @Column(name = "sold", columnDefinition = "bigint default 0")
-    private Long sold = 0L; // Số lượng đã bán
+    private Long sold = 0L; // S? lu?ng d� b�n
 
     // Thống kê đánh giá
     @Column(name = "average_rating", columnDefinition = "double precision default 0.0")

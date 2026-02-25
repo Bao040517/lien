@@ -12,8 +12,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.List;
 
 /**
- * Controller quáº£n lÃ½ Ä‘á»‹a chá»‰ giao hÃ ng
- * User/Seller chá»‰ quáº£n lÃ½ Ä‘á»‹a chá»‰ cá»§a mÃ¬nh, Admin quáº£n lÃ½ Ä‘Æ°á»£c táº¥t cáº£
+ * Controller quản lý địa chỉ giao hàng
+ * User/Seller chỉ quản lý địa chỉ của mình, Admin quản lý được tất cả
  */
 @RestController
 @RequestMapping("/api/addresses")
@@ -25,41 +25,41 @@ public class AddressController {
     private JwtService jwtService;
 
     /**
-     * Láº¥y táº¥t cáº£ Ä‘á»‹a chá»‰ trong há»‡ thá»‘ng
-     * Quyá»n háº¡n: ADMIN
+     * Lấy tất cả địa chỉ trong hệ thống
+     * Quyền hạn: ADMIN
      */
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ApiResponse<List<Address>> getAllAddresses() {
-        return ApiResponse.success(addressService.getAllAddresses(), "Láº¥y danh sÃ¡ch táº¥t cáº£ Ä‘á»‹a chá»‰ thÃ nh cÃ´ng");
+        return ApiResponse.success(addressService.getAllAddresses(), "Lấy danh sách tất cả địa chỉ thành công");
     }
 
     /**
-     * Láº¥y danh sÃ¡ch Ä‘á»‹a chá»‰ cá»§a má»™t user
-     * User/Seller chá»‰ xem Ä‘Æ°á»£c Ä‘á»‹a chá»‰ cá»§a mÃ¬nh, Admin xem Ä‘Æ°á»£c táº¥t cáº£
+     * Lấy danh sách địa chỉ của một user
+     * User/Seller chỉ xem được địa chỉ của mình, Admin xem được tất cả
      */
     @GetMapping("/user/{userId}")
     public ApiResponse<List<Address>> getUserAddresses(@PathVariable Long userId) {
         Long currentUserId = SecurityUtils.getCurrentUserId(jwtService);
         SecurityUtils.validateOwnership(userId, currentUserId);
         return ApiResponse.success(addressService.getUserAddresses(userId),
-                "Láº¥y danh sÃ¡ch Ä‘á»‹a chá»‰ cá»§a ngÆ°á»i dÃ¹ng thÃ nh cÃ´ng");
+                "Lấy danh sách địa chỉ của người dùng thành công");
     }
 
     /**
-     * ThÃªm Ä‘á»‹a chá»‰ má»›i
-     * User/Seller chá»‰ thÃªm cho mÃ¬nh
+     * Thêm địa chỉ mới
+     * User/Seller chỉ thêm cho mình
      */
     @PostMapping("/user/{userId}")
     public ApiResponse<Address> addAddress(@PathVariable Long userId, @RequestBody Address address) {
         Long currentUserId = SecurityUtils.getCurrentUserId(jwtService);
         SecurityUtils.validateOwnership(userId, currentUserId);
-        return ApiResponse.success(addressService.addAddress(userId, address), "ThÃªm Ä‘á»‹a chá»‰ thÃ nh cÃ´ng");
+        return ApiResponse.success(addressService.addAddress(userId, address), "Thêm địa chỉ thành công");
     }
 
     /**
-     * Cáº­p nháº­t thÃ´ng tin Ä‘á»‹a chá»‰
-     * User/Seller chá»‰ sá»­a Ä‘á»‹a chá»‰ cá»§a mÃ¬nh
+     * Cập nhật thông tin địa chỉ
+     * User/Seller chỉ sửa địa chỉ của mình
      */
     @PutMapping("/user/{userId}/{addressId}")
     public ApiResponse<Address> updateAddress(@PathVariable Long userId, @PathVariable Long addressId,
@@ -67,19 +67,19 @@ public class AddressController {
         Long currentUserId = SecurityUtils.getCurrentUserId(jwtService);
         SecurityUtils.validateOwnership(userId, currentUserId);
         return ApiResponse.success(addressService.updateAddress(userId, addressId, address),
-                "Cáº­p nháº­t Ä‘á»‹a chá»‰ thÃ nh cÃ´ng");
+                "Cập nhật địa chỉ thành công");
     }
 
     /**
-     * XÃ³a Ä‘á»‹a chá»‰
-     * User/Seller chá»‰ xÃ³a Ä‘á»‹a chá»‰ cá»§a mÃ¬nh
+     * Xóa địa chỉ
+     * User/Seller chỉ xóa địa chỉ của mình
      */
     @DeleteMapping("/user/{userId}/{addressId}")
     public ApiResponse<String> deleteAddress(@PathVariable Long userId, @PathVariable Long addressId) {
         Long currentUserId = SecurityUtils.getCurrentUserId(jwtService);
         SecurityUtils.validateOwnership(userId, currentUserId);
         addressService.deleteAddress(userId, addressId);
-        return ApiResponse.success("XÃ³a Ä‘á»‹a chá»‰ thÃ nh cÃ´ng", "ThÃ nh cÃ´ng");
+        return ApiResponse.success("Xóa địa chỉ thành công", "Thành công");
     }
 }
 

@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
- * Controller quáº£n lÃ½ MÃ£ giáº£m giÃ¡ (Voucher)
- * Há»— trá»£ voucher há»‡ thá»‘ng vÃ  voucher cá»§a shop, cÅ©ng nhÆ° chá»©c nÄƒng Ã¡p dá»¥ng
+ * Controller quản lý Mã giảm giá (Voucher)
+ * Hỗ trợ voucher hệ thống và voucher của shop, cũng như chức năng áp dụng
  * voucher
  */
 @RestController
@@ -23,29 +23,29 @@ public class VoucherController {
     private com.liennganh.shopee.repository.user.UserRepository userRepository;
 
     /**
-     * Láº¥y danh sÃ¡ch táº¥t cáº£ voucher há»‡ thá»‘ng Ä‘ang cÃ³ hiá»‡u lá»±c
-     * Quyá»n háº¡n: Public
+     * Lấy danh sách tất cả voucher hệ thống đang có hiệu lực
+     * Quyền hạn: Public
      * 
      */
     @GetMapping
     public ApiResponse<java.util.List<Voucher>> getAllVouchers() {
-        return ApiResponse.success(voucherService.getAllVouchers(), "Láº¥y danh sÃ¡ch voucher thÃ nh cÃ´ng");
+        return ApiResponse.success(voucherService.getAllVouchers(), "Lấy danh sách voucher thành công");
     }
 
     /**
-     * Táº¡o voucher má»›i cho há»‡ thá»‘ng
-     * Quyá»n háº¡n: ADMIN
+     * Tạo voucher mới cho hệ thống
+     * Quyền hạn: ADMIN
      * 
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ApiResponse<Voucher> createVoucher(@RequestBody Voucher voucher) {
-        return ApiResponse.success(voucherService.createVoucher(voucher), "Táº¡o voucher thÃ nh cÃ´ng");
+        return ApiResponse.success(voucherService.createVoucher(voucher), "Tạo voucher thành công");
     }
 
     /**
-     * Ãp dá»¥ng mÃ£ voucher vÃ o Ä‘Æ¡n hÃ ng Ä‘á»ƒ tÃ­nh toÃ¡n má»©c giáº£m giÃ¡
-     * Quyá»n háº¡n: USER, SELLER
+     * Áp dụng mã voucher vào đơn hàng để tính toán mức giảm giá
+     * Quyền hạn: USER, SELLER
      * 
      */
     @PreAuthorize("hasAnyRole('USER', 'SELLER')")
@@ -58,17 +58,17 @@ public class VoucherController {
             com.liennganh.shopee.entity.Voucher voucher = voucherService.getVoucherByCode(code)
                     .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
             return ApiResponse.success(discount,
-                    "ThÃ nh cÃ´ng: Giáº£m=" + discount + ", GiÃ¡ trá»‹=" + orderValue + ", Má»©c giáº£m="
+                    "Thành công: Giảm=" + discount + ", Giá trị=" + orderValue + ", Mức giảm="
                             + voucher.getDiscountValue()
-                            + ", Loáº¡i=" + voucher.getDiscountType());
+                            + ", Loại=" + voucher.getDiscountType());
         } catch (RuntimeException e) {
             return ApiResponse.error(400, e.getMessage());
         }
     }
 
     /**
-     * Láº¥y danh sÃ¡ch voucher do shop cá»§a user hiá»‡n táº¡i táº¡o ra
-     * Quyá»n háº¡n: SELLER, ADMIN
+     * Lấy danh sách voucher do shop của user hiện tại tạo ra
+     * Quyền hạn: SELLER, ADMIN
      * 
      */
     @PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
@@ -77,23 +77,23 @@ public class VoucherController {
         com.liennganh.shopee.entity.User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         return ApiResponse.success(voucherService.getShopVouchers(user),
-                "Láº¥y danh sÃ¡ch voucher cá»§a shop thÃ nh cÃ´ng");
+                "Lấy danh sách voucher của shop thành công");
     }
 
     /**
-     * Láº¥y danh sÃ¡ch voucher cá»§a má»™t shop báº¥t ká»³ hiá»ƒn thá»‹ cho ngÆ°á»i mua
-     * Quyá»n háº¡n: Public
+     * Lấy danh sách voucher của một shop bất kỳ hiển thị cho người mua
+     * Quyền hạn: Public
      * 
      */
     @GetMapping("/shop/{shopId}")
     public ApiResponse<java.util.List<Voucher>> getShopVouchers(@PathVariable Long shopId) {
         return ApiResponse.success(voucherService.getShopVouchersByShopId(shopId),
-                "Láº¥y danh sÃ¡ch voucher cá»§a shop thÃ nh cÃ´ng");
+                "Lấy danh sách voucher của shop thành công");
     }
 
     /**
-     * Táº¡o voucher má»›i cho shop
-     * Quyá»n háº¡n: SELLER, ADMIN
+     * Tạo voucher mới cho shop
+     * Quyền hạn: SELLER, ADMIN
      * 
      */
     @PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
@@ -102,12 +102,12 @@ public class VoucherController {
         com.liennganh.shopee.entity.User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         return ApiResponse.success(voucherService.createShopVoucher(voucher, user),
-                "Táº¡o voucher cho shop thÃ nh cÃ´ng");
+                "Tạo voucher cho shop thành công");
     }
 
     /**
-     * XÃ³a voucher cá»§a shop
-     * Quyá»n háº¡n: SELLER, ADMIN
+     * Xóa voucher của shop
+     * Quyền hạn: SELLER, ADMIN
      * 
      */
     @PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
@@ -116,7 +116,7 @@ public class VoucherController {
         com.liennganh.shopee.entity.User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         voucherService.deleteShopVoucher(id, user);
-        return ApiResponse.success(null, "XÃ³a voucher cá»§a shop thÃ nh cÃ´ng");
+        return ApiResponse.success(null, "Xóa voucher của shop thành công");
     }
 }
 
