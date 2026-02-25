@@ -223,7 +223,7 @@ const AdminFlashSales = () => {
                 <h1 className="text-2xl font-bold text-gray-800">Quản lý Flash Sale</h1>
                 <button
                     onClick={handleCreateClick}
-                    className="bg-orange-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-orange-600 transition"
+                    className="bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary-darker transition"
                 >
                     <Plus className="w-4 h-4" /> Tạo Flash Sale
                 </button>
@@ -278,7 +278,7 @@ const AdminFlashSales = () => {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                     <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 p-6 animate-[fadeIn_0.2s_ease-out] max-h-[90vh] flex flex-col">
                         <h2 className="text-xl font-bold mb-4 flex items-center gap-2 flex-shrink-0">
-                            <Zap className="w-5 h-5 text-orange-500" /> {editingId ? 'Chỉnh Sửa Flash Sale' : 'Tạo Flash Sale Mới'}
+                            <Zap className="w-5 h-5 text-primary-dark" /> {editingId ? 'Chỉnh Sửa Flash Sale' : 'Tạo Flash Sale Mới'}
                         </h2>
 
                         <div className="overflow-y-auto flex-1 pr-2">
@@ -337,7 +337,7 @@ const AdminFlashSales = () => {
                                                     const p = products.find(prod => prod.id === id);
                                                     if (!p) return null;
                                                     return (
-                                                        <div key={id} className="flex items-center gap-1 bg-white border border-orange-200 rounded-full pl-1 pr-2 py-1 shadow-sm">
+                                                        <div key={id} className="flex items-center gap-1 bg-white border border-primary rounded-full pl-1 pr-2 py-1 shadow-sm">
                                                             <img src={getImageUrl(p.imageUrl)} alt="" className="w-5 h-5 rounded-full object-cover" />
                                                             <span className="text-xs font-medium max-w-[120px] truncate">{p.name}</span>
                                                             <button
@@ -360,7 +360,7 @@ const AdminFlashSales = () => {
                                         placeholder="Tìm kiếm sản phẩm để thêm..."
                                         value={searchTerm}
                                         onChange={e => setSearchTerm(e.target.value)}
-                                        className="w-full border border-gray-300 rounded-lg p-2 mb-2 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                                        className="w-full border border-gray-300 rounded-lg p-2 mb-2 text-sm focus:ring-2 focus:ring-primary-dark focus:border-primary-dark outline-none"
                                     />
 
                                     <div className="border border-gray-200 rounded-lg max-h-60 overflow-y-auto p-2 space-y-1">
@@ -368,16 +368,16 @@ const AdminFlashSales = () => {
                                             <div
                                                 key={p.id}
                                                 onClick={() => toggleProductSelection(p.id)}
-                                                className={`flex items-center gap-3 p-2 rounded cursor-pointer transition ${form.productIds.includes(p.id) ? 'bg-orange-50 border-orange-200 ring-1 ring-orange-200' : 'hover:bg-gray-50'
+                                                className={`flex items-center gap-3 p-2 rounded cursor-pointer transition ${form.productIds.includes(p.id) ? 'bg-primary-lighter border-primary ring-1 ring-primary' : 'hover:bg-gray-50'
                                                     }`}
                                             >
-                                                <div className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${form.productIds.includes(p.id) ? 'bg-orange-500 border-orange-500' : 'border-gray-300'
+                                                <div className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${form.productIds.includes(p.id) ? 'bg-primary-dark border-primary-dark' : 'border-gray-300'
                                                     }`}>
                                                     {form.productIds.includes(p.id) && <div className="w-2 h-2 bg-white rounded-full" />}
                                                 </div>
                                                 <img src={getImageUrl(p.imageUrl)} alt="" className="w-8 h-8 rounded object-cover bg-gray-100 flex-shrink-0" />
                                                 <div className="flex-1 text-sm truncate">{p.name}</div>
-                                                <div className="text-xs font-medium text-orange-600 flex-shrink-0">
+                                                <div className="text-xs font-medium text-primary-darker flex-shrink-0">
                                                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p.price)}
                                                 </div>
                                             </div>
@@ -397,7 +397,7 @@ const AdminFlashSales = () => {
                             <button
                                 type="submit"
                                 form="flash-sale-form"
-                                className="px-6 py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
+                                className="px-6 py-2 bg-primary-dark text-white rounded hover:bg-primary-darker"
                             >{editingId ? 'Cập Nhật' : 'Tạo Flash Sale'}</button>
                         </div>
                     </div>
@@ -410,7 +410,7 @@ const AdminFlashSales = () => {
                         <div className="flex justify-between items-center mb-4 border-b border-gray-100 pb-4">
                             <div>
                                 <h2 className="text-xl font-bold flex items-center gap-2">
-                                    <Zap className="w-5 h-5 text-orange-500" /> {selectedSale.name || `Flash Sale #${selectedSale.id}`}
+                                    <Zap className="w-5 h-5 text-primary-dark" /> {selectedSale.name || `Flash Sale #${selectedSale.id}`}
                                 </h2>
                                 <div className="text-sm text-gray-500 mt-1">
                                     {new Date(selectedSale.startTime).toLocaleString('vi-VN')} - {new Date(selectedSale.endTime).toLocaleString('vi-VN')}
@@ -433,7 +433,7 @@ const AdminFlashSales = () => {
                                                 <span className="text-gray-500 line-through">
                                                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.product?.price || 0)}
                                                 </span>
-                                                <span className="text-orange-600 font-bold">
+                                                <span className="text-primary-darker font-bold">
                                                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.discountedPrice || 0)}
                                                 </span>
                                                 <span className="text-gray-500">
@@ -453,7 +453,7 @@ const AdminFlashSales = () => {
                                         setSelectedSale(null);
                                         handleEditClick(selectedSale, e);
                                     }}
-                                    className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 flex items-center gap-2"
+                                    className="px-4 py-2 bg-primary-dark text-white rounded hover:bg-primary-darker flex items-center gap-2"
                                 >
                                     <Zap className="w-4 h-4" /> Chỉnh sửa
                                 </button>

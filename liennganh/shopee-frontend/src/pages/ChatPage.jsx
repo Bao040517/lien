@@ -122,7 +122,7 @@ const ChatPage = () => {
     // Role badge
     const getRoleBadge = (role) => {
         if (role === 'ADMIN') return <span className="inline-flex items-center gap-1 text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full font-medium"><Shield className="w-3 h-3" /> Admin</span>;
-        if (role === 'SELLER') return <span className="inline-flex items-center gap-1 text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full font-medium"><Store className="w-3 h-3" /> Seller</span>;
+        if (role === 'SELLER') return <span className="inline-flex items-center gap-1 text-[10px] bg-primary-light text-primary-darker px-1.5 py-0.5 rounded-full font-medium"><Store className="w-3 h-3" /> Seller</span>;
         return <span className="inline-flex items-center gap-1 text-[10px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full font-medium"><Users className="w-3 h-3" /> User</span>;
     };
 
@@ -149,7 +149,7 @@ const ChatPage = () => {
                 <div className="p-4 border-b bg-white">
                     <div className="flex items-center justify-between mb-3">
                         <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                            <MessageCircle className="w-5 h-5 text-orange-500" /> Tin nhắn
+                            <MessageCircle className="w-5 h-5 text-primary-dark" /> Tin nhắn
                         </h2>
                         <button
                             onClick={() => { setShowSearch(!showSearch); setSearchResults([]); setSearchKeyword(''); }}
@@ -170,9 +170,9 @@ const ChatPage = () => {
                                     onChange={e => setSearchKeyword(e.target.value)}
                                     onKeyDown={e => e.key === 'Enter' && handleSearch()}
                                     placeholder="Tìm theo tên hoặc email..."
-                                    className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
+                                    className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                                 />
-                                <button onClick={handleSearch} className="px-3 py-2 bg-orange-500 text-white rounded-lg text-sm hover:bg-orange-600 transition">
+                                <button onClick={handleSearch} className="px-3 py-2 bg-primary-dark text-white rounded-lg text-sm hover:bg-primary-darker transition">
                                     Tìm
                                 </button>
                             </div>
@@ -182,9 +182,9 @@ const ChatPage = () => {
                                         <button
                                             key={u.id}
                                             onClick={() => startConversation(u.id)}
-                                            className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-orange-50 transition text-left"
+                                            className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-primary-lighter transition text-left"
                                         >
-                                            <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-pink-400 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                                            <div className="w-8 h-8 bg-gradient-to-br from-primary-dark to-pink-400 rounded-full flex items-center justify-center text-white text-sm font-bold">
                                                 {u.username?.charAt(0).toUpperCase()}
                                             </div>
                                             <div className="min-w-0 flex-1">
@@ -213,10 +213,10 @@ const ChatPage = () => {
                             <button
                                 key={conv.id}
                                 onClick={() => openConversation(conv)}
-                                className={`w-full flex items-center gap-3 px-4 py-3 transition text-left border-b hover:bg-orange-50/50 ${activeConv?.id === conv.id ? 'bg-orange-50 border-l-4 border-l-orange-500' : ''}`}
+                                className={`w-full flex items-center gap-3 px-4 py-3 transition text-left border-b hover:bg-primary-lighter/50 ${activeConv?.id === conv.id ? 'bg-primary-lighter border-l-4 border-l-primary-dark' : ''}`}
                             >
                                 <div className="relative">
-                                    <div className="w-11 h-11 bg-gradient-to-br from-orange-400 to-pink-400 rounded-full flex items-center justify-center text-white font-bold">
+                                    <div className="w-11 h-11 bg-gradient-to-br from-primary-dark to-pink-400 rounded-full flex items-center justify-center text-white font-bold">
                                         {conv.otherUser?.username?.charAt(0).toUpperCase()}
                                     </div>
                                     {conv.unreadCount > 0 && (
@@ -258,7 +258,7 @@ const ChatPage = () => {
                     <>
                         {/* Header chat */}
                         <div className="px-5 py-3 border-b bg-white flex items-center gap-3 shadow-sm">
-                            <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-pink-400 rounded-full flex items-center justify-center text-white font-bold">
+                            <div className="w-10 h-10 bg-gradient-to-br from-primary-dark to-pink-400 rounded-full flex items-center justify-center text-white font-bold">
                                 {activeConv.otherUser?.username?.charAt(0).toUpperCase()}
                             </div>
                             <div>
@@ -283,7 +283,7 @@ const ChatPage = () => {
                                                 <p className="text-[10px] text-gray-400 mb-0.5 ml-1">{msg.senderName}</p>
                                             )}
                                             <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${isMine
-                                                ? 'bg-orange-500 text-white rounded-br-md'
+                                                ? 'bg-primary-dark text-white rounded-br-md'
                                                 : 'bg-white text-gray-800 border rounded-bl-md shadow-sm'
                                                 }`}>
                                                 {msg.content}
@@ -305,12 +305,12 @@ const ChatPage = () => {
                                 value={newMessage}
                                 onChange={e => setNewMessage(e.target.value)}
                                 placeholder="Nhập tin nhắn..."
-                                className="flex-1 px-4 py-2.5 border rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-300 bg-gray-50"
+                                className="flex-1 px-4 py-2.5 border rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-gray-50"
                             />
                             <button
                                 type="submit"
                                 disabled={!newMessage.trim()}
-                                className="p-2.5 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                                className="p-2.5 bg-primary-dark text-white rounded-full hover:bg-primary-darker transition disabled:opacity-40 disabled:cursor-not-allowed"
                             >
                                 <Send className="w-5 h-5" />
                             </button>

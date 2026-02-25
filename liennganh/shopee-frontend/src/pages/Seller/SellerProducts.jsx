@@ -75,7 +75,7 @@ const SellerProducts = () => {
                     <p className="text-gray-500 text-sm mt-1">{products.length} sản phẩm</p>
                 </div>
                 <Link to="/seller/add-product"
-                    className="flex items-center gap-2 bg-orange-500 text-white px-5 py-2.5 rounded-lg hover:bg-orange-600 transition font-medium shadow-sm">
+                    className="flex items-center gap-2 bg-primary-dark text-white px-5 py-2.5 rounded-lg hover:bg-primary-darker transition font-medium shadow-sm">
                     <Plus className="w-5 h-5" /> Thêm sản phẩm
                 </Link>
             </div>
@@ -88,14 +88,14 @@ const SellerProducts = () => {
                         type="text" value={searchTerm}
                         onChange={e => setSearchTerm(e.target.value)}
                         placeholder="Tìm kiếm sản phẩm..."
-                        className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-300 outline-none"
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary outline-none"
                     />
                 </div>
             </div>
 
             {/* Cảnh báo sản phẩm bị khóa */}
             {products.some(p => p.banned) && (
-                <div className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl p-4 mb-6 flex items-center gap-3">
+                <div className="bg-gradient-to-r from-primary-lighter to-primary-lighter border border-primary-light rounded-xl p-4 mb-6 flex items-center gap-3">
                     <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0">
                         <AlertTriangle className="w-5 h-5 text-white" />
                     </div>
@@ -110,7 +110,7 @@ const SellerProducts = () => {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 {loading ? (
                     <div className="p-12 text-center text-gray-400">
-                        <div className="animate-spin w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full mx-auto mb-3"></div>
+                        <div className="animate-spin w-8 h-8 border-2 border-primary-dark border-t-transparent rounded-full mx-auto mb-3"></div>
                         Đang tải sản phẩm...
                     </div>
                 ) : filtered.length > 0 ? (
@@ -130,7 +130,7 @@ const SellerProducts = () => {
                                 {currentProducts.map(product => (
                                     <tr key={product.id} className={`transition ${product.banned
                                         ? 'bg-red-50 border-l-4 border-red-500 hover:bg-red-100/50'
-                                        : 'hover:bg-orange-50/30'
+                                        : 'hover:bg-primary-lighter/30'
                                         }`}>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
@@ -154,7 +154,7 @@ const SellerProducts = () => {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className="text-orange-600 font-bold">{formatPrice(product.price)}</span>
+                                            <span className="text-primary-darker font-bold">{formatPrice(product.price)}</span>
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${product.stockQuantity > 10
@@ -182,7 +182,7 @@ const SellerProducts = () => {
                                                     <Eye className="w-4 h-4" />
                                                 </Link>
                                                 <Link to={`/seller/edit-product/${product.id}`}
-                                                    className="p-2 text-gray-400 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition"
+                                                    className="p-2 text-gray-400 hover:text-primary-dark hover:bg-primary-lighter rounded-lg transition"
                                                     title="Sửa">
                                                     <Edit3 className="w-4 h-4" />
                                                 </Link>
@@ -222,7 +222,7 @@ const SellerProducts = () => {
                         </p>
                         {!searchTerm && (
                             <Link to="/seller/add-product"
-                                className="inline-flex items-center gap-2 bg-orange-500 text-white px-5 py-2 rounded-lg hover:bg-orange-600 transition">
+                                className="inline-flex items-center gap-2 bg-primary-dark text-white px-5 py-2 rounded-lg hover:bg-primary-darker transition">
                                 <Plus className="w-4 h-4" /> Thêm sản phẩm đầu tiên
                             </Link>
                         )}

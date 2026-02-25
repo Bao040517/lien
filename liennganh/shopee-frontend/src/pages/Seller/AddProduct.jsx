@@ -216,7 +216,7 @@ const AddProduct = () => {
     return (
         <div className="max-w-4xl mx-auto">
             <div className="flex items-center gap-3 mb-6">
-                <Package className="w-8 h-8 text-orange-500" />
+                <Package className="w-8 h-8 text-primary-dark" />
                 <h1 className="text-2xl font-bold text-gray-800">Thêm Sản Phẩm Mới</h1>
             </div>
 
@@ -237,7 +237,7 @@ const AddProduct = () => {
                             <input
                                 type="text" required value={form.name}
                                 onChange={e => setForm({ ...form, name: e.target.value })}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-300 focus:border-orange-400 outline-none"
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary-dark outline-none"
                                 placeholder="VD: Áo thun nam cổ tròn Cotton"
                             />
                         </div>
@@ -245,7 +245,7 @@ const AddProduct = () => {
                             <label className="block text-sm font-medium text-gray-600 mb-1">Danh mục *</label>
                             <select required value={form.categoryId}
                                 onChange={e => setForm({ ...form, categoryId: e.target.value })}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-300 outline-none">
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none">
                                 <option value="">Chọn danh mục</option>
                                 {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                             </select>
@@ -254,7 +254,7 @@ const AddProduct = () => {
                             <label className="block text-sm font-medium text-gray-600 mb-1">Giá gốc (₫) *</label>
                             <input type="number" required value={form.price}
                                 onChange={e => setForm({ ...form, price: e.target.value })}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-300 outline-none"
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none"
                                 placeholder="250000"
                             />
                         </div>
@@ -262,7 +262,7 @@ const AddProduct = () => {
                             <label className="block text-sm font-medium text-gray-600 mb-1">Số lượng kho</label>
                             <input type="number" value={form.stockQuantity}
                                 onChange={e => setForm({ ...form, stockQuantity: e.target.value })}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-300 outline-none"
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none"
                                 placeholder="100"
                             />
                         </div>
@@ -273,7 +273,7 @@ const AddProduct = () => {
                             <label className="block text-sm font-medium text-gray-600 mb-1">Mô tả</label>
                             <textarea value={form.description}
                                 onChange={e => setForm({ ...form, description: e.target.value })}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-300 outline-none h-24 resize-none"
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none h-24 resize-none"
                                 placeholder="Mô tả chi tiết sản phẩm..."
                             />
                         </div>
@@ -288,7 +288,7 @@ const AddProduct = () => {
                             <div key={index} className="relative w-24 h-24 rounded-lg overflow-hidden border-2 border-gray-200 group">
                                 <img src={preview} alt={`preview-${index}`} className="w-full h-full object-cover" />
                                 {index === 0 && (
-                                    <span className="absolute top-0.5 left-0.5 bg-orange-500 text-white text-[10px] px-1.5 py-0.5 rounded font-medium">Bìa</span>
+                                    <span className="absolute top-0.5 left-0.5 bg-primary-dark text-white text-[10px] px-1.5 py-0.5 rounded font-medium">Bìa</span>
                                 )}
                                 <button type="button" onClick={() => removeImage(index)}
                                     className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition">
@@ -297,7 +297,7 @@ const AddProduct = () => {
                             </div>
                         ))}
                         {imageFiles.length < 9 && (
-                            <label className="w-24 h-24 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-400 hover:bg-orange-50/50 transition">
+                            <label className="w-24 h-24 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary-dark hover:bg-primary-lighter/50 transition">
                                 <Plus className="w-6 h-6 text-gray-400" />
                                 <span className="text-[10px] text-gray-400 mt-1">Thêm ảnh</span>
                                 <input type="file" accept="image/*" multiple onChange={handleImagesChange} className="hidden" />
@@ -311,7 +311,7 @@ const AddProduct = () => {
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-lg font-semibold text-gray-700">Phân loại hàng</h2>
                         <button type="button" onClick={addAttribute}
-                            className="flex items-center gap-1 px-3 py-1.5 bg-orange-50 text-orange-500 border border-orange-300 rounded-lg text-sm hover:bg-orange-100 transition">
+                            className="flex items-center gap-1 px-3 py-1.5 bg-primary-lighter text-primary-dark border border-primary rounded-lg text-sm hover:bg-primary-light transition">
                             <Plus className="w-4 h-4" /> Thêm nhóm phân loại
                         </button>
                     </div>
@@ -330,7 +330,7 @@ const AddProduct = () => {
                                 <input
                                     type="text" value={attr.name}
                                     onChange={e => updateAttributeName(ai, e.target.value)}
-                                    className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-orange-300 outline-none"
+                                    className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none"
                                     placeholder="Tên nhóm (VD: Size, Màu sắc, RAM)"
                                 />
                                 <button type="button" onClick={() => removeAttribute(ai)}
@@ -344,7 +344,7 @@ const AddProduct = () => {
                                         <input
                                             type="text" value={opt}
                                             onChange={e => updateOption(ai, oi, e.target.value)}
-                                            className="border border-gray-300 rounded px-3 py-1.5 text-sm w-28 focus:ring-2 focus:ring-orange-300 outline-none"
+                                            className="border border-gray-300 rounded px-3 py-1.5 text-sm w-28 focus:ring-2 focus:ring-primary outline-none"
                                             placeholder={`Giá trị ${oi + 1}`}
                                         />
                                         {attr.options.length > 1 && (
@@ -356,7 +356,7 @@ const AddProduct = () => {
                                     </div>
                                 ))}
                                 <button type="button" onClick={() => addOption(ai)}
-                                    className="px-3 py-1.5 border border-dashed border-gray-300 rounded text-sm text-gray-500 hover:border-orange-400 hover:text-orange-400 transition">
+                                    className="px-3 py-1.5 border border-dashed border-gray-300 rounded text-sm text-gray-500 hover:border-primary-dark hover:text-primary-dark transition">
                                     + Thêm
                                 </button>
                             </div>
@@ -365,7 +365,7 @@ const AddProduct = () => {
 
                     {attributes.length > 0 && (
                         <button type="button" onClick={generateVariants}
-                            className="w-full py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition font-medium">
+                            className="w-full py-2 bg-primary-dark text-white rounded-lg hover:bg-primary-darker transition font-medium">
                             Tạo danh sách phân loại ({attributes.reduce((acc, a) => acc * Math.max(1, a.options.filter(o => o).length), 1)} tổ hợp)
                         </button>
                     )}
@@ -398,13 +398,13 @@ const AddProduct = () => {
                                             <td className="px-3 py-2">
                                                 <input type="number" value={v.price}
                                                     onChange={e => updateVariant(vi, 'price', e.target.value)}
-                                                    className="w-28 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-orange-300 outline-none"
+                                                    className="w-28 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-primary outline-none"
                                                 />
                                             </td>
                                             <td className="px-3 py-2">
                                                 <input type="number" value={v.stockQuantity}
                                                     onChange={e => updateVariant(vi, 'stockQuantity', e.target.value)}
-                                                    className="w-20 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-orange-300 outline-none"
+                                                    className="w-20 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-primary outline-none"
                                                 />
                                             </td>
                                             <td className="px-3 py-2">
@@ -424,7 +424,7 @@ const AddProduct = () => {
                 {/* Submit */}
                 <div className="flex gap-4">
                     <button type="submit" disabled={loading}
-                        className="flex-1 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition font-bold text-lg flex items-center justify-center gap-2 disabled:opacity-60">
+                        className="flex-1 py-3 bg-primary-dark text-white rounded-lg hover:bg-primary-darker transition font-bold text-lg flex items-center justify-center gap-2 disabled:opacity-60">
                         <Save className="w-5 h-5" />
                         {loading ? 'Đang tạo...' : 'Đăng Sản Phẩm'}
                     </button>

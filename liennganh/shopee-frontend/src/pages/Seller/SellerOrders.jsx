@@ -85,19 +85,19 @@ const SellerOrders = () => {
             {/* Status Filter Tabs */}
             <div className="flex gap-1 mb-6 bg-gray-100 rounded-xl p-1 overflow-x-auto">
                 <button onClick={() => setStatusFilter('ALL')}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${statusFilter === 'ALL' ? 'bg-orange-500 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${statusFilter === 'ALL' ? 'bg-primary-dark text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'
                         }`}>
-                    Tất cả <span className={`text-xs ml-1 px-1.5 py-0.5 rounded-full ${statusFilter === 'ALL' ? 'bg-orange-400' : 'bg-gray-200'}`}>{orders.length}</span>
+                    Tất cả <span className={`text-xs ml-1 px-1.5 py-0.5 rounded-full ${statusFilter === 'ALL' ? 'bg-primary-dark' : 'bg-gray-200'}`}>{orders.length}</span>
                 </button>
                 {allStatuses.map(s => {
                     const cfg = statusConfig[s];
                     return (
                         <button key={s} onClick={() => setStatusFilter(s)}
-                            className={`flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${statusFilter === s ? 'bg-orange-500 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                            className={`flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${statusFilter === s ? 'bg-primary-dark text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'
                                 }`}>
                             {cfg.label}
                             {statusCounts[s] > 0 && (
-                                <span className={`text-xs px-1.5 py-0.5 rounded-full ${statusFilter === s ? 'bg-orange-400' : 'bg-gray-200'}`}>{statusCounts[s]}</span>
+                                <span className={`text-xs px-1.5 py-0.5 rounded-full ${statusFilter === s ? 'bg-primary-dark' : 'bg-gray-200'}`}>{statusCounts[s]}</span>
                             )}
                         </button>
                     );
@@ -110,7 +110,7 @@ const SellerOrders = () => {
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input type="text" value={search} onChange={e => setSearch(e.target.value)}
                         placeholder="Tìm theo mã đơn hoặc tên khách hàng..."
-                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none" />
+                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-dark outline-none" />
                 </div>
             </div>
 
@@ -118,13 +118,13 @@ const SellerOrders = () => {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 {loading ? (
                     <div className="p-12 text-center text-gray-400">
-                        <div className="animate-spin w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+                        <div className="animate-spin w-6 h-6 border-2 border-primary-dark border-t-transparent rounded-full mx-auto mb-2"></div>
                         Đang tải...
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
-                            <thead className="bg-orange-50/50 text-xs text-gray-500 uppercase">
+                            <thead className="bg-primary-lighter/50 text-xs text-gray-500 uppercase">
                                 <tr>
                                     <th className="px-6 py-4 font-semibold">Mã đơn</th>
                                     <th className="px-6 py-4 font-semibold">Người mua</th>
@@ -140,7 +140,7 @@ const SellerOrders = () => {
                                     const sc = statusConfig[order.status] || statusConfig.PENDING;
                                     const StatusIcon = sc.icon;
                                     return (
-                                        <tr key={order.id} className={`hover:bg-orange-50/30 transition-colors`}>
+                                        <tr key={order.id} className={`hover:bg-primary-lighter/30 transition-colors`}>
                                             <td className="px-6 py-4">
                                                 <span className="text-sm font-mono font-bold text-gray-800">
                                                     #{order.id}
@@ -148,7 +148,7 @@ const SellerOrders = () => {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                                                    <div className="w-8 h-8 bg-gradient-to-br from-primary-dark to-primary-darker rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm">
                                                         {order.user?.username?.charAt(0).toUpperCase() || '?'}
                                                     </div>
                                                     <span className="text-sm font-medium text-gray-700">{order.user?.username || 'N/A'}</span>
@@ -162,7 +162,7 @@ const SellerOrders = () => {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div>
-                                                    <p className="text-sm font-bold text-orange-600">{formatPrice(order.finalPrice)}</p>
+                                                    <p className="text-sm font-bold text-primary-darker">{formatPrice(order.finalPrice)}</p>
                                                     {order.totalPrice !== order.finalPrice && (
                                                         <p className="text-xs text-gray-400 line-through mt-0.5">{formatPrice(order.totalPrice)}</p>
                                                     )}
@@ -183,7 +183,7 @@ const SellerOrders = () => {
                                                         value={order.status}
                                                         disabled={updating === order.id || order.status === 'DELIVERED' || order.status === 'CANCELLED'}
                                                         onChange={e => handleUpdateStatus(order.id, e.target.value)}
-                                                        className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 pr-8 text-sm font-medium text-gray-700 hover:border-orange-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none disabled:opacity-50 disabled:bg-gray-50 cursor-pointer shadow-sm transition-all duration-200">
+                                                        className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 pr-8 text-sm font-medium text-gray-700 hover:border-primary focus:border-primary-dark focus:ring-2 focus:ring-primary outline-none disabled:opacity-50 disabled:bg-gray-50 cursor-pointer shadow-sm transition-all duration-200">
                                                         {allStatuses.map(s => (
                                                             <option key={s} value={s}>{statusConfig[s].label}</option>
                                                         ))}

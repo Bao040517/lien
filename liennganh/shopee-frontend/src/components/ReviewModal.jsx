@@ -49,14 +49,14 @@ const ReviewModal = ({ isOpen, onClose, onSubmit, productName, productImage }) =
                                 >
                                     <Star
                                         className={`w-8 h-8 ${star <= (hoverRating || rating)
-                                                ? 'fill-orange-400 text-orange-400'
-                                                : 'text-gray-300'
+                                            ? 'fill-primary-dark text-primary-dark'
+                                            : 'text-gray-300'
                                             }`}
                                     />
                                 </button>
                             ))}
                         </div>
-                        <div className="text-orange-500 font-medium text-sm">
+                        <div className="text-primary-darker font-medium text-sm">
                             {rating === 5 && 'Tuyệt vời'}
                             {rating === 4 && 'Hài lòng'}
                             {rating === 3 && 'Bình thường'}
@@ -71,7 +71,7 @@ const ReviewModal = ({ isOpen, onClose, onSubmit, productName, productImage }) =
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
                             placeholder="Chia sẻ nhận xét của bạn về sản phẩm này..."
-                            className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none resize-none h-32"
+                            className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:border-primary-dark focus:ring-1 focus:ring-primary-dark outline-none resize-none h-32"
                         ></textarea>
                     </div>
                 </div>
@@ -87,7 +87,7 @@ const ReviewModal = ({ isOpen, onClose, onSubmit, productName, productImage }) =
                     <button
                         onClick={handleSubmit}
                         disabled={!rating}
-                        className="px-6 py-2 bg-orange-500 text-white text-sm font-medium rounded hover:bg-orange-600 transition disabled:opacity-50"
+                        className="px-6 py-2 bg-primary-dark text-white text-sm font-medium rounded hover:bg-primary-darker transition disabled:opacity-50"
                     >
                         Hoàn thành
                     </button>

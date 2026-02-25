@@ -122,7 +122,7 @@ const SellerRevenue = () => {
             return (
                 <div className="bg-white p-3 border border-gray-100 shadow-lg rounded-xl">
                     <p className="text-gray-500 text-sm mb-1">{label}</p>
-                    <p className="font-bold text-orange-600 text-lg">
+                    <p className="font-bold text-primary-darker text-lg">
                         {formatPrice(payload[0].value)}
                     </p>
                 </div>
@@ -134,7 +134,7 @@ const SellerRevenue = () => {
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center p-20 text-gray-400">
-                <div className="animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full mb-4"></div>
+                <div className="animate-spin w-8 h-8 border-4 border-primary-dark border-t-transparent rounded-full mb-4"></div>
                 <p>Đang tải dữ liệu doanh thu...</p>
             </div>
         );
@@ -144,7 +144,7 @@ const SellerRevenue = () => {
         <div>
             <div className="mb-6">
                 <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                    <BarChart3 className="w-7 h-7 text-orange-500" />
+                    <BarChart3 className="w-7 h-7 text-primary-dark" />
                     Báo Cáo Doanh Thu
                 </h1>
                 <p className="text-gray-500 mt-1">Theo dõi hoạt động kinh doanh và tăng trưởng của Shop</p>
@@ -216,7 +216,7 @@ const SellerRevenue = () => {
                                 title="Đến ngày"
                             />
                             {(startDate || endDate) && (
-                                <button onClick={() => { setStartDate(''); setEndDate(''); }} className="ml-2 text-orange-500 hover:text-orange-600 font-medium">Xóa</button>
+                                <button onClick={() => { setStartDate(''); setEndDate(''); }} className="ml-2 text-primary-dark hover:text-primary-darker font-medium">Xóa</button>
                             )}
                         </div>
                     </div>

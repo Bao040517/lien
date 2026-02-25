@@ -185,19 +185,19 @@ const EditProduct = () => {
 
     if (loading) return (
         <div className="flex items-center justify-center py-20">
-            <div className="animate-spin w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full"></div>
+            <div className="animate-spin w-8 h-8 border-2 border-primary-dark border-t-transparent rounded-full"></div>
         </div>
     );
 
     return (
         <div className="max-w-4xl mx-auto">
             <button onClick={() => navigate('/seller/products')}
-                className="flex items-center gap-2 text-gray-500 hover:text-orange-500 mb-4 transition">
+                className="flex items-center gap-2 text-gray-500 hover:text-primary-dark mb-4 transition">
                 <ArrowLeft className="w-4 h-4" /> Quay lại danh sách
             </button>
 
             <div className="flex items-center gap-3 mb-6">
-                <Package className="w-8 h-8 text-orange-500" />
+                <Package className="w-8 h-8 text-primary-dark" />
                 <h1 className="text-2xl font-bold text-gray-800">Chỉnh sửa sản phẩm</h1>
             </div>
 
@@ -210,25 +210,25 @@ const EditProduct = () => {
                             <label className="block text-sm font-medium text-gray-600 mb-1">Tên sản phẩm</label>
                             <input type="text" required value={form.name}
                                 onChange={e => setForm({ ...form, name: e.target.value })}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-300 outline-none" />
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none" />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-600 mb-1">Giá (₫)</label>
                             <input type="number" required value={form.price}
                                 onChange={e => setForm({ ...form, price: e.target.value })}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-300 outline-none" />
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none" />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-600 mb-1">Kho</label>
                             <input type="number" value={form.stockQuantity}
                                 onChange={e => setForm({ ...form, stockQuantity: e.target.value })}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-300 outline-none" />
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none" />
                         </div>
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-600 mb-1">Mô tả</label>
                             <textarea value={form.description}
                                 onChange={e => setForm({ ...form, description: e.target.value })}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-300 outline-none h-24 resize-none" />
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none h-24 resize-none" />
                         </div>
                     </div>
                 </div>
@@ -242,7 +242,7 @@ const EditProduct = () => {
                             <div key={`existing-${index}`} className="relative w-24 h-24 rounded-lg overflow-hidden border-2 border-gray-200 group">
                                 <img src={url} alt={`img-${index}`} className="w-full h-full object-cover" />
                                 {index === 0 && existingImages.length > 0 && newImageFiles.length === 0 && (
-                                    <span className="absolute top-0.5 left-0.5 bg-orange-500 text-white text-[10px] px-1.5 py-0.5 rounded font-medium">Bìa</span>
+                                    <span className="absolute top-0.5 left-0.5 bg-primary-dark text-white text-[10px] px-1.5 py-0.5 rounded font-medium">Bìa</span>
                                 )}
                                 <button type="button" onClick={() => removeExistingImage(index)}
                                     className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition">
@@ -263,7 +263,7 @@ const EditProduct = () => {
                         ))}
                         {/* Add button */}
                         {totalImages < 9 && (
-                            <label className="w-24 h-24 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-400 hover:bg-orange-50/50 transition">
+                            <label className="w-24 h-24 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary-dark hover:bg-primary-lighter/50 transition">
                                 <Plus className="w-6 h-6 text-gray-400" />
                                 <span className="text-[10px] text-gray-400 mt-1">Thêm ảnh</span>
                                 <input type="file" accept="image/*" multiple onChange={handleNewImages} className="hidden" />
@@ -313,13 +313,13 @@ const EditProduct = () => {
                                             <td className="px-3 py-2">
                                                 <div className="flex flex-wrap gap-1">
                                                     {Object.entries(v.parsedAttrs).map(([k, val]) => (
-                                                        <span key={k} className="px-2 py-0.5 bg-orange-50 text-orange-700 rounded text-xs">
+                                                        <span key={k} className="px-2 py-0.5 bg-primary-lighter text-primary-darker rounded text-xs">
                                                             {k}: {val}
                                                         </span>
                                                     ))}
                                                 </div>
                                             </td>
-                                            <td className="px-3 py-2 font-medium text-orange-600">{formatPrice(v.price)}</td>
+                                            <td className="px-3 py-2 font-medium text-primary-darker">{formatPrice(v.price)}</td>
                                             <td className="px-3 py-2">{v.stockQuantity}</td>
                                             <td className="px-3 py-2">
                                                 <button type="button" onClick={() => handleDeleteVariant(v.id)}
@@ -340,7 +340,7 @@ const EditProduct = () => {
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-lg font-semibold text-gray-700">Thêm phân loại mới</h2>
                         <button type="button" onClick={addNewAttribute}
-                            className="flex items-center gap-1 px-3 py-1.5 bg-orange-50 text-orange-500 border border-orange-300 rounded-lg text-sm hover:bg-orange-100 transition">
+                            className="flex items-center gap-1 px-3 py-1.5 bg-primary-lighter text-primary-dark border border-primary rounded-lg text-sm hover:bg-primary-light transition">
                             <Plus className="w-4 h-4" /> Thêm nhóm
                         </button>
                     </div>
@@ -353,7 +353,7 @@ const EditProduct = () => {
                                 <div className="flex items-center gap-3 mb-3">
                                     <input type="text" value={attr.name}
                                         onChange={e => updateNewAttrName(ai, e.target.value)}
-                                        className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-orange-300 outline-none"
+                                        className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none"
                                         placeholder="Tên (VD: Kích cỡ, Màu sắc)" />
                                     <button type="button" onClick={() => removeNewAttribute(ai)}
                                         className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition">
@@ -365,7 +365,7 @@ const EditProduct = () => {
                                         <div key={oi} className="flex items-center gap-1">
                                             <input type="text" value={opt}
                                                 onChange={e => updateNewOption(ai, oi, e.target.value)}
-                                                className="border border-gray-300 rounded px-3 py-1.5 text-sm w-28 focus:ring-2 focus:ring-orange-300 outline-none"
+                                                className="border border-gray-300 rounded px-3 py-1.5 text-sm w-28 focus:ring-2 focus:ring-primary outline-none"
                                                 placeholder={`Giá trị ${oi + 1}`} />
                                             {attr.options.length > 1 && (
                                                 <button type="button" onClick={() => removeNewOption(ai, oi)}
@@ -376,7 +376,7 @@ const EditProduct = () => {
                                         </div>
                                     ))}
                                     <button type="button" onClick={() => addNewOption(ai)}
-                                        className="px-3 py-1.5 border border-dashed border-gray-300 rounded text-sm text-gray-500 hover:border-orange-400 hover:text-orange-400 transition">
+                                        className="px-3 py-1.5 border border-dashed border-gray-300 rounded text-sm text-gray-500 hover:border-primary-dark hover:text-primary-dark transition">
                                         + Thêm
                                     </button>
                                 </div>
@@ -388,7 +388,7 @@ const EditProduct = () => {
                 {/* Submit */}
                 <div className="flex gap-4">
                     <button type="submit" disabled={saving}
-                        className="flex-1 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition font-bold text-lg flex items-center justify-center gap-2 disabled:opacity-50">
+                        className="flex-1 py-3 bg-primary-dark text-white rounded-lg hover:bg-primary-darker transition font-bold text-lg flex items-center justify-center gap-2 disabled:opacity-50">
                         <Save className="w-5 h-5" />
                         {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
                     </button>

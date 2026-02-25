@@ -67,7 +67,7 @@ const SellerSettings = () => {
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center p-20 text-gray-400">
-                <div className="animate-spin w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full mb-3"></div>
+                <div className="animate-spin w-8 h-8 border-2 border-primary-dark border-t-transparent rounded-full mb-3"></div>
                 Đang tải thông tin...
             </div>
         );
@@ -76,7 +76,7 @@ const SellerSettings = () => {
     return (
         <div className="max-w-3xl mx-auto">
             <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-orange-500">
+                <div className="w-12 h-12 bg-primary-light rounded-xl flex items-center justify-center text-primary-dark">
                     <Store className="w-6 h-6" />
                 </div>
                 <div>
@@ -105,7 +105,7 @@ const SellerSettings = () => {
                                 value={shopName}
                                 onChange={(e) => setShopName(e.target.value)}
                                 placeholder="Nhập tên hiển thị của Shop..."
-                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-dark focus:border-primary-dark outline-none transition-colors"
                                 required
                                 maxLength={50}
                             />
@@ -123,7 +123,7 @@ const SellerSettings = () => {
                                 onChange={(e) => setShopDescription(e.target.value)}
                                 placeholder="Viết giới thiệu ngắn về các mặt hàng bạn kinh doanh..."
                                 rows="5"
-                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors resize-y"
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-dark focus:border-primary-dark outline-none transition-colors resize-y"
                                 maxLength={500}
                             />
                             <p className="text-xs text-gray-500 mt-2">
@@ -136,7 +136,7 @@ const SellerSettings = () => {
                         <button
                             type="submit"
                             disabled={isUpdating}
-                            className="bg-orange-500 hover:bg-orange-600 text-white font-medium py-2.5 px-6 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                            className="bg-primary-dark hover:bg-primary-darker text-white font-medium py-2.5 px-6 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
                             {isUpdating ? (
                                 <>

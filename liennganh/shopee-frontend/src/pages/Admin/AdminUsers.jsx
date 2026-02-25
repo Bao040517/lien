@@ -7,7 +7,7 @@ import ConfirmModal from '../../components/Admin/ConfirmModal';
 const roleLabels = { USER: 'Người dùng', SELLER: 'Người bán', ADMIN: 'Quản trị viên' };
 const roleColors = {
     USER: 'bg-blue-50 text-blue-700',
-    SELLER: 'bg-orange-50 text-orange-700',
+    SELLER: 'bg-primary-lighter text-primary-darker',
     ADMIN: 'bg-purple-50 text-purple-700'
 };
 
@@ -180,7 +180,7 @@ const AdminUsers = () => {
                                             <td className="px-6 py-3">
                                                 <div className="flex items-center gap-3">
                                                     <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold ${user.role === 'ADMIN' ? 'bg-gradient-to-br from-purple-500 to-purple-700'
-                                                        : user.role === 'SELLER' ? 'bg-gradient-to-br from-orange-400 to-orange-600'
+                                                        : user.role === 'SELLER' ? 'bg-gradient-to-br from-primary-dark to-primary-darker'
                                                             : 'bg-gradient-to-br from-blue-400 to-blue-600'
                                                         }`}>
                                                         {user.role === 'ADMIN' ? <Shield className="w-4 h-4" /> : user.username?.charAt(0).toUpperCase()}

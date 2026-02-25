@@ -132,13 +132,13 @@ const AdminSellers = () => {
 
             {/* Banner thông báo seller mới */}
             {newCount > 0 && (
-                <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-xl p-4 mb-6 flex items-center gap-3 animate-pulse">
-                    <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="bg-gradient-to-r from-primary-lighter to-amber-50 border border-primary rounded-xl p-4 mb-6 flex items-center gap-3 animate-pulse">
+                    <div className="w-10 h-10 bg-primary-dark rounded-full flex items-center justify-center flex-shrink-0">
                         <Sparkles className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                        <p className="text-orange-800 font-semibold">🆕 Có {newCount} người bán mới đăng ký!</p>
-                        <p className="text-orange-600 text-sm">Người bán mới đã được đưa lên đầu danh sách và đánh dấu nổi bật.</p>
+                        <p className="text-primary-text font-semibold">🆕 Có {newCount} người bán mới đăng ký!</p>
+                        <p className="text-primary-darker text-sm">Người bán mới đã được đưa lên đầu danh sách và đánh dấu nổi bật.</p>
                     </div>
                 </div>
             )}
@@ -190,18 +190,18 @@ const AdminSellers = () => {
                                     const status = statusConfig[seller.sellerStatus] || statusConfig.PENDING;
                                     const isNew = isNewSeller(seller);
                                     return (
-                                        <tr key={seller.id} className={`hover:bg-gray-50/50 transition-colors ${isNew ? 'bg-orange-50 border-l-4 border-orange-500' : ''
+                                        <tr key={seller.id} className={`hover:bg-gray-50/50 transition-colors ${isNew ? 'bg-primary-lighter border-l-4 border-primary-dark' : ''
                                             }`}>
                                             <td className="px-6 py-3 text-sm text-gray-400">#{seller.id}</td>
                                             <td className="px-6 py-3">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-9 h-9 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                                                    <div className="w-9 h-9 bg-gradient-to-br from-primary-dark to-primary-darker rounded-full flex items-center justify-center text-white text-sm font-bold">
                                                         {seller.username?.charAt(0).toUpperCase()}
                                                     </div>
                                                     <span className="text-sm font-medium text-gray-800">
                                                         {seller.username}
                                                         {isNew && (
-                                                            <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 bg-orange-500 text-white text-[10px] font-bold rounded-full animate-bounce">
+                                                            <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 bg-primary-dark text-white text-[10px] font-bold rounded-full animate-bounce">
                                                                 <Sparkles className="w-3 h-3" /> MỚI
                                                             </span>
                                                         )}

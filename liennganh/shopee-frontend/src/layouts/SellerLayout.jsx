@@ -171,9 +171,9 @@ const SellerLayout = () => {
 
     if (!user) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-orange-50">
+            <div className="min-h-screen flex items-center justify-center bg-primary-lighter">
                 <div className="text-center">
-                    <Store className="w-16 h-16 mx-auto mb-4 text-orange-400" />
+                    <Store className="w-16 h-16 mx-auto mb-4 text-primary-dark" />
                     <h1 className="text-2xl font-bold mb-2 text-gray-800">Đang chuyển hướng...</h1>
                     <p className="text-gray-500 mb-6">Bạn cần đăng nhập để truy cập trang này.</p>
                 </div>
@@ -192,7 +192,7 @@ const SellerLayout = () => {
                     <p className="text-yellow-700 mb-6">
                         Yêu cầu đăng ký Seller của bạn đã được gửi và đang được Admin xem xét. Vui lòng trở lại sau.
                     </p>
-                    <Link to="/" className="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 transition">
+                    <Link to="/" className="bg-primary-dark text-white px-6 py-2 rounded hover:bg-primary-darker transition">
                         Về trang chủ
                     </Link>
                 </div>
@@ -211,7 +211,7 @@ const SellerLayout = () => {
                     <p className="text-red-700 mb-6">
                         Yêu cầu trở thành Seller của bạn đã bị từ chối. Vui lòng liên hệ hỗ trợ.
                     </p>
-                    <Link to="/" className="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 transition">
+                    <Link to="/" className="bg-primary-dark text-white px-6 py-2 rounded hover:bg-primary-darker transition">
                         Về trang chủ
                     </Link>
                 </div>
@@ -232,10 +232,10 @@ const SellerLayout = () => {
         };
 
         return (
-            <div className="min-h-screen flex items-center justify-center bg-orange-50">
-                <div className="text-center max-w-md p-8 bg-white rounded-2xl shadow-xl border border-orange-100">
-                    <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <Store className="w-10 h-10 text-orange-500" />
+            <div className="min-h-screen flex items-center justify-center bg-primary-lighter">
+                <div className="text-center max-w-md p-8 bg-white rounded-2xl shadow-xl border border-primary-light">
+                    <div className="w-20 h-20 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-6">
+                        <Store className="w-10 h-10 text-primary-dark" />
                     </div>
                     <h1 className="text-2xl font-bold mb-3 text-gray-800">Đăng ký Kênh Người Bán</h1>
                     <p className="text-gray-500 mb-8 leading-relaxed">
@@ -252,7 +252,7 @@ const SellerLayout = () => {
                     <button
                         onClick={handleUpgradeToSeller}
                         disabled={isSubmitting}
-                        className="w-full bg-orange-500 text-white px-6 py-3.5 rounded-xl hover:bg-orange-600 transition font-bold shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="w-full bg-primary-dark text-white px-6 py-3.5 rounded-xl hover:bg-primary-darker transition font-bold shadow-lg shadow-primary-dark/30 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                         {isSubmitting ? (
                             <>
@@ -276,7 +276,7 @@ const SellerLayout = () => {
                 {/* Logo */}
                 <div className="px-6 py-5 border-b">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
+                        <div className="w-10 h-10 bg-primary-dark rounded-lg flex items-center justify-center">
                             <Store className="w-6 h-6 text-white" />
                         </div>
                         <div>
@@ -299,8 +299,8 @@ const SellerLayout = () => {
                                 key={item.path}
                                 to={item.path}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all duration-200 ${isActive
-                                    ? 'bg-orange-50 text-orange-600 font-medium border-l-4 border-orange-500'
-                                    : 'text-gray-600 hover:bg-gray-50 hover:text-orange-500'
+                                    ? 'bg-primary-lighter text-primary-darker font-medium border-l-4 border-primary-dark'
+                                    : 'text-gray-600 hover:bg-gray-50 hover:text-primary-dark'
                                     }`}
                             >
                                 <Icon className="w-5 h-5" />
@@ -328,7 +328,7 @@ const SellerLayout = () => {
                 {/* User Section */}
                 <div className="border-t p-4">
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-9 h-9 bg-orange-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                        <div className="w-9 h-9 bg-primary-dark rounded-full flex items-center justify-center text-white text-sm font-bold">
                             {(shopProfile?.name || user.username)?.charAt(0).toUpperCase()}
                         </div>
                         <div className="min-w-0">
@@ -337,7 +337,7 @@ const SellerLayout = () => {
                         </div>
                     </div>
                     <div className="flex gap-2">
-                        <Link to="/" className="text-xs text-gray-400 hover:text-orange-500 transition">
+                        <Link to="/" className="text-xs text-gray-400 hover:text-primary-dark transition">
                             Về cửa hàng
                         </Link>
                         <span className="text-gray-300">|</span>
@@ -427,12 +427,12 @@ const SellerLayout = () => {
             {showShopSetup && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
                     <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in">
-                        <div className="bg-orange-500 p-6 text-center text-white">
+                        <div className="bg-primary-dark p-6 text-center text-white">
                             <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
                                 <Store className="w-8 h-8" />
                             </div>
                             <h2 className="text-2xl font-bold">Chào mừng Seller mới! 🎉</h2>
-                            <p className="text-orange-100 mt-2 text-sm">
+                            <p className="text-primary-light mt-2 text-sm">
                                 Yêu cầu đăng ký Kênh Người Bán của bạn đã được duyệt.
                                 Hãy đặt tên cho Cửa hàng của bạn để bắt đầu kinh doanh.
                             </p>
@@ -448,7 +448,7 @@ const SellerLayout = () => {
                                         value={shopName}
                                         onChange={(e) => setShopName(e.target.value)}
                                         placeholder="Ví dụ: Shopee Mall, Cửa hàng Mẹ và Bé..."
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-dark focus:border-primary-dark transition-colors"
                                         required
                                         maxLength={50}
                                     />
@@ -462,7 +462,7 @@ const SellerLayout = () => {
                                         onChange={(e) => setShopDescription(e.target.value)}
                                         placeholder="Giới thiệu ngắn gọn về cửa hàng của bạn..."
                                         rows="3"
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors resize-none"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-dark focus:border-primary-dark transition-colors resize-none"
                                         maxLength={500}
                                     />
                                 </div>
@@ -471,7 +471,7 @@ const SellerLayout = () => {
                                 <button
                                     type="submit"
                                     disabled={isUpdatingShop || !shopName.trim()}
-                                    className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                                    className="w-full bg-primary-dark hover:bg-primary-darker text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                                 >
                                     {isUpdatingShop ? (
                                         <>
