@@ -37,7 +37,7 @@ const SellerRegister = () => {
             <p className="text-green-600 mb-4">Bạn đã có quyền bán hàng trên nền tảng.</p>
             <button
                 onClick={() => navigate('/seller')}
-                className="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 transition"
+                className="bg-primary-dark text-white px-6 py-2 rounded hover:bg-primary-darker transition"
             >
                 Vào kênh bán hàng
             </button>
@@ -55,7 +55,7 @@ const SellerRegister = () => {
 
     return (
         <div className="max-w-2xl mx-auto bg-white p-10 rounded-lg shadow mt-10 text-center">
-            <Store className="w-16 h-16 mx-auto text-orange-500 mb-6" />
+            <Store className="w-16 h-16 mx-auto text-primary-dark mb-6" />
             <h1 className="text-3xl font-bold mb-4 text-gray-800">Đăng ký bán hàng trên Shopee Clone</h1>
             <p className="text-gray-600 mb-8 max-w-lg mx-auto">
                 Bắt đầu kinh doanh sản phẩm cho hàng triệu người dùng.
@@ -76,7 +76,7 @@ const SellerRegister = () => {
             <button
                 onClick={handleRegister}
                 disabled={loading}
-                className="px-8 py-3 bg-orange-500 text-white font-bold rounded hover:bg-orange-600 transition disabled:opacity-70"
+                className="px-8 py-3 bg-primary-dark text-white font-bold rounded hover:bg-primary-darker transition disabled:opacity-70"
             >
                 {loading ? 'Đang xử lý...' : 'Đăng ký trở thành Seller'}
             </button>

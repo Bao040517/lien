@@ -136,12 +136,12 @@ const SellerVouchers = () => {
         <div>
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                    <Ticket className="w-8 h-8 text-orange-500" />
+                    <Ticket className="w-8 h-8 text-primary-dark" />
                     Mã Giảm Giá Của Shop
                 </h1>
                 <button
                     onClick={() => setShowModal(true)}
-                    className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition"
+                    className="flex items-center gap-2 bg-primary-dark text-white px-4 py-2 rounded-lg hover:bg-primary-darker transition"
                 >
                     <Plus className="w-5 h-5" /> Tạo Mã Mới
                 </button>
@@ -158,7 +158,7 @@ const SellerVouchers = () => {
                             <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-gray-50 rounded-full"></div>
 
                             <div className="flex justify-between items-start mb-2">
-                                <div className="bg-orange-100 text-orange-600 font-bold px-3 py-1 rounded text-sm mb-1 inline-block">
+                                <div className="bg-primary-light text-primary-darker font-bold px-3 py-1 rounded text-sm mb-1 inline-block">
                                     {voucher.code}
                                 </div>
                                 <button
@@ -170,7 +170,7 @@ const SellerVouchers = () => {
                             </div>
 
                             <div className="flex items-center gap-2 mb-3">
-                                <div className="p-2 bg-orange-50 rounded-full text-orange-500">
+                                <div className="p-2 bg-primary-lighter rounded-full text-primary-dark">
                                     {voucher.discountType === 'PERCENTAGE' ? (
                                         <Percent className="w-5 h-5" />
                                     ) : (
@@ -231,7 +231,7 @@ const SellerVouchers = () => {
                                 onClick={() => typeof page === 'number' ? paginate(page) : null}
                                 disabled={typeof page !== 'number'}
                                 className={`px-3 py-1 border rounded transition ${currentPage === page
-                                    ? 'bg-orange-500 text-white border-orange-500'
+                                    ? 'bg-primary-dark text-white border-primary-dark'
                                     : typeof page === 'number'
                                         ? 'border-gray-300 text-gray-600 hover:bg-gray-50'
                                         : 'border-transparent text-gray-400'
@@ -266,7 +266,7 @@ const SellerVouchers = () => {
                                         name="code"
                                         value={formData.code}
                                         onChange={handleChange}
-                                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none uppercase"
+                                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-dark outline-none uppercase"
                                         placeholder="VD: SHOPKHAI TRUONG"
                                         required
                                     />
@@ -287,7 +287,7 @@ const SellerVouchers = () => {
                                         name="discountType"
                                         value={formData.discountType}
                                         onChange={handleChange}
-                                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-dark outline-none"
                                     >
                                         <option value="PERCENTAGE">Phần trăm (%)</option>
                                         <option value="FIXED">Số tiền cố định</option>
@@ -301,7 +301,7 @@ const SellerVouchers = () => {
                                         value={formData.discountValue}
                                         onChange={handleChange}
                                         min="0"
-                                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-dark outline-none"
                                         placeholder="VD: 10 hoặc 50000"
                                         required
                                     />
@@ -315,7 +315,7 @@ const SellerVouchers = () => {
                                     value={formData.minOrderValue}
                                     onChange={handleChange}
                                     min="0"
-                                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-dark outline-none"
                                     placeholder="0"
                                 />
                             </div>
@@ -327,7 +327,7 @@ const SellerVouchers = () => {
                                     value={formData.usageLimit}
                                     onChange={handleChange}
                                     min="0"
-                                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-dark outline-none"
                                     placeholder="Không giới hạn"
                                 />
                             </div>
@@ -339,7 +339,7 @@ const SellerVouchers = () => {
                                         name="startDate"
                                         value={formData.startDate}
                                         onChange={handleChange}
-                                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-dark outline-none"
                                         required
                                     />
                                 </div>
@@ -350,7 +350,7 @@ const SellerVouchers = () => {
                                         name="endDate"
                                         value={formData.endDate}
                                         onChange={handleChange}
-                                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-dark outline-none"
                                         required
                                     />
                                 </div>
@@ -365,7 +365,7 @@ const SellerVouchers = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
+                                    className="px-4 py-2 bg-primary-dark text-white rounded-lg hover:bg-primary-darker transition"
                                 >
                                     Tạo Voucher
                                 </button>

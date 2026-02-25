@@ -1,7 +1,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 /**
- * Premium Pagination Component - Shopee Style
+ * Premium Pagination Component
  * 
  * Props:
  *   currentPage: number (1-indexed)
@@ -11,7 +11,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
  *   startItem: number (optional, 1-indexed)
  *   endItem: number (optional)
  *   itemLabel: string (optional, e.g. "sản phẩm", "người dùng")
- *   accentColor: 'orange' | 'blue' (default: 'orange')
+ *   accentColor: 'green' | 'blue' (default: 'green')
  */
 const Pagination = ({
     currentPage,
@@ -21,7 +21,7 @@ const Pagination = ({
     startItem,
     endItem,
     itemLabel = 'mục',
-    accentColor = 'orange'
+    accentColor = 'green'
 }) => {
     if (totalPages <= 1) return null;
 
@@ -41,10 +41,15 @@ const Pagination = ({
     const paginationRange = getPaginationRange(currentPage, totalPages);
 
     const colors = {
+        green: {
+            active: 'bg-primary-dark text-white border-primary-dark shadow-sm shadow-primary-light',
+            hover: 'hover:border-primary hover:text-primary-darker',
+            text: 'text-primary-darker',
+        },
         orange: {
-            active: 'bg-orange-500 text-white border-orange-500 shadow-sm shadow-orange-200',
-            hover: 'hover:border-orange-300 hover:text-orange-500',
-            text: 'text-orange-500',
+            active: 'bg-primary-dark text-white border-primary-dark shadow-sm shadow-primary-light',
+            hover: 'hover:border-primary hover:text-primary-darker',
+            text: 'text-primary-darker',
         },
         blue: {
             active: 'bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-200',
@@ -53,7 +58,7 @@ const Pagination = ({
         }
     };
 
-    const c = colors[accentColor] || colors.orange;
+    const c = colors[accentColor] || colors.green;
 
     return (
         <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-white">
@@ -89,8 +94,8 @@ const Pagination = ({
                             key={`page-${page}`}
                             onClick={() => onPageChange(page)}
                             className={`min-w-[36px] h-9 flex items-center justify-center border rounded-lg text-sm font-medium transition-all duration-200 ${currentPage === page
-                                    ? c.active
-                                    : `border-gray-200 text-gray-600 ${c.hover} hover:bg-gray-50`
+                                ? c.active
+                                : `border-gray-200 text-gray-600 ${c.hover} hover:bg-gray-50`
                                 }`}
                         >
                             {page}

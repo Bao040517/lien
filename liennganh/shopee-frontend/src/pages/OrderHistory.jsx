@@ -104,7 +104,7 @@ const OrderHistory = () => {
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-500"></div>
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-dark"></div>
             </div>
         );
     }
@@ -125,11 +125,11 @@ const OrderHistory = () => {
                         key={tab.key}
                         onClick={() => setActiveTab(tab.key)}
                         className={`px-5 py-3.5 text-sm font-medium whitespace-nowrap transition-colors relative
-                            ${activeTab === tab.key ? 'text-orange-500' : 'text-gray-600 hover:text-gray-800'}`}
+                            ${activeTab === tab.key ? 'text-primary-dark' : 'text-gray-600 hover:text-gray-800'}`}
                     >
                         {tab.label}
                         {activeTab === tab.key && (
-                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-orange-500"></div>
+                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-dark"></div>
                         )}
                         {tab.key !== 'ALL' && (
                             <span className="ml-1 text-xs text-gray-400">
@@ -200,7 +200,7 @@ const OrderHistory = () => {
                                                     <p className="text-xs text-gray-400 mt-0.5">x{item.quantity}</p>
                                                 </div>
                                                 <div className="text-right">
-                                                    <div className="text-sm font-medium text-orange-500">
+                                                    <div className="text-sm font-medium text-primary-dark">
                                                         {formatPrice(item.price * item.quantity)}
                                                     </div>
                                                     {isDelivered && (
@@ -217,7 +217,7 @@ const OrderHistory = () => {
                                                                     e.stopPropagation();
                                                                     handleOpenReview(order.id, { ...item, product: { ...item.product, imageUrl } });
                                                                 }}
-                                                                className="mt-2 text-xs border border-orange-500 text-orange-500 px-3 py-1 rounded hover:bg-orange-50 transition"
+                                                                className="mt-2 text-xs border border-primary-dark text-primary-dark px-3 py-1 rounded hover:bg-primary-lighter transition"
                                                             >
                                                                 Đánh giá
                                                             </button>
@@ -233,14 +233,14 @@ const OrderHistory = () => {
                                 <div className="px-5 py-3 bg-gray-50/50 border-t border-gray-100 flex items-center justify-between">
                                     <button
                                         onClick={() => setExpandedOrder(isExpanded ? null : order.id)}
-                                        className="flex items-center gap-1 text-xs text-gray-500 hover:text-orange-500 transition-colors"
+                                        className="flex items-center gap-1 text-xs text-gray-500 hover:text-primary-dark transition-colors"
                                     >
                                         {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                                         {isExpanded ? 'Ẩn chi tiết' : 'Xem chi tiết'}
                                     </button>
                                     <div className="flex items-center gap-2">
                                         <span className="text-sm text-gray-500">Tổng tiền:</span>
-                                        <span className="text-lg font-semibold text-orange-500">{formatPrice(order.finalPrice)}</span>
+                                        <span className="text-lg font-semibold text-primary-dark">{formatPrice(order.finalPrice)}</span>
                                         {order.totalPrice > order.finalPrice && (
                                             <span className="text-xs text-gray-400 line-through">{formatPrice(order.totalPrice)}</span>
                                         )}
@@ -259,7 +259,7 @@ const OrderHistory = () => {
                                                     <div className="absolute top-3 left-6 right-6 h-0.5 bg-gray-200"></div>
                                                     {/* Progress line */}
                                                     <div
-                                                        className="absolute top-3 left-6 h-0.5 bg-orange-500 transition-all duration-500"
+                                                        className="absolute top-3 left-6 h-0.5 bg-primary-dark transition-all duration-500"
                                                         style={{ width: currentStep >= 0 ? `${(currentStep / (STEPS.length - 1)) * (100 - 12)}%` : '0%' }}
                                                     ></div>
 
@@ -269,13 +269,13 @@ const OrderHistory = () => {
                                                         const StepIcon = STATUS_CONFIG[step].icon;
                                                         return (
                                                             <div key={step} className="flex flex-col items-center z-10 relative">
-                                                                <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${active ? 'bg-orange-500 text-white ring-4 ring-orange-100' :
-                                                                    done ? 'bg-orange-500 text-white' :
+                                                                <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${active ? 'bg-primary-dark text-white ring-4 ring-primary-light' :
+                                                                    done ? 'bg-primary-dark text-white' :
                                                                         'bg-gray-200 text-gray-400'
                                                                     }`}>
                                                                     <StatusIcon size={12} />
                                                                 </div>
-                                                                <span className={`text-[10px] mt-1.5 text-center max-w-[70px] leading-tight ${done ? 'text-orange-500 font-medium' : 'text-gray-400'
+                                                                <span className={`text-[10px] mt-1.5 text-center max-w-[70px] leading-tight ${done ? 'text-primary-dark font-medium' : 'text-gray-400'
                                                                     }`}>
                                                                     {STATUS_CONFIG[step].label}
                                                                 </span>

@@ -45,7 +45,7 @@ const SellerProductAnalytics = () => {
 
     const getStockStatus = (stock) => {
         if (stock === 0) return { label: 'Hết hàng', color: 'text-red-600 bg-red-50 border-red-200' };
-        if (stock < 10) return { label: 'Sắp hết', color: 'text-orange-600 bg-orange-50 border-orange-200' };
+        if (stock < 10) return { label: 'Sắp hết', color: 'text-primary-darker bg-primary-lighter border-primary' };
         return { label: 'Còn hàng', color: 'text-green-600 bg-green-50 border-green-200' };
     };
 
@@ -56,7 +56,7 @@ const SellerProductAnalytics = () => {
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center p-20 text-gray-400">
-                <div className="animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full mb-4"></div>
+                <div className="animate-spin w-8 h-8 border-4 border-primary-dark border-t-transparent rounded-full mb-4"></div>
                 <p>Đang tải dữ liệu phân tích sản phẩm...</p>
             </div>
         );
@@ -67,7 +67,7 @@ const SellerProductAnalytics = () => {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                        <TrendingUp className="w-7 h-7 text-orange-500" />
+                        <TrendingUp className="w-7 h-7 text-primary-dark" />
                         Thống Kê Sản Phẩm
                     </h1>
                     <p className="text-gray-500 mt-1">Phân tích hiệu suất bán hàng của từng mặt hàng</p>
@@ -81,14 +81,14 @@ const SellerProductAnalytics = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Bảng Xếp Hạng 1: Bán Chạy Nhất (Số lượng) */}
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">
-                    <div className="p-5 border-b border-gray-100 bg-gradient-to-r from-orange-50 to-white flex justify-between items-center">
+                    <div className="p-5 border-b border-gray-100 bg-gradient-to-r from-primary-lighter to-white flex justify-between items-center">
                         <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
+                            <div className="w-8 h-8 rounded-full bg-primary-light flex items-center justify-center text-primary-darker">
                                 <Trophy className="w-4 h-4" />
                             </div>
                             <h2 className="font-bold text-gray-800">Top 10 Bán Chạy Nhất</h2>
                         </div>
-                        <span className="text-xs font-semibold text-orange-600 bg-orange-100 px-2.5 py-1 rounded-full">{topBySold.length} Sản phẩm</span>
+                        <span className="text-xs font-semibold text-primary-darker bg-primary-light px-2.5 py-1 rounded-full">{topBySold.length} Sản phẩm</span>
                     </div>
 
                     <div className="flex-1 p-0 overflow-y-auto max-h-[500px]">
@@ -111,11 +111,11 @@ const SellerProductAnalytics = () => {
                                             )}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <Link to={`/product/${product.productId}`} target="_blank" className="font-medium text-gray-800 hover:text-orange-500 truncate block mb-1">
+                                            <Link to={`/product/${product.productId}`} target="_blank" className="font-medium text-gray-800 hover:text-primary-dark truncate block mb-1">
                                                 {product.productName}
                                             </Link>
                                             <div className="flex items-center gap-3 text-xs text-gray-500">
-                                                <span className="flex items-center gap-1 font-semibold text-orange-600 bg-orange-50 px-2 py-0.5 rounded">
+                                                <span className="flex items-center gap-1 font-semibold text-primary-darker bg-primary-lighter px-2 py-0.5 rounded">
                                                     <Package className="w-3 h-3" /> Đã bán: {product.sold}
                                                 </span>
                                             </div>
@@ -212,7 +212,7 @@ const SellerProductAnalytics = () => {
                                     return (
                                         <tr key={`list-${product.productId}`} className="hover:bg-gray-50 transition-colors">
                                             <td className="px-6 py-4">
-                                                <Link to={`/product/${product.productId}`} target="_blank" className="font-medium text-gray-800 hover:text-orange-500 flex items-center gap-3">
+                                                <Link to={`/product/${product.productId}`} target="_blank" className="font-medium text-gray-800 hover:text-primary-dark flex items-center gap-3">
                                                     <div className="w-10 h-10 shrink-0 rounded border border-gray-100 bg-gray-50 flex flex-col items-center justify-center overflow-hidden">
                                                         {detail.imageUrl ? (
                                                             <img src={getImageUrl(detail.imageUrl)} alt={product.productName} className="w-full h-full object-cover" />

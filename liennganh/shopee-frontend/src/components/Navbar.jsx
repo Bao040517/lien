@@ -38,9 +38,9 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="bg-orange-500 text-white sticky top-0 z-50 shadow-md">
+        <nav className="bg-primary text-white sticky top-0 z-50 shadow-md">
             {/* Top tiny bar */}
-            <div className="container mx-auto px-4 text-xs font-light flex justify-between py-1">
+            <div className="container mx-auto px-4 text-xs font-bold flex justify-between py-1">
                 <div className="flex gap-4">
                     <Link to="/seller" className="hover:text-gray-200">Kênh Người Bán</Link>
                     {user?.role === 'ADMIN' && (
@@ -84,7 +84,7 @@ const Navbar = () => {
                         <span className="text-2xl font-bold">Shopee Clone</span>
                     </Link>
 
-                    {/* Search Bar - Adjusted width */}
+                    {/* Search Bar */}
                     <div className="flex-1 max-w-2xl">
                         <form onSubmit={handleSearch} className="bg-white p-1 rounded-sm flex shadow-sm relative">
                             <input
@@ -94,11 +94,11 @@ const Navbar = () => {
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
-                            <button type="submit" className="bg-orange-500 px-6 rounded-sm hover:bg-orange-600 transition">
+                            <button type="submit" className="bg-primary-dark px-6 rounded-sm hover:bg-primary-darker transition">
                                 <Search className="w-5 h-5 text-white" />
                             </button>
                         </form>
-                        <div className="flex gap-3 text-xs mt-1 text-white/90 overflow-hidden h-4">
+                        <div className="flex gap-3 text-xs mt-1 text-white/80 overflow-hidden h-4">
                             <span className="cursor-pointer hover:text-white">Áo Phông Đẹp</span>
                             <span className="cursor-pointer hover:text-white">Dép Crocs</span>
                             <span className="cursor-pointer hover:text-white">Váy Trễ Vai</span>
@@ -123,7 +123,7 @@ const Navbar = () => {
                             <Link to="/cart">
                                 <ShoppingCart className="w-8 h-8" />
                                 {cartCount > 0 && (
-                                    <span className="absolute -top-1 -right-2 bg-white text-orange-500 text-xs font-bold px-1.5 py-0.5 rounded-full border border-orange-500">
+                                    <span className="absolute -top-1 -right-2 bg-white text-primary text-xs font-bold px-1.5 py-0.5 rounded-full border border-primary">
                                         {cartCount > 99 ? '99+' : cartCount}
                                     </span>
                                 )}

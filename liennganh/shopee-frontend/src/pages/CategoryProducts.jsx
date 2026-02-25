@@ -56,25 +56,25 @@ const CategoryProducts = () => {
                     <div className="flex items-center gap-4 overflow-x-auto">
                         <span className="text-gray-500 flex items-center gap-1 whitespace-nowrap"><Filter className="w-4 h-4" /> Sắp xếp theo</span>
                         <button
-                            className={`px-4 py-2 rounded-sm text-sm whitespace-nowrap ${sortBy === 'relevance' ? 'bg-orange-500 text-white' : 'bg-white border hover:bg-gray-50'}`}
+                            className={`px-4 py-2 rounded-sm text-sm whitespace-nowrap ${sortBy === 'relevance' ? 'bg-primary-dark text-white' : 'bg-white border hover:bg-gray-50'}`}
                             onClick={() => setSortBy('relevance')}
                         >
                             Liên quan
                         </button>
                         <button
-                            className={`px-4 py-2 rounded-sm text-sm whitespace-nowrap ${sortBy === 'date_desc' ? 'bg-orange-500 text-white' : 'bg-white border hover:bg-gray-50'}`}
+                            className={`px-4 py-2 rounded-sm text-sm whitespace-nowrap ${sortBy === 'date_desc' ? 'bg-primary-dark text-white' : 'bg-white border hover:bg-gray-50'}`}
                             onClick={() => setSortBy('date_desc')}
                         >
                             Mới nhất
                         </button>
                         <button
-                            className={`px-4 py-2 rounded-sm text-sm whitespace-nowrap ${sortBy === 'price_asc' ? 'bg-orange-500 text-white' : 'bg-white border hover:bg-gray-50'}`}
+                            className={`px-4 py-2 rounded-sm text-sm whitespace-nowrap ${sortBy === 'price_asc' ? 'bg-primary-dark text-white' : 'bg-white border hover:bg-gray-50'}`}
                             onClick={() => setSortBy('price_asc')}
                         >
                             Giá: Thấp đến Cao
                         </button>
                         <button
-                            className={`px-4 py-2 rounded-sm text-sm whitespace-nowrap ${sortBy === 'price_desc' ? 'bg-orange-500 text-white' : 'bg-white border hover:bg-gray-50'}`}
+                            className={`px-4 py-2 rounded-sm text-sm whitespace-nowrap ${sortBy === 'price_desc' ? 'bg-primary-dark text-white' : 'bg-white border hover:bg-gray-50'}`}
                             onClick={() => setSortBy('price_desc')}
                         >
                             Giá: Cao đến Thấp
@@ -85,12 +85,12 @@ const CategoryProducts = () => {
                 {/* Results Grid */}
                 {loading ? (
                     <div className="text-center py-20">
-                        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-500 mx-auto"></div>
+                        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-dark mx-auto"></div>
                     </div>
                 ) : products.length > 0 ? (
                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
                         {products.map((product) => (
-                            <Link to={`/product/${product.id}`} key={product.id} className="bg-white rounded hover:shadow-lg hover:-translate-y-0.5 transition duration-100 border border-transparent hover:border-orange-500 cursor-pointer overflow-hidden relative block group">
+                            <Link to={`/product/${product.id}`} key={product.id} className="bg-white rounded hover:shadow-lg hover:-translate-y-0.5 transition duration-100 border border-transparent hover:border-primary-dark cursor-pointer overflow-hidden relative block group">
                                 <div className="aspect-square bg-gray-100 flex items-center justify-center relative">
                                     {product.imageUrl ? (
                                         <img src={getImageUrl(product.imageUrl)} alt={product.name} className="w-full h-full object-cover" />
@@ -98,7 +98,7 @@ const CategoryProducts = () => {
                                         <ShoppingBag className="w-12 h-12 text-gray-300" />
                                     )}
                                     {product.discountPercentage > 0 && (
-                                        <div className="absolute top-0 right-0 bg-yellow-100 text-orange-500 px-1 text-xs font-semibold z-10">
+                                        <div className="absolute top-0 right-0 bg-yellow-100 text-primary-dark px-1 text-xs font-semibold z-10">
                                             -{product.discountPercentage}%
                                         </div>
                                     )}
@@ -107,7 +107,7 @@ const CategoryProducts = () => {
                                     <h3 className="text-sm text-gray-800 line-clamp-2 min-h-[40px] mb-2">{product.name}</h3>
                                     <div className="flex justify-between items-end min-h-[44px]">
                                         <div className="flex flex-col justify-end">
-                                            <div className="text-orange-500 font-medium leading-tight text-sm">
+                                            <div className="text-primary-dark font-medium leading-tight text-sm">
                                                 {formatPrice(product.discountedPrice || product.price || 0)}
                                             </div>
                                             {product.discountPercentage > 0 && (
@@ -128,7 +128,7 @@ const CategoryProducts = () => {
                             <ShoppingBag className="w-16 h-16 text-gray-300" />
                         </div>
                         <h3 className="text-lg text-gray-800 mb-2">Chưa có sản phẩm nào trong danh mục này</h3>
-                        <Link to="/" className="text-orange-500 hover:underline">Quay lại trang chủ</Link>
+                        <Link to="/" className="text-primary-dark hover:underline">Quay lại trang chủ</Link>
                     </div>
                 )}
             </div>

@@ -175,7 +175,7 @@ const AdminLayout = () => {
                                     <span className={`min-w-[20px] h-5 px-1.5 flex items-center justify-center text-[11px] font-bold rounded-full animate-pulse ${isActive
                                         ? 'bg-white text-blue-600'
                                         : item.path === '/admin/sellers'
-                                            ? 'bg-orange-500 text-white'
+                                            ? 'bg-primary-dark text-white'
                                             : item.path === '/admin/orders'
                                                 ? 'bg-red-500 text-white'
                                                 : item.path === '/admin/products'

@@ -83,7 +83,7 @@ const SearchResults = () => {
                             </span>
                             <Link
                                 to={`/shop/${matchedShop.id}`}
-                                className="text-orange-500 text-sm font-medium flex items-center gap-1 hover:underline"
+                                className="text-primary-dark text-sm font-medium flex items-center gap-1 hover:underline"
                             >
                                 Xem Shop <ChevronRight className="w-4 h-4" />
                             </Link>
@@ -91,11 +91,11 @@ const SearchResults = () => {
                         <div className="p-5 flex flex-col md:flex-row gap-6 items-start">
                             {/* Shop Info */}
                             <Link to={`/shop/${matchedShop.id}`} className="flex items-center gap-4 group shrink-0">
-                                <div className="w-16 h-16 rounded-full bg-orange-500 flex items-center justify-center text-white text-2xl font-bold shadow-md border-2 border-orange-300">
+                                <div className="w-16 h-16 rounded-full bg-primary-dark flex items-center justify-center text-white text-2xl font-bold shadow-md border-2 border-primary">
                                     {matchedShop.name?.charAt(0).toUpperCase()}
                                 </div>
                                 <div>
-                                    <h3 className="text-lg font-bold text-gray-800 group-hover:text-orange-500 transition">
+                                    <h3 className="text-lg font-bold text-gray-800 group-hover:text-primary-dark transition">
                                         {matchedShop.name}
                                     </h3>
                                     <p className="text-xs text-gray-400 mt-0.5">Online</p>
@@ -105,24 +105,24 @@ const SearchResults = () => {
                             {/* Shop Stats */}
                             <div className="flex flex-wrap gap-x-8 gap-y-3 items-center text-sm">
                                 <div className="flex items-center gap-2 text-gray-600">
-                                    <ShoppingBag className="w-4 h-4 text-orange-400" />
+                                    <ShoppingBag className="w-4 h-4 text-primary-dark" />
                                     <span>Sản Phẩm: </span>
-                                    <span className="text-orange-500 font-semibold">{matchedShop.productCount}</span>
+                                    <span className="text-primary-dark font-semibold">{matchedShop.productCount}</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-gray-600">
-                                    <Star className="w-4 h-4 text-orange-400" />
+                                    <Star className="w-4 h-4 text-primary-dark" />
                                     <span>Đánh Giá: </span>
-                                    <span className="text-orange-500 font-semibold">4.9</span>
+                                    <span className="text-primary-dark font-semibold">4.9</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-gray-600">
-                                    <MessageSquare className="w-4 h-4 text-orange-400" />
+                                    <MessageSquare className="w-4 h-4 text-primary-dark" />
                                     <span>Tỉ Lệ Phản Hồi: </span>
-                                    <span className="text-orange-500 font-semibold">99%</span>
+                                    <span className="text-primary-dark font-semibold">99%</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-gray-600">
-                                    <Clock className="w-4 h-4 text-orange-400" />
+                                    <Clock className="w-4 h-4 text-primary-dark" />
                                     <span>Phản Hồi: </span>
-                                    <span className="text-orange-500 font-semibold">trong vài giờ</span>
+                                    <span className="text-primary-dark font-semibold">trong vài giờ</span>
                                 </div>
                             </div>
 
@@ -130,7 +130,7 @@ const SearchResults = () => {
                             <div className="ml-auto shrink-0 hidden md:block">
                                 <Link
                                     to={`/shop/${matchedShop.id}`}
-                                    className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2"
+                                    className="bg-primary-dark hover:bg-primary-darker text-white px-5 py-2 rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2"
                                 >
                                     <Store className="w-4 h-4" /> Xem Shop
                                 </Link>
@@ -144,25 +144,25 @@ const SearchResults = () => {
                     <div className="flex items-center gap-4">
                         <span className="text-gray-500 flex items-center gap-1"><Filter className="w-4 h-4" /> Sắp xếp theo</span>
                         <button
-                            className={`px-4 py-2 rounded-sm text-sm ${sortBy === 'relevance' ? 'bg-orange-500 text-white' : 'bg-white border hover:bg-gray-50'}`}
+                            className={`px-4 py-2 rounded-sm text-sm ${sortBy === 'relevance' ? 'bg-primary-dark text-white' : 'bg-white border hover:bg-gray-50'}`}
                             onClick={() => setSortBy('relevance')}
                         >
                             Liên quan
                         </button>
                         <button
-                            className={`px-4 py-2 rounded-sm text-sm ${sortBy === 'date_desc' ? 'bg-orange-500 text-white' : 'bg-white border hover:bg-gray-50'}`}
+                            className={`px-4 py-2 rounded-sm text-sm ${sortBy === 'date_desc' ? 'bg-primary-dark text-white' : 'bg-white border hover:bg-gray-50'}`}
                             onClick={() => setSortBy('date_desc')}
                         >
                             Mới nhất
                         </button>
                         <button
-                            className={`px-4 py-2 rounded-sm text-sm ${sortBy === 'price_asc' ? 'bg-orange-500 text-white' : 'bg-white border hover:bg-gray-50'}`}
+                            className={`px-4 py-2 rounded-sm text-sm ${sortBy === 'price_asc' ? 'bg-primary-dark text-white' : 'bg-white border hover:bg-gray-50'}`}
                             onClick={() => setSortBy('price_asc')}
                         >
                             Giá: Thấp đến Cao
                         </button>
                         <button
-                            className={`px-4 py-2 rounded-sm text-sm ${sortBy === 'price_desc' ? 'bg-orange-500 text-white' : 'bg-white border hover:bg-gray-50'}`}
+                            className={`px-4 py-2 rounded-sm text-sm ${sortBy === 'price_desc' ? 'bg-primary-dark text-white' : 'bg-white border hover:bg-gray-50'}`}
                             onClick={() => setSortBy('price_desc')}
                         >
                             Giá: Cao đến Thấp
@@ -174,7 +174,7 @@ const SearchResults = () => {
                 {!loading && products.length > 0 && (
                     <div className="flex items-center gap-2 mb-4 text-sm text-gray-500">
                         <ShoppingBag className="w-4 h-4" />
-                        Kết quả tìm kiếm cho từ khoá '<span className="text-orange-500 font-medium">{keyword}</span>'
+                        Kết quả tìm kiếm cho từ khoá '<span className="text-primary-dark font-medium">{keyword}</span>'
                     </div>
                 )}
 
@@ -184,7 +184,7 @@ const SearchResults = () => {
                 ) : products.length > 0 ? (
                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
                         {products.map((product) => (
-                            <Link to={`/product/${product.id}`} key={product.id} className="bg-white rounded hover:shadow-lg hover:-translate-y-0.5 transition duration-100 border border-transparent hover:border-orange-500 cursor-pointer overflow-hidden relative block group">
+                            <Link to={`/product/${product.id}`} key={product.id} className="bg-white rounded hover:shadow-lg hover:-translate-y-0.5 transition duration-100 border border-transparent hover:border-primary-dark cursor-pointer overflow-hidden relative block group">
                                 <div className="aspect-square bg-gray-100 flex items-center justify-center relative">
                                     {product.imageUrl ? (
                                         <img src={getImageUrl(product.imageUrl)} alt={product.name} className="w-full h-full object-cover" />
@@ -192,7 +192,7 @@ const SearchResults = () => {
                                         <ShoppingBag className="w-12 h-12 text-gray-300" />
                                     )}
                                     {product.discountPercentage > 0 && (
-                                        <div className="absolute top-0 right-0 bg-yellow-100 text-orange-500 px-1 text-xs font-semibold z-10">
+                                        <div className="absolute top-0 right-0 bg-yellow-100 text-primary-dark px-1 text-xs font-semibold z-10">
                                             -{product.discountPercentage}%
                                         </div>
                                     )}
@@ -201,7 +201,7 @@ const SearchResults = () => {
                                     <h3 className="text-sm text-gray-800 line-clamp-2 min-h-[40px] mb-2">{product.name}</h3>
                                     <div className="flex justify-between items-end min-h-[44px]">
                                         <div className="flex flex-col justify-end">
-                                            <div className="text-orange-500 font-medium leading-tight text-sm">
+                                            <div className="text-primary-dark font-medium leading-tight text-sm">
                                                 {formatPrice(product.discountedPrice || product.price || 0)}
                                             </div>
                                             {product.discountPercentage > 0 && (

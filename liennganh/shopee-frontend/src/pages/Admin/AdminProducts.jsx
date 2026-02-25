@@ -274,7 +274,7 @@ const AdminProducts = () => {
                                                         </button>
                                                     ) : (
                                                         <button onClick={() => handleBan(product.id, product.name)}
-                                                            className="p-2 text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition shadow-sm" title="Khóa / Cảnh báo">
+                                                            className="p-2 text-white bg-primary-dark hover:bg-primary-darker rounded-lg transition shadow-sm" title="Khóa / Cảnh báo">
                                                             <ShieldAlert className="w-4 h-4" />
                                                         </button>
                                                     )}

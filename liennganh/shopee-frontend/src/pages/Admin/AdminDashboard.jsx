@@ -8,7 +8,7 @@ import {
 
 const statusColors = {
     PENDING: { bg: 'bg-yellow-50', text: 'text-yellow-700', icon: Clock },
-    PAYMENT_PENDING: { bg: 'bg-orange-50', text: 'text-orange-700', icon: AlertCircle },
+    PAYMENT_PENDING: { bg: 'bg-primary-lighter', text: 'text-primary-darker', icon: AlertCircle },
     PROCESSING: { bg: 'bg-blue-50', text: 'text-blue-700', icon: Package },
     SHIPPED: { bg: 'bg-indigo-50', text: 'text-indigo-700', icon: Truck },
     DELIVERED: { bg: 'bg-green-50', text: 'text-green-700', icon: CheckCircle },
@@ -100,7 +100,7 @@ const AdminDashboard = () => {
 
     const colorMap = {
         blue: { bg: 'bg-blue-50', text: 'text-blue-600', icon: 'text-blue-500' },
-        orange: { bg: 'bg-orange-50', text: 'text-orange-600', icon: 'text-orange-500' },
+        orange: { bg: 'bg-primary-lighter', text: 'text-primary-darker', icon: 'text-primary-dark' },
         green: { bg: 'bg-green-50', text: 'text-green-600', icon: 'text-green-500' },
         purple: { bg: 'bg-purple-50', text: 'text-purple-600', icon: 'text-purple-500' },
         emerald: { bg: 'bg-emerald-50', text: 'text-emerald-600', icon: 'text-emerald-500' },
@@ -196,16 +196,16 @@ const AdminDashboard = () => {
 
             {/* Top Sellers */}
             <div className="bg-white rounded-xl border border-gray-100 overflow-hidden mb-8">
-                <div className="px-6 py-4 border-b flex items-center justify-between bg-gradient-to-r from-orange-50 to-white">
+                <div className="px-6 py-4 border-b flex items-center justify-between bg-gradient-to-r from-primary-lighter to-white">
                     <div className="flex items-center gap-2">
-                        <TrendingUp className="w-5 h-5 text-orange-500" />
+                        <TrendingUp className="w-5 h-5 text-primary-dark" />
                         <h3 className="font-bold text-gray-800">🏆 Đối Tác Xuất Sắc (Top Sellers)</h3>
                     </div>
                 </div>
 
                 {(!stats?.topSellers || stats.topSellers.length === 0) ? (
                     <div className="p-8 text-center text-gray-400">
-                        <Store className="w-12 h-12 mx-auto mb-3 text-orange-200" />
+                        <Store className="w-12 h-12 mx-auto mb-3 text-primary" />
                         <p>Chưa có dữ liệu xếp hạng</p>
                     </div>
                 ) : (
@@ -223,10 +223,10 @@ const AdminDashboard = () => {
                             </thead>
                             <tbody className="divide-y divide-gray-100">
                                 {stats.topSellers.map((seller, index) => (
-                                    <tr key={seller.shopId} className="hover:bg-orange-50/30 transition-colors">
+                                    <tr key={seller.shopId} className="hover:bg-primary-lighter/30 transition-colors">
                                         <td className="px-6 py-4 text-center">
                                             {index < 3 ? (
-                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto text-white font-bold shadow-sm ${index === 0 ? 'bg-yellow-400' : index === 1 ? 'bg-gray-400' : 'bg-orange-400'
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto text-white font-bold shadow-sm ${index === 0 ? 'bg-yellow-400' : index === 1 ? 'bg-gray-400' : 'bg-primary-dark'
                                                     }`}>
                                                     {index + 1}
                                                 </div>
@@ -236,7 +236,7 @@ const AdminDashboard = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg flex items-center justify-center text-orange-600 font-bold border border-orange-100">
+                                                <div className="w-10 h-10 bg-gradient-to-br from-primary-light to-primary rounded-lg flex items-center justify-center text-primary-darker font-bold border border-primary-light">
                                                     {seller.shopName?.charAt(0).toUpperCase()}
                                                 </div>
                                                 <div>
@@ -268,7 +268,7 @@ const AdminDashboard = () => {
                                             <span className={`px-2.5 py-1 text-xs font-bold rounded-full ${seller.returnRate > 10
                                                 ? 'bg-red-50 text-red-600'
                                                 : seller.returnRate > 5
-                                                    ? 'bg-orange-50 text-orange-600'
+                                                    ? 'bg-primary-lighter text-primary-darker'
                                                     : 'bg-green-50 text-green-600'
                                                 }`}>
                                                 {seller.returnRate}%

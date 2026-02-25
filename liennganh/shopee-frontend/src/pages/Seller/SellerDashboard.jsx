@@ -70,12 +70,12 @@ const SellerDashboard = () => {
     return (
         <div>
             {/* Welcome Banner */}
-            <div className="bg-gradient-to-r from-orange-500 to-orange-400 rounded-2xl p-6 mb-8 text-white shadow-lg">
+            <div className="bg-gradient-to-r from-primary-dark to-primary-dark rounded-2xl p-6 mb-8 text-white shadow-lg">
                 <h1 className="text-2xl font-bold mb-1">Xin chào, {shopProfile?.name || user?.username}! 👋</h1>
-                <p className="text-orange-100">Chào mừng bạn đến Kênh Người Bán. Quản lý shop của bạn tại đây.</p>
+                <p className="text-primary-light">Chào mừng bạn đến Kênh Người Bán. Quản lý shop của bạn tại đây.</p>
                 <div className="flex gap-3 mt-4">
                     <Link to="/seller/add-product"
-                        className="flex items-center gap-2 bg-white text-orange-500 px-5 py-2 rounded-lg font-medium hover:bg-orange-50 transition shadow-sm">
+                        className="flex items-center gap-2 bg-white text-primary-dark px-5 py-2 rounded-lg font-medium hover:bg-primary-lighter transition shadow-sm">
                         <Plus className="w-4 h-4" /> Thêm sản phẩm
                     </Link>
                     <Link to="/seller/product-analytics"
@@ -87,7 +87,7 @@ const SellerDashboard = () => {
 
             {/* Banner cảnh báo sản phẩm bị khóa */}
             {productDetailStats.some(p => p.isBanned) && (
-                <div className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl p-4 mb-6 flex items-center gap-3">
+                <div className="bg-gradient-to-r from-primary-lighter to-primary-lighter border border-primary-light rounded-xl p-4 mb-6 flex items-center gap-3">
                     <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0">
                         <AlertTriangle className="w-5 h-5 text-white" />
                     </div>
@@ -109,11 +109,11 @@ const SellerDashboard = () => {
                             <h3 className="text-gray-500 text-xs font-medium uppercase tracking-wide">Tổng Sản Phẩm</h3>
                             <p className="text-2xl font-bold mt-1 text-gray-800">{stats.totalProducts}</p>
                         </div>
-                        <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center">
-                            <Package className="text-orange-500 w-5 h-5" />
+                        <div className="w-10 h-10 bg-primary-lighter rounded-xl flex items-center justify-center">
+                            <Package className="text-primary-dark w-5 h-5" />
                         </div>
                     </div>
-                    <Link to="/seller/products" className="text-xs text-orange-500 hover:underline mt-2 block">Xem tất cả →</Link>
+                    <Link to="/seller/products" className="text-xs text-primary-dark hover:underline mt-2 block">Xem tất cả →</Link>
                 </div>
                 <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
                     <div className="flex justify-between items-start">
@@ -144,14 +144,14 @@ const SellerDashboard = () => {
                 <div className="px-6 py-4 border-b flex justify-between items-center">
                     <h3 className="font-bold text-gray-700">Chi tiết sản phẩm</h3>
                     <Link to="/seller/products"
-                        className="text-sm text-orange-500 hover:text-orange-600 font-medium">
+                        className="text-sm text-primary-dark hover:text-primary-darker font-medium">
                         Xem tất cả →
                     </Link>
                 </div>
 
                 {loading ? (
                     <div className="p-8 text-center text-gray-400">
-                        <div className="animate-spin w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+                        <div className="animate-spin w-6 h-6 border-2 border-primary-dark border-t-transparent rounded-full mx-auto mb-2"></div>
                         Đang tải...
                     </div>
                 ) : productDetailStats.length > 0 ? (
@@ -172,7 +172,7 @@ const SellerDashboard = () => {
                                 {currentProducts.map((product) => (
                                     <tr key={product.productId} className={`border - t border - gray - 100 transition ${product.isBanned
                                         ? 'bg-red-50 border-l-4 border-red-500 hover:bg-red-100/50'
-                                        : 'hover:bg-orange-50/30'
+                                        : 'hover:bg-primary-lighter/30'
                                         } `}>
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-3">
@@ -207,7 +207,7 @@ const SellerDashboard = () => {
                                             </div>
                                         </td>
                                         <td className="px-4 py-3">
-                                            <span className="font-semibold text-orange-600">{formatPrice(product.price)}</span>
+                                            <span className="font-semibold text-primary-darker">{formatPrice(product.price)}</span>
                                         </td>
                                         <td className="px-4 py-3 text-center">
                                             <span className={`font - medium ${product.stockQuantity <= 10 ? 'text-red-500' : 'text-gray-700'} `}>
@@ -228,7 +228,7 @@ const SellerDashboard = () => {
                                         </td>
                                         <td className="px-4 py-3 text-center">
                                             <Link to={`/ seller / edit - product / ${product.productId} `}
-                                                className="p-1.5 text-gray-400 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition inline-block">
+                                                className="p-1.5 text-gray-400 hover:text-primary-dark hover:bg-primary-lighter rounded-lg transition inline-block">
                                                 <Eye className="w-4 h-4" />
                                             </Link>
                                         </td>
@@ -237,10 +237,10 @@ const SellerDashboard = () => {
                             </tbody>
                             {/* Tổng (Totals Row) - all from backend */}
                             <tfoot>
-                                <tr className="bg-orange-50 border-t-2 border-orange-200 font-bold text-gray-800">
+                                <tr className="bg-primary-lighter border-t-2 border-primary font-bold text-gray-800">
                                     <td className="px-4 py-3" colSpan={2}>
                                         <div className="flex items-center gap-2">
-                                            <span className="text-orange-600">TỔNG CỘNG</span>
+                                            <span className="text-primary-darker">TỔNG CỘNG</span>
                                             <span className="text-sm font-normal text-gray-400">({productDetailStats.length} sản phẩm)</span>
                                         </div>
                                     </td>
@@ -287,7 +287,7 @@ const SellerDashboard = () => {
                         <Package className="w-12 h-12 mx-auto mb-3 text-gray-200" />
                         <p>Chưa có sản phẩm nào.</p>
                         <Link to="/seller/add-product"
-                            className="inline-flex items-center gap-2 mt-3 bg-orange-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-orange-600 transition">
+                            className="inline-flex items-center gap-2 mt-3 bg-primary-dark text-white px-4 py-2 rounded-lg text-sm hover:bg-primary-darker transition">
                             <Plus className="w-4 h-4" /> Thêm sản phẩm đầu tiên
                         </Link>
                     </div>

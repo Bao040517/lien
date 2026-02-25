@@ -245,7 +245,7 @@ const Home = () => {
                                         <button
                                             key={idx}
                                             onClick={() => setCurrentSlide(idx)}
-                                            className={`w-2.5 h-2.5 rounded-full transition-all ${idx === currentSlide ? 'bg-orange-500 w-5 scale-110' : 'bg-white/60 hover:bg-white'}`}
+                                            className={`w-2.5 h-2.5 rounded-full transition-all ${idx === currentSlide ? 'bg-primary-dark w-5 scale-110' : 'bg-white/60 hover:bg-white'}`}
                                         />
                                     ))}
                                 </div>
@@ -261,14 +261,14 @@ const Home = () => {
                     {/* Left Arrow */}
                     <button
                         onClick={() => scrollCategory('left')}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white shadow-md border hover:border-orange-500 hover:text-orange-500 rounded-full flex items-center justify-center opacity-0 group-hover/cats:opacity-100 transition-all transform -translate-x-1/2"
+                        className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white shadow-md border hover:border-primary-dark hover:text-primary-dark rounded-full flex items-center justify-center opacity-0 group-hover/cats:opacity-100 transition-all transform -translate-x-1/2"
                     >
                         <ChevronLeft className="w-6 h-6" />
                     </button>
                     {/* Right Arrow */}
                     <button
                         onClick={() => scrollCategory('right')}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white shadow-md border hover:border-orange-500 hover:text-orange-500 rounded-full flex items-center justify-center opacity-0 group-hover/cats:opacity-100 transition-all transform translate-x-1/2"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white shadow-md border hover:border-primary-dark hover:text-primary-dark rounded-full flex items-center justify-center opacity-0 group-hover/cats:opacity-100 transition-all transform translate-x-1/2"
                     >
                         <ChevronRight className="w-6 h-6" />
                     </button>
@@ -303,7 +303,7 @@ const Home = () => {
                                                     </span>
                                                 )}
                                             </div>
-                                            <span className="text-xs text-center text-gray-800 group-hover:text-orange-500 line-clamp-2 w-full">{cat.name}</span>
+                                            <span className="text-xs text-center text-gray-800 group-hover:text-primary-dark line-clamp-2 w-full">{cat.name}</span>
                                         </Link>
                                     ))}
                                 </div>
@@ -315,7 +315,7 @@ const Home = () => {
                 {/* 2. FLASH SALE SECTION */}
                 <div className="bg-white rounded shadow-sm overflow-hidden">
                     {/* Flash Sale Header — Red gradient banner */}
-                    <div className="bg-gradient-to-r from-red-600 via-orange-500 to-red-600 px-5 py-3 flex justify-between items-center">
+                    <div className="bg-gradient-to-r from-primary-darker via-primary to-primary-darker px-5 py-3 flex justify-between items-center">
                         <div className="flex items-center gap-2">
                             <div className="flex items-center gap-1">
                                 <Zap className="fill-yellow-300 text-yellow-300 w-6 h-6 animate-pulse" />
@@ -371,7 +371,7 @@ const Home = () => {
                                     <Link
                                         to={`/product/${product.id}`}
                                         key={item.id || product.id || idx}
-                                        className="min-w-[160px] max-w-[160px] flex-shrink-0 border border-gray-100 hover:border-orange-400 rounded-lg overflow-hidden cursor-pointer block transition-all hover:shadow-md group bg-white"
+                                        className="min-w-[160px] max-w-[160px] flex-shrink-0 border border-gray-100 hover:border-primary-dark rounded-lg overflow-hidden cursor-pointer block transition-all hover:shadow-md group bg-white"
                                     >
                                         {/* Product Image */}
                                         <div className="relative aspect-square bg-gray-50">
@@ -389,7 +389,7 @@ const Home = () => {
                                             {/* Discount Badge */}
                                             {discountPercent > 0 && (
                                                 <div className="absolute top-0 right-0">
-                                                    <div className="bg-gradient-to-b from-yellow-400 to-orange-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">
+                                                    <div className="bg-gradient-to-b from-yellow-400 to-primary-dark text-white text-xs font-bold px-2 py-1 rounded-bl-lg">
                                                         <div className="text-[10px] leading-tight">GIẢM</div>
                                                         <div className="text-sm font-black leading-tight">{discountPercent}%</div>
                                                     </div>
@@ -409,9 +409,9 @@ const Home = () => {
                                                 </div>
                                             )}
                                             {/* Sold progress bar */}
-                                            <div className="relative w-full h-[18px] bg-orange-100 rounded-full mt-2 overflow-hidden">
+                                            <div className="relative w-full h-[18px] bg-primary-light rounded-full mt-2 overflow-hidden">
                                                 <div
-                                                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full"
+                                                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary-dark to-primary rounded-full"
                                                     style={{ width: `${Math.max(5, soldPercent)}%` }}
                                                 ></div>
                                                 <span className="absolute inset-0 flex items-center justify-center text-[10px] text-white font-bold uppercase drop-shadow-sm">
@@ -428,13 +428,13 @@ const Home = () => {
 
                 {/* 3. DAILY SUGGESTIONS - PAGINATED */}
                 <div className="mt-8" id="daily-suggestions">
-                    <div className="bg-white sticky top-[120px] z-40 border-b-4 border-orange-500 py-3 text-center mb-4 shadow-sm">
-                        <h3 className="text-orange-500 font-bold uppercase text-lg">Gợi Ý Hôm Nay</h3>
+                    <div className="bg-white sticky top-[120px] z-40 border-b-4 border-primary-dark py-3 text-center mb-4 shadow-sm">
+                        <h3 className="text-primary-dark font-bold uppercase text-lg">Gợi Ý Hôm Nay</h3>
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                         {currentProducts.map((product) => (
-                            <Link to={`/product/${product.id}`} key={product.id} className="bg-white rounded hover:shadow-lg hover:-translate-y-0.5 transition duration-100 border border-transparent hover:border-orange-500 cursor-pointer overflow-hidden relative block group">
+                            <Link to={`/product/${product.id}`} key={product.id} className="bg-white rounded hover:shadow-lg hover:-translate-y-0.5 transition duration-100 border border-transparent hover:border-primary-dark cursor-pointer overflow-hidden relative block group">
                                 <div className="aspect-square bg-gray-100 flex items-center justify-center relative">
                                     {product.imageUrl ? (
                                         <img src={getImageUrl(product.imageUrl)} alt={product.name} className="w-full h-full object-cover" />
@@ -442,7 +442,7 @@ const Home = () => {
                                         <ShoppingBag className="w-12 h-12 text-gray-300" />
                                     )}
                                     {product.discountPercentage > 0 && (
-                                        <div className="absolute top-0 right-0 bg-yellow-100 text-orange-500 px-1 text-xs font-semibold z-10">
+                                        <div className="absolute top-0 right-0 bg-yellow-100 text-primary-dark px-1 text-xs font-semibold z-10">
                                             -{product.discountPercentage}%
                                         </div>
                                     )}
@@ -451,7 +451,7 @@ const Home = () => {
                                     <h3 className="text-sm text-gray-800 line-clamp-2 min-h-[40px] mb-2">{product.name}</h3>
                                     <div className="flex justify-between items-end min-h-[44px]">
                                         <div className="flex flex-col justify-end">
-                                            <div className="text-orange-500 font-medium leading-tight">
+                                            <div className="text-primary-dark font-medium leading-tight">
                                                 <span className="text-xs underline align-top">đ</span>
                                                 <span className="text-lg">{(product.discountedPrice || product.price || 0).toLocaleString('vi-VN')}</span>
                                             </div>
@@ -494,7 +494,7 @@ const Home = () => {
                                             key={item}
                                             onClick={() => goToPage(item)}
                                             className={`w-10 h-10 rounded font-medium text-sm ${currentPage === item
-                                                ? 'bg-orange-500 text-white'
+                                                ? 'bg-primary-dark text-white'
                                                 : 'bg-white border hover:bg-gray-50 text-gray-700'
                                                 }`}
                                         >

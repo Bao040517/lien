@@ -144,7 +144,7 @@ const Cart = () => {
                     <div className="bg-white rounded shadow-sm p-16 text-center">
                         <ShoppingBag className="w-24 h-24 text-gray-300 mx-auto mb-4" />
                         <p className="text-gray-500 mb-4">Giỏ hàng của bạn còn trống</p>
-                        <Link to="/" className="bg-orange-500 text-white px-8 py-2 rounded-sm hover:bg-orange-600 transition">
+                        <Link to="/" className="bg-primary-dark text-white px-8 py-2 rounded-sm hover:bg-primary-darker transition">
                             Mua Ngay
                         </Link>
                     </div>
@@ -157,7 +157,7 @@ const Cart = () => {
                                     type="checkbox"
                                     checked={selectedItems.size === cartItems.length && cartItems.length > 0}
                                     onChange={toggleSelectAll}
-                                    className="w-4 h-4 accent-orange-500 cursor-pointer"
+                                    className="w-4 h-4 accent-primary-dark cursor-pointer"
                                 />
                             </div>
                             <div className="col-span-4">Sản Phẩm</div>
@@ -177,7 +177,7 @@ const Cart = () => {
                                             type="checkbox"
                                             checked={selectedItems.has(item.product.id)}
                                             onChange={() => toggleSelectItem(item.product.id)}
-                                            className="w-4 h-4 accent-orange-500 cursor-pointer"
+                                            className="w-4 h-4 accent-primary-dark cursor-pointer"
                                         />
                                     </div>
 
@@ -193,7 +193,7 @@ const Cart = () => {
                                             </div>
                                         </Link>
                                         <div className="min-w-0">
-                                            <Link to={`/product/${item.product.id}`} className="text-sm text-gray-800 line-clamp-2 hover:text-orange-500">
+                                            <Link to={`/product/${item.product.id}`} className="text-sm text-gray-800 line-clamp-2 hover:text-primary-dark">
                                                 {item.product.name}
                                             </Link>
                                         </div>
@@ -225,7 +225,7 @@ const Cart = () => {
                                     </div>
 
                                     {/* Subtotal */}
-                                    <div className="col-span-2 text-center text-orange-500 font-medium text-sm">
+                                    <div className="col-span-2 text-center text-primary-dark font-medium text-sm">
                                         {formatPrice(item.product.price * item.quantity)}
                                     </div>
 
@@ -253,19 +253,19 @@ const Cart = () => {
                         {/* Voucher Input */}
                         <div className="flex justify-end items-center py-2 border-b border-gray-100 gap-2">
                             <div className="flex items-center gap-2">
-                                <ShoppingBag className="w-5 h-5 text-orange-500" />
+                                <ShoppingBag className="w-5 h-5 text-primary-dark" />
                                 <span className="text-sm font-medium">Shopee Voucher</span>
                             </div>
                             <div className="flex gap-2">
                                 <input
                                     type="text"
                                     placeholder="Nhập mã giảm giá"
-                                    className="border border-gray-300 rounded px-2 py-1 text-sm outline-none focus:border-orange-500 uppercase"
+                                    className="border border-gray-300 rounded px-2 py-1 text-sm outline-none focus:border-primary-dark uppercase"
                                     value={voucherCode}
                                     onChange={(e) => setVoucherCode(e.target.value)}
                                 />
                                 <button
-                                    className="text-orange-500 text-sm font-medium hover:text-orange-600 disabled:opacity-50"
+                                    className="text-primary-dark text-sm font-medium hover:text-primary-darker disabled:opacity-50"
                                     onClick={handleApplyVoucher}
                                     disabled={!voucherCode || selectedItems.size === 0}
                                 >
@@ -281,7 +281,7 @@ const Cart = () => {
                                         type="checkbox"
                                         checked={selectedItems.size === cartItems.length && cartItems.length > 0}
                                         onChange={toggleSelectAll}
-                                        className="w-4 h-4 accent-orange-500"
+                                        className="w-4 h-4 accent-primary-dark"
                                     />
                                     <span className="text-sm">Chọn Tất Cả ({cartItems.length})</span>
                                 </label>
@@ -302,21 +302,21 @@ const Cart = () => {
                                         <span>{formatPrice(getSelectedTotal())}</span>
                                     </div>
                                     {discountAmount > 0 && (
-                                        <div className="flex items-center justify-end gap-2 text-orange-500 text-xs">
+                                        <div className="flex items-center justify-end gap-2 text-primary-dark text-xs">
                                             Voucher giảm giá:
                                             <span>-{formatPrice(discountAmount)}</span>
                                         </div>
                                     )}
                                     <div className="text-lg mt-1">
                                         Tổng thanh toán:
-                                        <span className="text-orange-500 text-2xl font-medium ml-2">
+                                        <span className="text-primary-dark text-2xl font-medium ml-2">
                                             {formatPrice(getFinalTotal())}
                                         </span>
                                     </div>
                                 </div>
                                 <button
                                     disabled={selectedItems.size === 0}
-                                    className="bg-orange-500 text-white px-12 py-3 rounded-sm hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition text-sm font-medium uppercase shadow-md"
+                                    className="bg-primary-dark text-white px-12 py-3 rounded-sm hover:bg-primary-darker disabled:bg-gray-300 disabled:cursor-not-allowed transition text-sm font-medium uppercase shadow-md"
                                     onClick={() => {
                                         const itemsToCheckout = cartItems.filter(item => selectedItems.has(item.product.id));
                                         navigate('/checkout', { state: { items: itemsToCheckout } });

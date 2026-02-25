@@ -346,15 +346,15 @@ const Checkout = () => {
                         { label: 'Thanh toán' }
                     ]} />
                 </div>
-                <div className="flex items-center gap-4 mb-6 text-orange-500">
-                    <div className="text-2xl font-medium border-r border-orange-500 pr-4">Thanh Toán</div>
+                <div className="flex items-center gap-4 mb-6 text-primary-dark">
+                    <div className="text-2xl font-medium border-r border-primary-dark pr-4">Thanh Toán</div>
                     <div className="text-lg">Shopee Clone</div>
                 </div>
 
                 {/* Address Section */}
                 <div className="bg-white p-6 rounded shadow-sm mb-4 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 via-blue-500 to-red-500 repeating-linear-gradient-45"></div>
-                    <div className="flex items-center gap-2 text-orange-500 text-lg mb-4">
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-primary-light to-primary repeating-linear-gradient-45"></div>
+                    <div className="flex items-center gap-2 text-primary-dark text-lg mb-4">
                         <MapPin className="w-5 h-5" /> Địa Chỉ Nhận Hàng
                     </div>
 
@@ -365,7 +365,7 @@ const Checkout = () => {
                                 {selectedAddress.street}, {selectedAddress.ward}, {selectedAddress.district}, {selectedAddress.city}
                             </div>
                             {selectedAddress.isDefault && (
-                                <div className="border border-orange-500 text-orange-500 text-xs px-1 py-0.5">Mặc định</div>
+                                <div className="border border-primary-dark text-primary-dark text-xs px-1 py-0.5">Mặc định</div>
                             )}
                             <button
                                 onClick={() => setShowAddressModal(true)}
@@ -416,7 +416,7 @@ const Checkout = () => {
                                             </div>
                                             <div className="col-span-2 text-center">{formatPrice(price)}</div>
                                             <div className="col-span-2 text-center">{item.quantity}</div>
-                                            <div className="col-span-2 text-right font-medium text-orange-500">{formatPrice(price * item.quantity)}</div>
+                                            <div className="col-span-2 text-right font-medium text-primary-dark">{formatPrice(price * item.quantity)}</div>
                                         </div>
                                     );
                                 })}
@@ -425,15 +425,15 @@ const Checkout = () => {
                             <div className="border-t border-dashed border-gray-200 mx-6"></div>
 
                             {/* Voucher Input for this Shop */}
-                            <div className="px-6 py-4 bg-orange-50/30 flex items-center justify-between">
+                            <div className="px-6 py-4 bg-primary-lighter/30 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <Tag className="w-4 h-4 text-orange-500" />
+                                    <Tag className="w-4 h-4 text-primary-dark" />
                                     <span className="text-sm font-medium text-gray-700">Voucher của Shop</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     {voucher.applied ? (
-                                        <div className="flex items-center gap-2 bg-white border border-orange-200 rounded px-2 py-1">
-                                            <span className="text-orange-600 font-medium text-sm">{voucher.code}</span>
+                                        <div className="flex items-center gap-2 bg-white border border-primary rounded px-2 py-1">
+                                            <span className="text-primary-darker font-medium text-sm">{voucher.code}</span>
                                             <span className="text-xs text-gray-500">(-{formatPrice(voucher.discount)})</span>
                                             <button onClick={() => handleRemoveVoucher(shopId)}>
                                                 <X className="w-3 h-3 text-gray-400 hover:text-red-500" />
@@ -444,7 +444,7 @@ const Checkout = () => {
                                             <input
                                                 type="text"
                                                 placeholder="Nhập mã voucher"
-                                                className="border border-gray-300 rounded px-2 py-1 text-sm outline-none focus:border-orange-500 uppercase"
+                                                className="border border-gray-300 rounded px-2 py-1 text-sm outline-none focus:border-primary-dark uppercase"
                                                 value={shopVouchers[shopId]?.code || ''}
                                                 onChange={(e) => setShopVouchers(prev => ({
                                                     ...prev,
@@ -453,7 +453,7 @@ const Checkout = () => {
                                             />
                                             <button
                                                 onClick={() => handleApplyVoucher(shopId)}
-                                                className="bg-orange-500 text-white text-xs px-3 py-1 rounded hover:bg-orange-600"
+                                                className="bg-primary-dark text-white text-xs px-3 py-1 rounded hover:bg-primary-darker"
                                             >
                                                 Áp Dụng
                                             </button>
@@ -475,7 +475,7 @@ const Checkout = () => {
                                         <div className="text-black pl-4">đ15.000</div>
                                     </div>
                                     <div className="text-gray-800 font-medium">
-                                        Tổng số tiền ({group.items.length} sản phẩm): <span className="text-orange-500 text-lg">{formatPrice(subTotal + 15000 - voucher.discount)}</span>
+                                        Tổng số tiền ({group.items.length} sản phẩm): <span className="text-primary-dark text-lg">{formatPrice(subTotal + 15000 - voucher.discount)}</span>
                                     </div>
                                 </div>
                             </div>
@@ -491,13 +491,13 @@ const Checkout = () => {
                     </div>
                     <div className="flex gap-4">
                         <button
-                            className={`px-4 py-2 border rounded text-sm ${paymentMethod === 'COD' ? 'border-orange-500 text-orange-500' : 'border-gray-300 hover:border-orange-500'}`}
+                            className={`px-4 py-2 border rounded text-sm ${paymentMethod === 'COD' ? 'border-primary-dark text-primary-dark' : 'border-gray-300 hover:border-primary-dark'}`}
                             onClick={() => setPaymentMethod('COD')}
                         >
                             Thanh toán khi nhận hàng (COD)
                         </button>
                         <button
-                            className={`px-4 py-2 border rounded text-sm ${paymentMethod === 'Banking' ? 'border-orange-500 text-orange-500' : 'border-gray-300 hover:border-orange-500'}`}
+                            className={`px-4 py-2 border rounded text-sm ${paymentMethod === 'Banking' ? 'border-primary-dark text-primary-dark' : 'border-gray-300 hover:border-primary-dark'}`}
                             onClick={() => setPaymentMethod('Banking')}
                         >
                             Chuyển khoản ngân hàng
@@ -520,7 +520,7 @@ const Checkout = () => {
                         <div className="text-right">
                             <div className="flex items-baseline gap-1">
                                 <span className="text-sm text-gray-700">Tổng thanh toán:</span>
-                                <span className="text-orange-500 text-xl font-medium">{formatPrice(getTotalPayment())}</span>
+                                <span className="text-primary-dark text-xl font-medium">{formatPrice(getTotalPayment())}</span>
                             </div>
                             <div className="text-xs text-gray-500">
                                 (Đã bao gồm phí vận chuyển và giảm giá)
@@ -529,7 +529,7 @@ const Checkout = () => {
                         <button
                             onClick={handlePlaceOrder}
                             disabled={loading}
-                            className="bg-orange-500 text-white px-10 py-3 rounded-sm hover:bg-orange-600 font-medium text-base min-w-[160px]"
+                            className="bg-primary-dark text-white px-10 py-3 rounded-sm hover:bg-primary-darker font-medium text-base min-w-[160px]"
                         >
                             {loading ? 'Đang Xử Lý...' : 'Mua Hàng'}
                         </button>
@@ -549,7 +549,7 @@ const Checkout = () => {
                             <input
                                 type="text" placeholder="Số điện thoại liên hệ"
                                 value={addressForm.phoneNumber} onChange={(e) => setAddressForm({ ...addressForm, phoneNumber: e.target.value })}
-                                className="w-full border border-gray-300 rounded px-4 py-3 text-sm outline-none focus:border-orange-400"
+                                className="w-full border border-gray-300 rounded px-4 py-3 text-sm outline-none focus:border-primary-dark"
                             />
                             {/* ... (Provinces/Districts/Wards Selects - Simplified for brevity but logic remains) ... */}
                             <select
@@ -584,7 +584,7 @@ const Checkout = () => {
                         </div>
                         <div className="px-6 pb-5 pt-3 flex items-center justify-end gap-3 flex-shrink-0">
                             <button onClick={() => { if (selectedAddress) setShowAddressModal(false); else navigate('/'); }} className="px-6 py-2 text-sm text-gray-600 hover:text-gray-800">Trở Lại</button>
-                            <button onClick={handleSaveAddress} disabled={savingAddress} className="px-6 py-2 bg-orange-500 text-white rounded text-sm font-medium hover:bg-orange-600">{savingAddress ? 'Đang lưu...' : 'Hoàn thành'}</button>
+                            <button onClick={handleSaveAddress} disabled={savingAddress} className="px-6 py-2 bg-primary-dark text-white rounded text-sm font-medium hover:bg-primary-darker">{savingAddress ? 'Đang lưu...' : 'Hoàn thành'}</button>
                         </div>
                     </div>
                 </div>

@@ -78,7 +78,7 @@ const AdminVouchers = () => {
                 <h1 className="text-2xl font-bold text-gray-800">Quản lý Voucher</h1>
                 <button
                     onClick={() => setShowModal(true)}
-                    className="bg-orange-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-orange-600 transition"
+                    className="bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary-darker transition"
                 >
                     <Plus className="w-4 h-4" /> Tạo Voucher
                 </button>
@@ -108,7 +108,7 @@ const AdminVouchers = () => {
                                     const isExpired = new Date(v.endDate) < new Date();
                                     return (
                                         <tr key={v.id} className="hover:bg-gray-50">
-                                            <td className="px-6 py-4 font-medium text-orange-600">{v.code}</td>
+                                            <td className="px-6 py-4 font-medium text-primary-darker">{v.code}</td>
                                             <td className="px-6 py-4">
                                                 {v.discountType === 'FIXED'
                                                     ? formatPrice(v.discountValue)
@@ -143,7 +143,7 @@ const AdminVouchers = () => {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                     <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 p-6 animate-[fadeIn_0.2s_ease-out]">
                         <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                            <Tag className="w-5 h-5 text-orange-500" /> Tạo Voucher Mới
+                            <Tag className="w-5 h-5 text-primary-dark" /> Tạo Voucher Mới
                         </h2>
 
                         <form onSubmit={handleSubmit} className="space-y-4">
@@ -231,7 +231,7 @@ const AdminVouchers = () => {
                                 >Hủy</button>
                                 <button
                                     type="submit"
-                                    className="px-6 py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
+                                    className="px-6 py-2 bg-primary-dark text-white rounded hover:bg-primary-darker"
                                 >Tạo Voucher</button>
                             </div>
                         </form>

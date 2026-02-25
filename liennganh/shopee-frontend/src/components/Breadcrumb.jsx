@@ -38,8 +38,8 @@ const Breadcrumb = ({ items = [], variant = 'light' }) => {
                             <Link
                                 to={item.path || '/'}
                                 className={`transition-colors duration-200 hover:underline flex items-center gap-1 ${isAdmin
-                                        ? 'text-gray-400 hover:text-blue-400'
-                                        : 'text-gray-500 hover:text-orange-500'
+                                    ? 'text-gray-400 hover:text-blue-400'
+                                    : 'text-gray-500 hover:text-primary-darker'
                                     }`}
                             >
                                 {isFirst && <Home className="w-3.5 h-3.5 flex-shrink-0" />}

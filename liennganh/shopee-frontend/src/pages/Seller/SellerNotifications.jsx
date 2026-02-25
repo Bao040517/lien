@@ -48,7 +48,7 @@ const SellerNotifications = () => {
     return (
         <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 min-h-[600px]">
             <h1 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                <Bell className="w-6 h-6 text-orange-500" />
+                <Bell className="w-6 h-6 text-primary-dark" />
                 Thông báo của Shop
             </h1>
 

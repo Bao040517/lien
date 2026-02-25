@@ -86,28 +86,28 @@ const ShopProfile = () => {
                                 <ShoppingBag className="w-5 h-5 text-gray-500" />
                                 <div>
                                     <div className="text-gray-500 text-sm">Sản phẩm:</div>
-                                    <div className="text-orange-500 font-medium">{products.length}</div>
+                                    <div className="text-primary-dark font-medium">{products.length}</div>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
                                 <Star className="w-5 h-5 text-gray-500" />
                                 <div>
                                     <div className="text-gray-500 text-sm">Đánh giá:</div>
-                                    <div className="text-orange-500 font-medium">4.9 (2.1k đánh giá)</div>
+                                    <div className="text-primary-dark font-medium">4.9 (2.1k đánh giá)</div>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
                                 <MessageSquare className="w-5 h-5 text-gray-500" />
                                 <div>
                                     <div className="text-gray-500 text-sm">Tỉ lệ phản hồi:</div>
-                                    <div className="text-orange-500 font-medium">98%</div>
+                                    <div className="text-primary-dark font-medium">98%</div>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
                                 <Clock className="w-5 h-5 text-gray-500" />
                                 <div>
                                     <div className="text-gray-500 text-sm">Tham gia:</div>
-                                    <div className="text-orange-500 font-medium text-sm">12 tháng trước</div>
+                                    <div className="text-primary-dark font-medium text-sm">12 tháng trước</div>
                                 </div>
                             </div>
                         </div>
@@ -127,10 +127,10 @@ const ShopProfile = () => {
                             {/* Container for horizontal scroll */}
                             <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide snap-x" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                                 {vouchers.map(voucher => (
-                                    <div key={voucher.id} className="min-w-[280px] md:min-w-[320px] bg-gradient-to-r from-orange-500 to-orange-400 rounded-sm p-0.5 flex shadow-sm snap-start shrink-0 relative">
+                                    <div key={voucher.id} className="min-w-[280px] md:min-w-[320px] bg-gradient-to-r from-primary-dark to-primary-dark rounded-sm p-0.5 flex shadow-sm snap-start shrink-0 relative">
                                         {/* Left part (Main visual) */}
                                         <div className="bg-white w-24 md:w-28 flex flex-col items-center justify-center border-r border-dashed border-gray-200 relative p-2">
-                                            <div className="text-orange-500 font-bold text-sm md:text-base text-center">
+                                            <div className="text-primary-dark font-bold text-sm md:text-base text-center">
                                                 {voucher.discountType === 'PERCENTAGE' ? `${voucher.discountValue}%` : formatPrice(voucher.discountValue)}
                                             </div>
                                             <div className="text-gray-500 text-xs text-center mt-1">GIẢM</div>
@@ -151,7 +151,7 @@ const ShopProfile = () => {
                                             </div>
 
                                             <div className="flex justify-end mt-2">
-                                                <button className="px-3 py-1 bg-orange-500 text-white text-xs rounded hover:bg-orange-600 transition shadow-sm">
+                                                <button className="px-3 py-1 bg-primary-dark text-white text-xs rounded hover:bg-primary-darker transition shadow-sm">
                                                     Lưu
                                                 </button>
                                             </div>
@@ -169,9 +169,9 @@ const ShopProfile = () => {
                         <div className="flex items-center justify-between mb-4 border-b pb-2">
                             <h2 className="text-lg font-medium text-gray-800 uppercase">Sản Phẩm Của Shop</h2>
                             <div className="flex gap-2 text-sm text-gray-500">
-                                <span className="text-orange-500 font-medium cursor-pointer">Phổ biến</span>
-                                <span className="cursor-pointer hover:text-orange-500">Mới nhất</span>
-                                <span className="cursor-pointer hover:text-orange-500">Bán chạy</span>
+                                <span className="text-primary-dark font-medium cursor-pointer">Phổ biến</span>
+                                <span className="cursor-pointer hover:text-primary-dark">Mới nhất</span>
+                                <span className="cursor-pointer hover:text-primary-dark">Bán chạy</span>
                             </div>
                         </div>
 
@@ -180,7 +180,7 @@ const ShopProfile = () => {
                         ) : (
                             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                                 {products.map((product) => (
-                                    <Link key={product.id} to={`/product/${product.id}`} className="bg-white border hover:border-orange-500 transition rounded-sm overflow-hidden group">
+                                    <Link key={product.id} to={`/product/${product.id}`} className="bg-white border hover:border-primary-dark transition rounded-sm overflow-hidden group">
                                         <div className="aspect-square bg-gray-200 relative">
                                             {product.imageUrl ? (
                                                 <img src={getImageUrl(product.imageUrl)} alt={product.name} className="w-full h-full object-cover" />
@@ -197,11 +197,11 @@ const ShopProfile = () => {
                                             )}
                                         </div>
                                         <div className="p-2">
-                                            <h3 className="text-sm font-medium text-gray-800 line-clamp-2 h-10 group-hover:text-orange-500 transition">
+                                            <h3 className="text-sm font-medium text-gray-800 line-clamp-2 h-10 group-hover:text-primary-dark transition">
                                                 {product.name}
                                             </h3>
                                             <div className="mt-2 flex items-center justify-between">
-                                                <span className="text-orange-500 text-base font-medium">
+                                                <span className="text-primary-dark text-base font-medium">
                                                     {formatPrice(product.price)}
                                                 </span>
                                                 <span className="text-xs text-gray-500">Đã bán {product.soldCount || 0}</span>
