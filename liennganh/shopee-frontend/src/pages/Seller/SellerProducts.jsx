@@ -25,7 +25,7 @@ const SellerProducts = () => {
 
     const fetchProducts = async () => {
         try {
-            const res = await api.get(`/products/my-shop?userId=${user.id}`);
+            const res = await api.get(`/products/my-shop?userId=${user.id}&page=0&size=10000`);
             const data = res.data.data || res.data.result || [];
             if (data && Array.isArray(data.content)) {
                 setProducts(data.content);
