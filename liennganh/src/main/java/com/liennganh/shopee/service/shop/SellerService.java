@@ -66,6 +66,7 @@ public class SellerService {
         Shop shop = new Shop();
         shop.setName(shopData.getName());
         shop.setDescription(shopData.getDescription());
+        shop.setAvatarUrl(shopData.getAvatarUrl());
         shop.setOwner(seller);
 
         Shop savedShop = shopRepository.save(shop);
@@ -80,6 +81,7 @@ public class SellerService {
 
         shop.setName(shopData.getName());
         shop.setDescription(shopData.getDescription());
+        shop.setAvatarUrl(shopData.getAvatarUrl());
 
         Shop updatedShop = shopRepository.save(shop);
         log.info("Shop updated: {}", updatedShop.getName());

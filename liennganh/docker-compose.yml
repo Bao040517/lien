@@ -17,7 +17,7 @@ services:
     networks:
       - shopee-network
     volumes:
-      - backend-uploads:/app/uploads
+      - ./uploads:/app/uploads
 
   frontend:
     build: ./shopee-frontend
@@ -40,6 +40,7 @@ services:
       - "5433:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
+      - ./plaindata.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - shopee-network
 
@@ -49,4 +50,3 @@ networks:
 
 volumes:
   db-data:
-  backend-uploads:

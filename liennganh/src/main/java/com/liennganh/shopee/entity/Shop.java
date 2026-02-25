@@ -27,6 +27,8 @@ public class Shop {
 
     private String description; // Mô tả Shop
 
+    private String avatarUrl; // Ảnh đại diện Shop
+
     public String getName() {
         return name;
     }
@@ -41,6 +43,14 @@ public class Shop {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     public User getOwner() {
