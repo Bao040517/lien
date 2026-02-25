@@ -104,7 +104,7 @@ public class DataSeederService {
         categoryRepository.deleteAll();
         userRepository.deleteAll();
         clearUploadsFolder();
-        log.info("Đã xóa sạch dữ liệu!");
+        log.info("�� x�a s?ch d? li?u!");
     }
 
     // ==================== USERS (NGƯỜI DÙNG) ====================
@@ -127,7 +127,7 @@ public class DataSeederService {
             admin.setPassword(encodedAdminPassword);
             admin.setRole(User.Role.ADMIN);
             users.add(admin);
-            log.info("Đã tạo Admin user (admin/admin)");
+            log.info("�� t?o Admin user (admin/admin)");
         }
 
         int sellerCount = (int) (count * 0.4);
@@ -143,7 +143,7 @@ public class DataSeederService {
             seller.setSellerStatus(User.SellerStatus.APPROVED);
             users.add(seller);
         }
-        log.info("Đã tạo {} Sellers (password: 'password')", sellerCount);
+        log.info("�� t?o {} Sellers (password: 'password')", sellerCount);
 
         // 3. Tạo normal Users (60%)
         String[] firstNames = { "Nguyen", "Tran", "Le", "Pham", "Hoang", "Phan", "Vu", "Dang", "Bui", "Do", "Ho", "Ngo",
@@ -178,10 +178,10 @@ public class DataSeederService {
             user.setRole(User.Role.USER);
             users.add(user);
         }
-        log.info("Đã tạo {} Users thường (password: 'password')", userCount);
+        log.info("�� t?o {} Users thu?ng (password: 'password')", userCount);
 
         userRepository.saveAll(users);
-        log.info("Đã lưu tổng cộng {} users vào database", users.size());
+        log.info("�� luu t?ng c?ng {} users v�o database", users.size());
     }
 
     // ==================== SHOPS (CỬA HÀNG) ====================
@@ -227,7 +227,7 @@ public class DataSeederService {
             shops.add(shop);
         }
         shopRepository.saveAll(shops);
-        log.info("Đã lưu {} shops", shops.size());
+        log.info("�� luu {} shops", shops.size());
     }
 
     // ==================== CATEGORIES (DANH MỤC) ====================
@@ -254,7 +254,7 @@ public class DataSeederService {
             categories.add(c);
         }
         categoryRepository.saveAll(categories);
-        log.info("Đã lưu {} categories", categories.size());
+        log.info("�� luu {} categories", categories.size());
     }
 
     // ==================== PRODUCTS (SẢN PHẨM CHÍNH) ====================
@@ -320,10 +320,10 @@ public class DataSeederService {
 
             productRepository.saveAll(products);
             totalCreated += products.size();
-            log.info("Đã tạo {} sản phẩm cho danh mục: {}", products.size(), catName);
+            log.info("�� t?o {} s?n ph?m cho danh m?c: {}", products.size(), catName);
         }
 
-        log.info("Tổng số sản phẩm đã tạo: {}", totalCreated);
+        log.info("T?ng s? s?n ph?m d� t?o: {}", totalCreated);
     }
 
     // ==================== HELPERS FOR PRODUCT NAMES & CONTENT ====================
@@ -401,7 +401,7 @@ public class DataSeederService {
         String fileName = "product_" + System.currentTimeMillis() + "_" + index + ".jpg";
         File file = new File(UPLOAD_DIR, fileName);
 
-        // Nếu file đã tồn tại thì k cần tạo lại (nhưng ở đây có timestamp nên chắc chắn
+        // N?u file d� t?n t?i th� k c?n t?o l?i (nhung ? d�y c� timestamp n�n ch?c ch?n
         // mới)
         try {
             int width = 800;
@@ -493,14 +493,14 @@ public class DataSeederService {
                                 log.warn("Không thể xóa file: {}", file);
                             }
                         });
-                log.info("Đã dọn dẹp thư mục uploads");
+                log.info("�� d?n d?p thu m?c uploads");
             }
         } catch (IOException e) {
             log.error("Lỗi khi dọn dẹp thư mục uploads", e);
         }
     }
 
-    // ==================== VOUCHERS (MÃ GIẢM GIÁ) ====================
+    // ==================== VOUCHERS (M� GI?M GI�) ====================
     @Transactional
     public void seedVouchers(int count) {
         log.info("Bắt đầu tạo {} vouchers", count);
@@ -523,7 +523,7 @@ public class DataSeederService {
             vouchers.add(v);
         }
         voucherRepository.saveAll(vouchers);
-        log.info("Đã lưu {} vouchers", vouchers.size());
+        log.info("�� luu {} vouchers", vouchers.size());
     }
 
     // ==================== ORDERS (ĐƠN HÀNG) ====================
@@ -582,7 +582,7 @@ public class DataSeederService {
             }
         }
         orderRepository.saveAll(orders);
-        log.info("Đã lưu {} đơn hàng", orders.size());
+        log.info("�� luu {} don h�ng", orders.size());
     }
 
     // ==================== PRODUCT VARIANTS (BIẾN THỂ SẢN PHẨM)
@@ -617,7 +617,7 @@ public class DataSeederService {
             // (Logíc tạo variants phức tạp giữ nguyên)
             // ...
         }
-        log.info("Đã tạo {} biến thể cho {} sản phẩm", variantCount, products.size());
+        log.info("�� t?o {} bi?n th? cho {} s?n ph?m", variantCount, products.size());
     }
 
     // ==================== REVIEWS (ĐÁNH GIÁ) ====================
@@ -669,6 +669,6 @@ public class DataSeederService {
                 totalReviews++;
             }
         }
-        log.info("Đã tạo {} đánh giá cho {} sản phẩm", totalReviews, products.size());
+        log.info("�� t?o {} d�nh gi� cho {} s?n ph?m", totalReviews, products.size());
     }
 }

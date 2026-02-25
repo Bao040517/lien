@@ -10,7 +10,7 @@ import java.util.List;
 public class OrderRequest {
     private Long userId; // ID người mua (thường lấy từ token, nhưng có thể truyền lên nếu cần)
     private List<OrderItemRequest> items; // Danh sách sản phẩm muốn mua
-    private String voucherCode; // Mã giảm giá (nếu có)
+    private String voucherCode; // M� gi?m gi� (n?u c�)
     private Long addressId; // ID địa chỉ giao hàng
     private String paymentMethod; // Phương thức thanh toán (COD, BANKING)
 

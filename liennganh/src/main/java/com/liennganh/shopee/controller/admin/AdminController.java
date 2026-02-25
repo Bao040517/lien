@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Controller dÃ nh cho Quáº£n trá»‹ viÃªn (Admin)
- * Cung cáº¥p cÃ¡c API quáº£n lÃ½ ngÆ°á»i dÃ¹ng, ngÆ°á»i bÃ¡n vÃ  xem thá»‘ng
- * kÃª há»‡ thá»‘ng
- * Táº¥t cáº£ endpoints chá»‰ dÃ nh cho role ADMIN
+ * Controller dành cho Quản trị viên (Admin)
+ * Cung cấp các API quản lý người dùng, người bán và xem thống
+ * kê hệ thống
+ * Tất cả endpoints chỉ dành cho role ADMIN
  */
 @RestController
 @RequestMapping("/api/admin")
@@ -25,120 +25,120 @@ public class AdminController {
     private final AdminService adminService;
     private final StatisticsService statisticsService;
 
-    // ========== QUáº¢N LÃ NGÆ¯á»œI DÃ™NG (USER MANAGEMENT) ==========
+    // ========== QUẢN LÝ NGƯỜI DÙNG (USER MANAGEMENT) ==========
 
     /**
-     * Láº¥y danh sÃ¡ch táº¥t cáº£ ngÆ°á»i dÃ¹ng
-     * Quyá»n háº¡n: ADMIN
+     * Lấy danh sách tất cả người dùng
+     * Quyền hạn: ADMIN
      * 
      */
     @GetMapping("/users")
     public ApiResponse<List<User>> getAllUsers() {
         List<User> users = adminService.getAllUsers();
-        return ApiResponse.success(users, "Láº¥y danh sÃ¡ch ngÆ°á»i dÃ¹ng thÃ nh cÃ´ng");
+        return ApiResponse.success(users, "Lấy danh sách người dùng thành công");
     }
 
     /**
-     * Xem chi tiáº¿t thÃ´ng tin ngÆ°á»i dÃ¹ng
-     * Quyá»n háº¡n: ADMIN
+     * Xem chi tiết thông tin người dùng
+     * Quyền hạn: ADMIN
      * 
      */
     @GetMapping("/users/{id}")
     public ApiResponse<User> getUserById(@PathVariable Long id) {
         User user = adminService.getUserById(id);
-        return ApiResponse.success(user, "Láº¥y thÃ´ng tin ngÆ°á»i dÃ¹ng thÃ nh cÃ´ng");
+        return ApiResponse.success(user, "Lấy thông tin người dùng thành công");
     }
 
     /**
-     * KhÃ³a tÃ i khoáº£n ngÆ°á»i dÃ¹ng
-     * Quyá»n háº¡n: ADMIN
+     * Khóa tài khoản người dùng
+     * Quyền hạn: ADMIN
      * 
      */
     @PutMapping("/users/{id}/lock")
     public ApiResponse<User> lockUser(@PathVariable Long id) {
         User user = adminService.lockUser(id);
-        return ApiResponse.success(user, "KhÃ³a ngÆ°á»i dÃ¹ng thÃ nh cÃ´ng");
+        return ApiResponse.success(user, "Khóa người dùng thành công");
     }
 
     /**
-     * Má»Ÿ khÃ³a tÃ i khoáº£n ngÆ°á»i dÃ¹ng
-     * Quyá»n háº¡n: ADMIN
+     * Mở khóa tài khoản người dùng
+     * Quyền hạn: ADMIN
      * 
      */
     @PutMapping("/users/{id}/unlock")
     public ApiResponse<User> unlockUser(@PathVariable Long id) {
         User user = adminService.unlockUser(id);
-        return ApiResponse.success(user, "Má»Ÿ khÃ³a ngÆ°á»i dÃ¹ng thÃ nh cÃ´ng");
+        return ApiResponse.success(user, "Mở khóa người dùng thành công");
     }
 
-    // ========== QUáº¢N LÃ NGÆ¯á»œI BÃN (SELLER MANAGEMENT) ==========
+    // ========== QUẢN LÝ NGƯỜI BÁN (SELLER MANAGEMENT) ==========
 
     /**
-     * Láº¥y danh sÃ¡ch ngÆ°á»i bÃ¡n Ä‘ang chá» duyá»‡t
-     * Quyá»n háº¡n: ADMIN
+     * Lấy danh sách người bán đang chờ duyệt
+     * Quyền hạn: ADMIN
      * 
      */
     @GetMapping("/sellers/pending")
     public ApiResponse<List<User>> getPendingSellers() {
         List<User> sellers = adminService.getPendingSellers();
-        return ApiResponse.success(sellers, "Láº¥y danh sÃ¡ch ngÆ°á»i bÃ¡n chá» duyá»‡t thÃ nh cÃ´ng");
+        return ApiResponse.success(sellers, "Lấy danh sách người bán chờ duyệt thành công");
     }
 
     /**
-     * Láº¥y danh sÃ¡ch táº¥t cáº£ ngÆ°á»i bÃ¡n
-     * Quyá»n háº¡n: ADMIN
+     * Lấy danh sách tất cả người bán
+     * Quyền hạn: ADMIN
      * 
      */
     @GetMapping("/sellers")
     public ApiResponse<List<User>> getAllSellers() {
         List<User> sellers = adminService.getAllSellers();
-        return ApiResponse.success(sellers, "Láº¥y danh sÃ¡ch ngÆ°á»i bÃ¡n thÃ nh cÃ´ng");
+        return ApiResponse.success(sellers, "Lấy danh sách người bán thành công");
     }
 
     /**
-     * Duyá»‡t yÃªu cáº§u Ä‘Äƒng kÃ½ ngÆ°á»i bÃ¡n
-     * Quyá»n háº¡n: ADMIN
+     * Duyệt yêu cầu đăng ký người bán
+     * Quyền hạn: ADMIN
      * 
      */
     @PutMapping("/sellers/{id}/approve")
     public ApiResponse<User> approveSeller(@PathVariable Long id) {
         User seller = adminService.approveSeller(id);
-        return ApiResponse.success(seller, "Duyá»‡t ngÆ°á»i bÃ¡n thÃ nh cÃ´ng");
+        return ApiResponse.success(seller, "Duyệt người bán thành công");
     }
 
     /**
-     * Tá»« chá»‘i yÃªu cáº§u Ä‘Äƒng kÃ½ ngÆ°á»i bÃ¡n
-     * Quyá»n háº¡n: ADMIN
+     * Từ chối yêu cầu đăng ký người bán
+     * Quyền hạn: ADMIN
      * 
      */
     @PutMapping("/sellers/{id}/reject")
     public ApiResponse<User> rejectSeller(@PathVariable Long id) {
         User seller = adminService.rejectSeller(id);
-        return ApiResponse.success(seller, "Tá»« chá»‘i ngÆ°á»i bÃ¡n thÃ nh cÃ´ng");
+        return ApiResponse.success(seller, "Từ chối người bán thành công");
     }
 
     /**
-     * Táº¡m khÃ³a tÃ i khoáº£n ngÆ°á»i bÃ¡n
-     * Quyá»n háº¡n: ADMIN
+     * Tạm khóa tài khoản người bán
+     * Quyền hạn: ADMIN
      * 
      */
     @PutMapping("/sellers/{id}/suspend")
     public ApiResponse<User> suspendSeller(@PathVariable Long id) {
         User seller = adminService.suspendSeller(id);
-        return ApiResponse.success(seller, "Táº¡m khÃ³a ngÆ°á»i bÃ¡n thÃ nh cÃ´ng");
+        return ApiResponse.success(seller, "Tạm khóa người bán thành công");
     }
 
-    // ========== THá»NG KÃŠ (STATISTICS) ==========
+    // ========== THỐNG KÊ (STATISTICS) ==========
 
     /**
-     * Xem thá»‘ng kÃª tá»•ng quan há»‡ thá»‘ng
-     * Bao gá»“m doanh thu, sá»‘ lÆ°á»£ng user, shop, Ä‘Æ¡n hÃ ng...
-     * Quyá»n háº¡n: ADMIN
+     * Xem thống kê tổng quan hệ thống
+     * Bao gồm doanh thu, số lượng user, shop, đơn hàng...
+     * Quyền hạn: ADMIN
      * 
      */
     @GetMapping("/statistics")
     public ApiResponse<AdminStatisticsDTO> getStatistics() {
         AdminStatisticsDTO stats = statisticsService.getAdminStatistics();
-        return ApiResponse.success(stats, "Láº¥y thá»‘ng kÃª há»‡ thá»‘ng thÃ nh cÃ´ng");
+        return ApiResponse.success(stats, "Lấy thống kê hệ thống thành công");
     }
 }

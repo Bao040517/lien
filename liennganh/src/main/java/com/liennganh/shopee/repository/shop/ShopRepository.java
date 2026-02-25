@@ -11,7 +11,7 @@ import java.util.Optional;
  */
 public interface ShopRepository extends JpaRepository<Shop, Long> {
     /**
-     * Kiểm tra xem user này đã có Shop chưa
+     * Ki?m tra xem user n�y d� c� Shop chua
      */
     boolean existsByOwner(User owner);
 

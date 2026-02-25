@@ -31,7 +31,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     int countTotalUnread(@Param("userId") Long userId);
 
     /**
-     * Đánh dấu tất cả tin nhắn trong hội thoại là đã đọc (tin mà người khác gửi)
+     * ��nh d?u t?t c? tin nh?n trong h?i tho?i l� d� d?c (tin m� ngu?i kh�c g?i)
      */
     @Modifying
     @Query("UPDATE Message m SET m.isRead = true WHERE m.conversation.id = :convId AND m.sender.id != :userId AND m.isRead = false")

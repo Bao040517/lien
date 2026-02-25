@@ -55,7 +55,7 @@ public class AdminService {
         User user = getUserById(userId);
         user.setIsLocked(true);
         User lockedUser = userRepository.save(user);
-        log.info("Đã khóa tài khoản user: {}", user.getUsername());
+        log.info("�� kh�a t�i kho?n user: {}", user.getUsername());
         return lockedUser;
     }
 
@@ -68,7 +68,7 @@ public class AdminService {
         User user = getUserById(userId);
         user.setIsLocked(false);
         User unlockedUser = userRepository.save(user);
-        log.info("Đã mở khóa tài khoản user: {}", user.getUsername());
+        log.info("�� m? kh�a t�i kho?n user: {}", user.getUsername());
         return unlockedUser;
     }
 
@@ -101,7 +101,7 @@ public class AdminService {
     public User approveSeller(Long sellerId) {
         User seller = getUserById(sellerId);
 
-        // Nếu đã duyệt rồi thì không làm gì
+        // N?u d� duy?t r?i th� kh�ng l�m g�
         if (seller.getSellerStatus() == User.SellerStatus.APPROVED) {
             return seller;
         }
@@ -118,12 +118,12 @@ public class AdminService {
             shop.setName(approvedSeller.getUsername() + "'s Shop");
             shop.setDescription("Chào mừng đến với cửa hàng của " + approvedSeller.getUsername() + "!");
             shopRepository.save(shop);
-            log.info("Đã tạo Shop cho user: {}", approvedSeller.getUsername());
+            log.info("�� t?o Shop cho user: {}", approvedSeller.getUsername());
         } else {
-            log.info("Shop đã tồn tại cho user: {}", approvedSeller.getUsername());
+            log.info("Shop d� t?n t?i cho user: {}", approvedSeller.getUsername());
         }
 
-        log.info("Đã duyệt seller: {}", seller.getUsername());
+        log.info("�� duy?t seller: {}", seller.getUsername());
 
         return approvedSeller;
     }
@@ -143,7 +143,7 @@ public class AdminService {
 
         seller.setSellerStatus(User.SellerStatus.REJECTED);
         User rejectedSeller = userRepository.save(seller);
-        log.info("Đã từ chối seller: {}", seller.getUsername());
+        log.info("�� t? ch?i seller: {}", seller.getUsername());
 
         return rejectedSeller;
     }
@@ -168,7 +168,7 @@ public class AdminService {
 
         seller.setSellerStatus(User.SellerStatus.SUSPENDED);
         User suspendedSeller = userRepository.save(seller);
-        log.info("Đã tạm khóa seller: {}", seller.getUsername());
+        log.info("�� t?m kh�a seller: {}", seller.getUsername());
 
         return suspendedSeller;
     }

@@ -56,7 +56,7 @@ public class CartService {
 
     /**
      * Thêm sản phẩm vào giỏ hàng
-     * Nếu sản phẩm đã có -> cập nhật số lượng
+     * N?u s?n ph?m d� c� -> c?p nh?t s? lu?ng
      * 
      */
     @Transactional
@@ -68,7 +68,7 @@ public class CartService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+        // Ki?m tra xem s?n ph?m d� c� trong gi? h�ng chua
         Optional<CartItem> existingItem = cart.getItems().stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst();

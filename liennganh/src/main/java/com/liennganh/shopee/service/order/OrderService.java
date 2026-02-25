@@ -149,7 +149,7 @@ public class OrderService {
 
     /**
      * Lấy chi tiết đơn hàng theo ID
-     * Đồng thời kiểm tra xem user đã đánh giá sản phẩm trong đơn hàng chưa
+     * �?ng th?i ki?m tra xem user d� d�nh gi� s?n ph?m trong don h�ng chua
      * 
      * @throws AppException ORDER_NOT_FOUND
      */
@@ -162,7 +162,7 @@ public class OrderService {
         Long userId = order.getUser().getId();
         List<Review> reviews = reviewRepository.findByUserId(userId);
 
-        // Tạo set các key (orderId_productId) đã được review để tra cứu nhanh (O(1))
+        // T?o set c�c key (orderId_productId) d� du?c review d? tra c?u nhanh (O(1))
         java.util.Set<String> reviewedKeys = new java.util.HashSet<>();
         for (Review r : reviews) {
             String key = r.getOrder().getId() + "_" + r.getProduct().getId();

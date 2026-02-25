@@ -84,13 +84,13 @@ const AdminSellers = () => {
 
     const confirmAction = async (id, action) => {
         try {
-            await api.put(`/ admin / sellers / ${id}/${action}`);
+            await api.put(`/admin/sellers/${id}/${action}`);
             const newStatus = action === 'approve' ? 'APPROVED' : action === 'reject' ? 'REJECTED' : 'SUSPENDED';
             setSellers(prev => prev.map(s =>
                 s.id === id ? { ...s, sellerStatus: newStatus } : s
             ));
             setPending(prev => prev.filter(s => s.id !== id));
-        } catch { alert('Thao tác thất bại!'); }
+        } catch (err) { alert('Thao tác thất bại: ' + (err.response?.data?.message || err.message)); }
         setConfirmModal({ ...confirmModal, isOpen: false });
     };
 

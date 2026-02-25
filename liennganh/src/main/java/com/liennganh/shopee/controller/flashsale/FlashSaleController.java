@@ -9,8 +9,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.List;
 
 /**
- * Controller quáº£n lÃ½ chÆ°Æ¡ng trÃ¬nh Flash Sale
- * Cho phÃ©p xem danh sÃ¡ch flash sale vÃ  quáº£n lÃ½ (Admin)
+ * Controller quản lý chương trình Flash Sale
+ * Cho phép xem danh sách flash sale và quản lý (Admin)
  */
 @RestController
 @RequestMapping("/api/flash-sales")
@@ -19,46 +19,46 @@ public class FlashSaleController {
     private FlashSaleService flashSaleService;
 
     /**
-     * Láº¥y toÃ n bá»™ danh sÃ¡ch Flash Sale (cáº£ cÅ© vÃ  má»›i)
-     * Quyá»n háº¡n: Public
+     * Lấy toàn bộ danh sách Flash Sale (cả cũ và mới)
+     * Quyền hạn: Public
      * 
      */
     @GetMapping
     public ApiResponse<List<FlashSale>> getAllFlashSales() {
-        return ApiResponse.success(flashSaleService.getAllFlashSales(), "Láº¥y danh sÃ¡ch Flash Sale thÃ nh cÃ´ng");
+        return ApiResponse.success(flashSaleService.getAllFlashSales(), "Lấy danh sách Flash Sale thành công");
     }
 
     /**
-     * Láº¥y danh sÃ¡ch Flash Sale Ä‘ang diá»…n ra (Active)
-     * Quyá»n háº¡n: Public
+     * Lấy danh sách Flash Sale đang diễn ra (Active)
+     * Quyền hạn: Public
      * 
      */
     @GetMapping("/current")
     public ApiResponse<List<FlashSale>> getCurrentFlashSales() {
         return ApiResponse.success(flashSaleService.getActiveFlashSales(),
-                "Láº¥y danh sÃ¡ch Flash Sale Ä‘ang diá»…n ra thÃ nh cÃ´ng");
+                "Lấy danh sách Flash Sale đang diễn ra thành công");
     }
 
     /**
-     * Táº¡o chÆ°Æ¡ng trÃ¬nh Flash Sale má»›i
-     * Quyá»n háº¡n: ADMIN
+     * Tạo chương trình Flash Sale mới
+     * Quyền hạn: ADMIN
      * 
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ApiResponse<FlashSale> createFlashSale(@RequestBody FlashSale flashSale) {
-        return ApiResponse.success(flashSaleService.createFlashSale(flashSale), "Táº¡o Flash Sale thÃ nh cÃ´ng");
+        return ApiResponse.success(flashSaleService.createFlashSale(flashSale), "Tạo Flash Sale thành công");
     }
 
     /**
-     * Cáº­p nháº­t thÃ´ng tin Flash Sale
-     * Quyá»n háº¡n: ADMIN
+     * Cập nhật thông tin Flash Sale
+     * Quyền hạn: ADMIN
      * 
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ApiResponse<FlashSale> updateFlashSale(@PathVariable Long id, @RequestBody FlashSale flashSale) {
-        return ApiResponse.success(flashSaleService.updateFlashSale(id, flashSale), "Cáº­p nháº­t Flash Sale thÃ nh cÃ´ng");
+        return ApiResponse.success(flashSaleService.updateFlashSale(id, flashSale), "Cập nhật Flash Sale thành công");
     }
 }
 

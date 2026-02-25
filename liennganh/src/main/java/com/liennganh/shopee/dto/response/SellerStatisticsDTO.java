@@ -16,7 +16,7 @@ public class SellerStatisticsDTO {
     private BigDecimal totalRevenue; // Tổng doanh thu
     private Long totalOrders; // Tổng số đơn hàng
     private Long totalProducts; // Tổng số sản phẩm
-    private Long totalSold; // Tổng số lượng đã bán
+    private Long totalSold; // T?ng s? lu?ng d� b�n
     private Long totalFeedback; // Tổng số lượt đánh giá
     private Double returnRate; // Tỷ lệ hoàn hàng/hủy (%)
     private Double averageRating; // Điểm đánh giá trung bình (sao)
@@ -25,8 +25,8 @@ public class SellerStatisticsDTO {
     private Long pendingOrders; // Đơn chờ xác nhận
     private Long shippingOrders; // Đơn đang vận chuyển
     private Long deliveringOrders; // Đơn đang giao
-    private Long deliveredOrders; // Đơn đã giao thành công
-    private Long cancelledOrders; // Đơn đã hủy
+    private Long deliveredOrders; // �on d� giao th�nh c�ng
+    private Long cancelledOrders; // �on d� h?y
 
     private List<TopProductDTO> topProducts; // Top sản phẩm bán chạy của shop
     private List<ProductDetailStatsDTO> productDetailStats; // Thống kê chi tiết từng sản phẩm

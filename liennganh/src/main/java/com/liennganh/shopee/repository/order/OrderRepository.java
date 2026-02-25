@@ -46,7 +46,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
         /**
          * Thống kê doanh thu toàn hệ thống theo ngày (Admin)
-         * Chỉ tính các đơn hàng đã giao thành công (DELIVERED)
+         * Ch? t�nh c�c don h�ng d� giao th�nh c�ng (DELIVERED)
          */
         @Query("SELECT FUNCTION('DATE', o.createdAt) as date, SUM(o.finalPrice) as revenue " +
                         "FROM Order o WHERE o.status = 'DELIVERED' " +
@@ -63,7 +63,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
         /**
          * Thống kê doanh thu của Shop theo ngày (Seller)
-         * Tính tổng tiền các món hàng thuộc shop trong các đơn đã giao
+         * T�nh t?ng ti?n c�c m�n h�ng thu?c shop trong c�c don d� giao
          */
         @Query("SELECT FUNCTION('DATE', o.createdAt) as date, SUM(oi.price * oi.quantity) as revenue " +
                         "FROM OrderItem oi " +

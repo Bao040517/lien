@@ -57,10 +57,10 @@ public class Order {
 
     public enum OrderStatus {
         PENDING, // Chờ xác nhận - người bán đang chuẩn bị hàng
-        SHIPPING, // Đang vận chuyển - đơn vị vận chuyển đã lấy hàng
+        SHIPPING, // �ang v?n chuy?n - don v? v?n chuy?n d� l?y h�ng
         DELIVERING, // Đang giao hàng - shipper đang giao
         DELIVERED, // Giao hàng thành công
-        CANCELLED // Đã hủy
+        CANCELLED // �� h?y
     }
 
     public enum PaymentMethod {

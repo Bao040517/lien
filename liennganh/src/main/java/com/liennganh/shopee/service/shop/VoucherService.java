@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.math.BigDecimal;
 
 /**
- * Service quản lý Mã giảm giá (Voucher)
+ * Service qu?n l� M� gi?m gi� (Voucher)
  * Xử lý logic tạo, áp dụng và kiểm tra voucher
  */
 @Service
@@ -36,7 +36,7 @@ public class VoucherService {
     }
 
     /**
-     * Tìm voucher theo mã code
+     * T�m voucher theo m� code
      * 
      */
     public Optional<Voucher> getVoucherByCode(String code) {
