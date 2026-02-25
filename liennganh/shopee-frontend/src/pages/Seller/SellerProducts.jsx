@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Package, Plus, Search, Trash2, Edit3, Eye, AlertTriangle } from 'lucide-react';
 import Pagination from '../../components/Pagination';
+import BadWordWarning from '../../components/BadWordWarning';
 import api from '../../api';
 import { getImageUrl } from '../../utils';
 
@@ -142,7 +143,10 @@ const SellerProducts = () => {
                                                     )}
                                                 </div>
                                                 <div className="min-w-0">
-                                                    <p className={`font-medium truncate max-w-xs ${product.banned ? 'text-red-700' : 'text-gray-900'}`}>{product.name}</p>
+                                                    <p className={`font-medium max-w-xs flex items-center ${product.banned ? 'text-red-700' : 'text-gray-900'}`}>
+                                                        <span className="truncate">{product.name}</span>
+                                                        <BadWordWarning productName={product.name} variant="seller" />
+                                                    </p>
                                                     <p className="text-xs text-gray-400 mt-0.5">ID: {product.id}</p>
                                                     {product.banned && (
                                                         <div className="mt-1 text-xs text-red-600 bg-red-100 px-2 py-0.5 rounded border border-red-200 inline-block">

@@ -4,6 +4,7 @@ import { Search, Plus, Trash2, Edit, Save, X, Ban, Settings, CheckCircle, Packag
 import Pagination from '../../components/Pagination';
 import ConfirmModal from '../../components/Admin/ConfirmModal';
 import PromptModal from '../../components/Admin/PromptModal';
+import BadWordWarning from '../../components/BadWordWarning';
 import { getImageUrl } from '../../utils';
 
 const AdminProducts = () => {
@@ -218,10 +219,11 @@ const AdminProducts = () => {
                                                         )}
                                                     </div>
                                                     <div className="min-w-0">
-                                                        <p className={`text-sm font-medium truncate max-w-xs ${isBanned ? 'text-red-800' : isNew ? 'text-green-800' : 'text-gray-800'}`}>
-                                                            {product.name}
+                                                        <p className={`text-sm font-medium max-w-xs flex items-center ${isBanned ? 'text-red-800' : isNew ? 'text-green-800' : 'text-gray-800'}`}>
+                                                            <span className="truncate">{product.name}</span>
+                                                            <BadWordWarning productName={product.name} variant="admin" />
                                                             {isNew && (
-                                                                <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 bg-green-500 text-white text-[10px] font-bold rounded-full animate-bounce">
+                                                                <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 bg-green-500 text-white text-[10px] font-bold rounded-full animate-bounce flex-shrink-0">
                                                                     <Sparkles className="w-3 h-3" /> MỚI
                                                                 </span>
                                                             )}
