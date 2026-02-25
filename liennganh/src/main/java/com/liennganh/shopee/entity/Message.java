@@ -36,7 +36,7 @@ public class Message {
     private String content; // Nội dung tin nhắn
 
     @Column(name = "is_read")
-    private boolean isRead = false; // Trạng thái đã đọc
+    private boolean isRead = false; // Tr?ng th�i d� d?c
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

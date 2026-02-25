@@ -15,9 +15,9 @@ import com.liennganh.shopee.entity.Order;
 import java.util.List;
 
 /**
- * Controller dÃ nh cho NgÆ°á»i bÃ¡n (Seller)
- * Cung cáº¥p cÃ¡c API quáº£n lÃ½ Shop, Sáº£n pháº©m vÃ  xem Thá»‘ng kÃª
- * Quyá»n háº¡n: SELLER hoáº·c ADMIN
+ * Controller dành cho Người bán (Seller)
+ * Cung cấp các API quản lý Shop, Sản phẩm và xem Thống kê
+ * Quyền hạn: SELLER hoặc ADMIN
  */
 @RestController
 @RequestMapping("/api/seller")
@@ -42,46 +42,46 @@ public class SellerController {
         return ApiResponse.success(orders, "Lấy danh sách đơn hàng thành công");
     }
 
-    // ========== QUáº¢N LÃ SHOP (SHOP MANAGEMENT) ==========
+    // ========== QUẢN LÝ SHOP (SHOP MANAGEMENT) ==========
 
     /**
-     * Láº¥y thÃ´ng tin shop cá»§a seller
-     * Quyá»n háº¡n: SELLER, ADMIN
+     * Lấy thông tin shop của seller
+     * Quyền hạn: SELLER, ADMIN
      * 
      */
     @GetMapping("/shop")
     public ApiResponse<Shop> getMyShop(@RequestParam Long sellerId) {
         Shop shop = sellerService.getMyShop(sellerId);
-        return ApiResponse.success(shop, "Láº¥y thÃ´ng tin shop thÃ nh cÃ´ng");
+        return ApiResponse.success(shop, "Lấy thông tin shop thành công");
     }
 
     /**
-     * Táº¡o shop má»›i
-     * Quyá»n háº¡n: SELLER, ADMIN
+     * Tạo shop mới
+     * Quyền hạn: SELLER, ADMIN
      * 
      */
     @PostMapping("/shop")
     public ApiResponse<Shop> createShop(@RequestParam Long sellerId, @RequestBody Shop shop) {
         Shop createdShop = sellerService.createShop(sellerId, shop);
-        return ApiResponse.success(createdShop, "Táº¡o shop thÃ nh cÃ´ng");
+        return ApiResponse.success(createdShop, "Tạo shop thành công");
     }
 
     /**
-     * Cáº­p nháº­t thÃ´ng tin shop
-     * Quyá»n háº¡n: SELLER, ADMIN
+     * Cập nhật thông tin shop
+     * Quyền hạn: SELLER, ADMIN
      * 
      */
     @PutMapping("/shop")
     public ApiResponse<Shop> updateShop(@RequestParam Long sellerId, @RequestBody Shop shop) {
         Shop updatedShop = sellerService.updateShop(sellerId, shop);
-        return ApiResponse.success(updatedShop, "Cáº­p nháº­t shop thÃ nh cÃ´ng");
+        return ApiResponse.success(updatedShop, "Cập nhật shop thành công");
     }
 
-    // ========== QUáº¢N LÃ Sáº¢N PHáº¨M (PRODUCT MANAGEMENT) ==========
+    // ========== QUẢN LÝ SẢN PHẨM (PRODUCT MANAGEMENT) ==========
 
     /**
-     * Láº¥y danh sÃ¡ch sáº£n pháº©m cá»§a shop
-     * Quyá»n háº¡n: SELLER, ADMIN
+     * Lấy danh sách sản phẩm của shop
+     * Quyền hạn: SELLER, ADMIN
      * 
      */
     @GetMapping("/products")
@@ -90,23 +90,23 @@ public class SellerController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         org.springframework.data.domain.Page<Product> products = sellerService.getMyProducts(sellerId, page, size);
-        return ApiResponse.success(products, "Láº¥y danh sÃ¡ch sáº£n pháº©m thÃ nh cÃ´ng");
+        return ApiResponse.success(products, "Lấy danh sách sản phẩm thành công");
     }
 
     /**
-     * Táº¡o sáº£n pháº©m má»›i cho shop
-     * Quyá»n háº¡n: SELLER, ADMIN
+     * Tạo sản phẩm mới cho shop
+     * Quyền hạn: SELLER, ADMIN
      * 
      */
     @PostMapping("/products")
     public ApiResponse<Product> createProduct(@RequestParam Long sellerId, @RequestBody Product product) {
         Product createdProduct = sellerService.createProduct(sellerId, product);
-        return ApiResponse.success(createdProduct, "Táº¡o sáº£n pháº©m thÃ nh cÃ´ng");
+        return ApiResponse.success(createdProduct, "Tạo sản phẩm thành công");
     }
 
     /**
-     * Cáº­p nháº­t sáº£n pháº©m
-     * Quyá»n háº¡n: SELLER, ADMIN
+     * Cập nhật sản phẩm
+     * Quyền hạn: SELLER, ADMIN
      * 
      */
     @PutMapping("/products/{id}")
@@ -115,31 +115,31 @@ public class SellerController {
             @PathVariable Long id,
             @RequestBody Product product) {
         Product updatedProduct = sellerService.updateProduct(sellerId, id, product);
-        return ApiResponse.success(updatedProduct, "Cáº­p nháº­t sáº£n pháº©m thÃ nh cÃ´ng");
+        return ApiResponse.success(updatedProduct, "Cập nhật sản phẩm thành công");
     }
 
     /**
-     * XÃ³a sáº£n pháº©m
-     * Quyá»n háº¡n: SELLER, ADMIN
+     * Xóa sản phẩm
+     * Quyền hạn: SELLER, ADMIN
      * 
      */
     @DeleteMapping("/products/{id}")
     public ApiResponse<Void> deleteProduct(@RequestParam Long sellerId, @PathVariable Long id) {
         sellerService.deleteProduct(sellerId, id);
-        return ApiResponse.success(null, "XÃ³a sáº£n pháº©m thÃ nh cÃ´ng");
+        return ApiResponse.success(null, "Xóa sản phẩm thành công");
     }
 
-    // ========== THá»NG KÃŠ (STATISTICS) ==========
+    // ========== THỐNG KÊ (STATISTICS) ==========
 
     /**
-     * Xem thá»‘ng kÃª chi tiáº¿t cá»§a shop
-     * Bao gá»“m doanh thu, Ä‘Æ¡n hÃ ng, sáº£n pháº©m bÃ¡n cháº¡y...
-     * Quyá»n háº¡n: SELLER, ADMIN
+     * Xem thống kê chi tiết của shop
+     * Bao gồm doanh thu, đơn hàng, sản phẩm bán chạy...
+     * Quyền hạn: SELLER, ADMIN
      * 
      */
     @GetMapping("/statistics")
     public ApiResponse<SellerStatisticsDTO> getStatistics(@RequestParam Long sellerId) {
         SellerStatisticsDTO stats = statisticsService.getSellerStatistics(sellerId);
-        return ApiResponse.success(stats, "Láº¥y thá»‘ng kÃª thÃ nh cÃ´ng");
+        return ApiResponse.success(stats, "Lấy thống kê thành công");
     }
 }

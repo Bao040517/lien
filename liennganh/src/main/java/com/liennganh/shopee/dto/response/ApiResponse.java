@@ -6,7 +6,7 @@ package com.liennganh.shopee.dto.response;
  */
 public class ApiResponse<T> {
     private boolean success; // Trạng thái thành công hay thất bại
-    private int code = 1000; // Mã lỗi (1000 = success)
+    private int code = 1000; // M� l?i (1000 = success)
     private String message; // Thông báo đi kèm
     private T data; // Dữ liệu chính
 

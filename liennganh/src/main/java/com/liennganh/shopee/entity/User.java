@@ -56,7 +56,7 @@ public class User {
 
     public enum SellerStatus {
         PENDING, // Đang chờ duyệt
-        APPROVED, // Đã duyệt
+        APPROVED, // �� duy?t
         REJECTED, // Bị từ chối
         SUSPENDED // Bị đình chỉ
     }

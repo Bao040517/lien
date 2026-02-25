@@ -170,15 +170,15 @@ const SellerDashboard = () => {
                             </thead>
                             <tbody>
                                 {currentProducts.map((product) => (
-                                    <tr key={product.productId} className={`border - t border - gray - 100 transition ${product.isBanned
+                                    <tr key={product.productId} className={`border-t border-gray-100 transition ${product.isBanned
                                         ? 'bg-red-50 border-l-4 border-red-500 hover:bg-red-100/50'
                                         : 'hover:bg-primary-lighter/30'
-                                        } `}>
+                                        }`}>
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 relative">
                                                     {product.imageUrl ? (
-                                                        <img src={getImageUrl(product.imageUrl)} alt="" className={`w - full h - full object - cover ${product.isBanned ? 'grayscale opacity-60' : ''} `} />
+                                                        <img src={getImageUrl(product.imageUrl)} alt="" className={`w-full h-full object-cover ${product.isBanned ? 'grayscale opacity-60' : ''}`} />
                                                     ) : (
                                                         <Package className="w-4 h-4 text-gray-300 m-auto mt-3" />
                                                     )}
@@ -189,7 +189,7 @@ const SellerDashboard = () => {
                                                     )}
                                                 </div>
                                                 <div className="min-w-0">
-                                                    <p className={`font - medium text - sm truncate max - w - [200px] ${product.isBanned ? 'text-red-700' : 'text-gray-900'} `}>
+                                                    <p className={`font-medium text-sm truncate max-w-[200px] ${product.isBanned ? 'text-red-700' : 'text-gray-900'}`}>
                                                         {product.productName}
                                                         {product.isBanned && (
                                                             <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full animate-pulse">
@@ -210,7 +210,7 @@ const SellerDashboard = () => {
                                             <span className="font-semibold text-primary-darker">{formatPrice(product.price)}</span>
                                         </td>
                                         <td className="px-4 py-3 text-center">
-                                            <span className={`font - medium ${product.stockQuantity <= 10 ? 'text-red-500' : 'text-gray-700'} `}>
+                                            <span className={`font-medium ${product.stockQuantity <= 10 ? 'text-red-500' : 'text-gray-700'}`}>
                                                 {product.stockQuantity}
                                             </span>
                                         </td>
@@ -222,12 +222,12 @@ const SellerDashboard = () => {
                                         </td>
                                         <td className="px-4 py-3 text-center">
                                             <div className="flex items-center justify-center gap-1">
-                                                <Star className={`w - 3.5 h - 3.5 ${product.averageRating > 0 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'} `} />
+                                                <Star className={`w-3.5 h-3.5 ${product.averageRating > 0 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
                                                 <span className="font-medium text-gray-700">{product.averageRating.toFixed(1)}</span>
                                             </div>
                                         </td>
                                         <td className="px-4 py-3 text-center">
-                                            <Link to={`/ seller / edit - product / ${product.productId} `}
+                                            <Link to={`/seller/edit-product/${product.productId}`}
                                                 className="p-1.5 text-gray-400 hover:text-primary-dark hover:bg-primary-lighter rounded-lg transition inline-block">
                                                 <Eye className="w-4 h-4" />
                                             </Link>
@@ -262,7 +262,7 @@ const SellerDashboard = () => {
                                     <td className="px-4 py-3 text-center">
                                         <div className="flex items-center justify-center gap-1 text-sm">
                                             <RotateCcw className="w-3.5 h-3.5 text-red-400" />
-                                            <span className={`${stats.returnRate > 5 ? 'text-red-500' : 'text-green-600'} `}>
+                                            <span className={`${stats.returnRate > 5 ? 'text-red-500' : 'text-green-600'}`}>
                                                 {stats.returnRate}%
                                             </span>
                                         </div>

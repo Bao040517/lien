@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository quản lý mã giảm giá (Voucher)
+ * Repository qu?n l� m� gi?m gi� (Voucher)
  */
 public interface VoucherRepository extends JpaRepository<Voucher, Long> {
     /**
-     * Tìm voucher theo mã code
+     * T�m voucher theo m� code
      */
     Optional<Voucher> findByCode(String code);
 

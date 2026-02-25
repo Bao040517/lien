@@ -44,7 +44,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-        // Kiểm tra nếu đã là Seller
+        // Ki?m tra n?u d� l� Seller
         if (user.getRole() == User.Role.SELLER) {
             throw new AppException(ErrorCode.SELLER_ALREADY_REGISTERED);
         }

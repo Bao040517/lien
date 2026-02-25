@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Controller quáº£n lÃ½ ngÆ°á»i dÃ¹ng
- * User/Seller chá»‰ xem Ä‘Æ°á»£c chÃ­nh mÃ¬nh, Admin xem Ä‘Æ°á»£c táº¥t cáº£
+ * Controller quản lý người dùng
+ * User/Seller chỉ xem được chính mình, Admin xem được tất cả
  */
 @RestController
 @RequestMapping("/api/users")
@@ -25,31 +25,31 @@ public class UserController {
     private JwtService jwtService;
 
     /**
-     * Láº¥y danh sÃ¡ch táº¥t cáº£ ngÆ°á»i dÃ¹ng
-     * Quyá»n háº¡n: ADMIN
+     * Lấy danh sách tất cả người dùng
+     * Quyền hạn: ADMIN
      */
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ApiResponse<List<User>> getAllUsers() {
-        return ApiResponse.success(userService.getAllUsers(), "Láº¥y danh sÃ¡ch ngÆ°á»i dÃ¹ng thÃ nh cÃ´ng");
+        return ApiResponse.success(userService.getAllUsers(), "Lấy danh sách người dùng thành công");
     }
 
     /**
-     * Xem thÃ´ng tin chi tiáº¿t cá»§a má»™t ngÆ°á»i dÃ¹ng
-     * User/Seller chá»‰ xem Ä‘Æ°á»£c chÃ­nh mÃ¬nh, Admin xem Ä‘Æ°á»£c táº¥t cáº£
+     * Xem thông tin chi tiết của một người dùng
+     * User/Seller chỉ xem được chính mình, Admin xem được tất cả
      */
     @PreAuthorize("hasAnyRole('USER', 'SELLER', 'ADMIN')")
     @GetMapping("/{id}")
     public ApiResponse<User> getUserById(@PathVariable Long id) {
         Long currentUserId = SecurityUtils.getCurrentUserId(jwtService);
         SecurityUtils.validateOwnership(id, currentUserId);
-        return ApiResponse.success(userService.getUserById(id), "Láº¥y thÃ´ng tin ngÆ°á»i dÃ¹ng thÃ nh cÃ´ng");
+        return ApiResponse.success(userService.getUserById(id), "Lấy thông tin người dùng thành công");
     }
 
     /**
-     * YÃªu cáº§u nÃ¢ng cáº¥p tÃ i khoáº£n tá»« User lÃªn Seller
-     * Chá»‰ user chÃ­nh chá»§ má»›i Ä‘Æ°á»£c yÃªu cáº§u
-     * Quyá»n háº¡n: USER
+     * Yêu cầu nâng cấp tài khoản từ User lên Seller
+     * Chỉ user chính chủ mới được yêu cầu
+     * Quyền hạn: USER
      */
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/{id}/upgrade-seller")
@@ -57,7 +57,7 @@ public class UserController {
         Long currentUserId = SecurityUtils.getCurrentUserId(jwtService);
         SecurityUtils.validateOwnership(id, currentUserId);
         return ApiResponse.success(userService.requestSellerUpgrade(id),
-                "YÃªu cáº§u nÃ¢ng cáº¥p thÃ nh ngÆ°á»i bÃ¡n thÃ nh cÃ´ng. Vui lÃ²ng chá» Admin phÃª duyá»‡t.");
+                "Yêu cầu nâng cấp thành người bán thành công. Vui lòng chờ Admin phê duyệt.");
     }
 }
 

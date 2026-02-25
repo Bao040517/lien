@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 public class TopProductDTO {
     private Long productId; // ID sản phẩm
     private String productName; // Tên sản phẩm
-    private Long totalSold; // Tổng số lượng đã bán
+    private Long totalSold; // T?ng s? lu?ng d� b�n
     private BigDecimal revenue; // Tổng doanh thu từ sản phẩm này
 
     public TopProductDTO(Long productId, String productName, Long totalSold, BigDecimal revenue) {

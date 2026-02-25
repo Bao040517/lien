@@ -10,8 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 /**
- * Controller quáº£n lÃ½ Ä‘Ã¡nh giÃ¡ sáº£n pháº©m (reviews/feedback)
- * Cho phÃ©p ngÆ°á»i mua Ä‘Ã¡nh giÃ¡ sáº£n pháº©m Ä‘Ã£ mua, kÃ¨m theo bÃ¬nh luáº­n vÃ  hÃ¬nh áº£nh
+ * Controller quản lý đánh giá sản phẩm (reviews/feedback)
+ * Cho phép người mua đánh giá sản phẩm đã mua, kèm theo bình luận và hình ảnh
  */
 @RestController
 @RequestMapping("/api/reviews")
@@ -20,71 +20,71 @@ public class ReviewController {
     private ReviewService reviewService;
 
     /**
-     * Láº¥y táº¥t cáº£ Ä‘Ã¡nh giÃ¡ trÃªn há»‡ thá»‘ng
-     * Quyá»n háº¡n: Public
+     * Lấy tất cả đánh giá trên hệ thống
+     * Quyền hạn: Public
      * 
      */
     @GetMapping
     public ApiResponse<List<Review>> getAllReviews() {
-        return ApiResponse.success(reviewService.getAllReviews(), "Láº¥y danh sÃ¡ch Ä‘Ã¡nh giÃ¡ thÃ nh cÃ´ng");
+        return ApiResponse.success(reviewService.getAllReviews(), "Lấy danh sách đánh giá thành công");
     }
 
     /**
-     * Láº¥y danh sÃ¡ch Ä‘Ã¡nh giÃ¡ cá»§a má»™t sáº£n pháº©m
-     * Quyá»n háº¡n: Public
+     * Lấy danh sách đánh giá của một sản phẩm
+     * Quyền hạn: Public
      * 
      */
     @GetMapping("/product/{productId}")
     public ApiResponse<List<Review>> getProductReviews(@PathVariable Long productId) {
-        return ApiResponse.success(reviewService.getProductReviews(productId), "Láº¥y Ä‘Ã¡nh giÃ¡ sáº£n pháº©m thÃ nh cÃ´ng");
+        return ApiResponse.success(reviewService.getProductReviews(productId), "Lấy đánh giá sản phẩm thành công");
     }
 
     /**
-     * Láº¥y danh sÃ¡ch Ä‘Ã¡nh giÃ¡ cá»§a má»™t shop
-     * Quyá»n háº¡n: Public
+     * Lấy danh sách đánh giá của một shop
+     * Quyền hạn: Public
      * 
      */
     @GetMapping("/shop/{shopId}")
     public ApiResponse<List<Review>> getShopReviews(@PathVariable Long shopId) {
-        return ApiResponse.success(reviewService.getShopReviews(shopId), "Láº¥y Ä‘Ã¡nh giÃ¡ shop thÃ nh cÃ´ng");
+        return ApiResponse.success(reviewService.getShopReviews(shopId), "Lấy đánh giá shop thành công");
     }
 
     /**
-     * Láº¥y Ä‘iá»ƒm Ä‘Ã¡nh giÃ¡ trung bÃ¬nh cá»§a sáº£n pháº©m
-     * Quyá»n háº¡n: Public
+     * Lấy điểm đánh giá trung bình của sản phẩm
+     * Quyền hạn: Public
      * 
      */
     @GetMapping("/product/{productId}/rating")
     public ApiResponse<Double> getProductRating(@PathVariable Long productId) {
         return ApiResponse.success(reviewService.getProductAverageRating(productId),
-                "Láº¥y Ä‘iá»ƒm Ä‘Ã¡nh giÃ¡ sáº£n pháº©m thÃ nh cÃ´ng");
+                "Lấy điểm đánh giá sản phẩm thành công");
     }
 
     /**
-     * Láº¥y Ä‘iá»ƒm Ä‘Ã¡nh giÃ¡ trung bÃ¬nh cá»§a shop
-     * Quyá»n háº¡n: Public
+     * Lấy điểm đánh giá trung bình của shop
+     * Quyền hạn: Public
      * 
      */
     @GetMapping("/shop/{shopId}/rating")
     public ApiResponse<Double> getShopRating(@PathVariable Long shopId) {
-        return ApiResponse.success(reviewService.getShopAverageRating(shopId), "Láº¥y Ä‘iá»ƒm Ä‘Ã¡nh giÃ¡ shop thÃ nh cÃ´ng");
+        return ApiResponse.success(reviewService.getShopAverageRating(shopId), "Lấy điểm đánh giá shop thành công");
     }
 
     /**
-     * ThÃªm Ä‘Ã¡nh giÃ¡ má»›i (chá»‰ text, khÃ´ng cÃ³ áº£nh)
-     * Quyá»n háº¡n: USER, SELLER (Ä‘Ã£ mua hÃ ng)
+     * Thêm đánh giá mới (chỉ text, không có ảnh)
+     * Quyền hạn: USER, SELLER (đã mua hàng)
      * 
      */
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('USER', 'SELLER')")
     @PostMapping
     public ApiResponse<Review> addReview(@RequestBody ReviewRequest request) {
         return ApiResponse.success(reviewService.addReview(request.getUserId(), request.getOrderId(),
-                request.getProductId(), request.getRating(), request.getComment()), "ThÃªm Ä‘Ã¡nh giÃ¡ thÃ nh cÃ´ng");
+                request.getProductId(), request.getRating(), request.getComment()), "Thêm đánh giá thành công");
     }
 
     /**
-     * ThÃªm Ä‘Ã¡nh giÃ¡ kÃ¨m áº£nh (tá»‘i Ä‘a 5 áº£nh)
-     * Quyá»n háº¡n: USER, SELLER (Ä‘Ã£ mua hÃ ng)
+     * Thêm đánh giá kèm ảnh (tối đa 5 ảnh)
+     * Quyền hạn: USER, SELLER (đã mua hàng)
      * 
      */
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('USER', 'SELLER')")
@@ -97,7 +97,7 @@ public class ReviewController {
             @RequestParam(required = false) String comment,
             @RequestParam(value = "images", required = false) MultipartFile[] images) {
         return ApiResponse.success(reviewService.addReviewWithImages(userId, orderId, productId,
-                rating, comment, images), "ThÃªm Ä‘Ã¡nh giÃ¡ kÃ¨m áº£nh thÃ nh cÃ´ng");
+                rating, comment, images), "Thêm đánh giá kèm ảnh thành công");
     }
 
     @Data

@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Controller quáº£n lÃ½ sáº£n pháº©m
- * GET endpoints: Public (khÃ´ng cáº§n Ä‘Äƒng nháº­p)
- * POST/PUT/DELETE endpoints: SELLER (chá»§ shop) hoáº·c ADMIN
+ * Controller quản lý sản phẩm
+ * GET endpoints: Public (không cần đăng nhập)
+ * POST/PUT/DELETE endpoints: SELLER (chủ shop) hoặc ADMIN
  */
 @RestController
 @RequestMapping("/api/products")
@@ -27,20 +27,20 @@ public class ProductController {
     private FileStorageService fileStorageService;
 
     /**
-     * Láº¥y danh sÃ¡ch sáº£n pháº©m (chÆ°a bá»‹ khÃ³a)
-     * Quyá»n háº¡n: Public
+     * Lấy danh sách sản phẩm (chưa bị khóa)
+     * Quyền hạn: Public
      */
     @GetMapping
     public ApiResponse<org.springframework.data.domain.Page<Product>> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return ApiResponse.success(productService.getAllProducts(page, size),
-                "Láº¥y danh sÃ¡ch sáº£n pháº©m thÃ nh cÃ´ng");
+                "Lấy danh sách sản phẩm thành công");
     }
 
     /**
-     * Láº¥y táº¥t cáº£ sáº£n pháº©m ká»ƒ cáº£ bá»‹ khÃ³a (Admin only)
-     * Quyá»n háº¡n: ADMIN
+     * Lấy tất cả sản phẩm kể cả bị khóa (Admin only)
+     * Quyền hạn: ADMIN
      */
     @GetMapping("/all")
     @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
@@ -48,19 +48,19 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "100") int size) {
         return ApiResponse.success(productService.getAllProductsIncludingBanned(page, size),
-                "Láº¥y táº¥t cáº£ sáº£n pháº©m thÃ nh cÃ´ng");
+                "Lấy tất cả sản phẩm thành công");
     }
 
     /**
-     * Xem chi tiáº¿t sáº£n pháº©m theo ID
-     * Sáº£n pháº©m bá»‹ khÃ³a: chá»‰ ADMIN vÃ  SELLER (chá»§ sáº£n pháº©m) má»›i
-     * xem Ä‘Æ°á»£c
+     * Xem chi tiết sản phẩm theo ID
+     * Sản phẩm bị khóa: chỉ ADMIN và SELLER (chủ sản phẩm) mới
+     * xem được
      */
     @GetMapping("/{id}")
     public ApiResponse<Product> getProductById(@PathVariable Long id) {
         Product product = productService.getProductById(id);
 
-        // Náº¿u sáº£n pháº©m bá»‹ khÃ³a â†’ kiá»ƒm tra quyá»n xem
+        // Nếu sản phẩm bị khóa → kiểm tra quyền xem
         if (product.isBanned()) {
             org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
                     .getContext().getAuthentication();
@@ -69,11 +69,11 @@ public class ProductController {
             boolean isOwner = false;
 
             if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
-                // Kiá»ƒm tra role ADMIN
+                // Kiểm tra role ADMIN
                 isAdmin = auth.getAuthorities().stream()
                         .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
-                // Kiá»ƒm tra SELLER chá»§ sáº£n pháº©m
+                // Kiểm tra SELLER chủ sản phẩm
                 if (!isAdmin) {
                     String username = null;
                     Object principal = auth.getPrincipal();
@@ -97,12 +97,12 @@ public class ProductController {
             }
         }
 
-        return ApiResponse.success(product, "Láº¥y thÃ´ng tin sáº£n pháº©m thÃ nh cÃ´ng");
+        return ApiResponse.success(product, "Lấy thông tin sản phẩm thành công");
     }
 
     /**
-     * Láº¥y danh sÃ¡ch sáº£n pháº©m cá»§a má»™t shop cá»¥ thá»ƒ
-     * Quyá»n háº¡n: Public
+     * Lấy danh sách sản phẩm của một shop cụ thể
+     * Quyền hạn: Public
      * 
      */
     @GetMapping("/shop/{shopId}")
@@ -111,12 +111,12 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return ApiResponse.success(productService.getProductsByShopId(shopId, page, size),
-                "Láº¥y danh sÃ¡ch sáº£n pháº©m cá»§a shop thÃ nh cÃ´ng");
+                "Lấy danh sách sản phẩm của shop thành công");
     }
 
     /**
-     * Láº¥y danh sÃ¡ch sáº£n pháº©m theo danh má»¥c
-     * Quyá»n háº¡n: Public
+     * Lấy danh sách sản phẩm theo danh mục
+     * Quyền hạn: Public
      * 
      */
     @GetMapping("/category/{categoryId}")
@@ -125,12 +125,12 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return ApiResponse.success(productService.getProductsByCategory(categoryId, page, size),
-                "Láº¥y danh sÃ¡ch sáº£n pháº©m theo danh má»¥c thÃ nh cÃ´ng");
+                "Lấy danh sách sản phẩm theo danh mục thành công");
     }
 
     /**
-     * TÃ¬m kiáº¿m sáº£n pháº©m theo tÃªn
-     * Quyá»n háº¡n: Public
+     * Tìm kiếm sản phẩm theo tên
+     * Quyền hạn: Public
      * 
      */
     @GetMapping("/search")
@@ -139,12 +139,12 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return ApiResponse.success(productService.searchProducts(keyword, page, size),
-                "TÃ¬m kiáº¿m sáº£n pháº©m thÃ nh cÃ´ng");
+                "Tìm kiếm sản phẩm thành công");
     }
 
     /**
-     * Lá»c vÃ  sáº¯p xáº¿p sáº£n pháº©m nÃ¢ng cao
-     * Quyá»n háº¡n: Public
+     * Lọc và sắp xếp sản phẩm nâng cao
+     * Quyền hạn: Public
      * 
      * rating_desc, best_selling)
      */
@@ -158,23 +158,23 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return ApiResponse.success(productService.filterProducts(keyword, categoryId, minPrice, maxPrice, sortBy, page, size),
-                "Lá»c sáº£n pháº©m thÃ nh cÃ´ng");
+                "Lọc sản phẩm thành công");
     }
 
     /**
-     * Táº¡o sáº£n pháº©m má»›i (chá»‰ thÃ´ng tin, khÃ´ng kÃ¨m áº£nh)
-     * Quyá»n háº¡n: SELLER, ADMIN
+     * Tạo sản phẩm mới (chỉ thông tin, không kèm ảnh)
+     * Quyền hạn: SELLER, ADMIN
      * 
      */
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
     @PostMapping
     public ApiResponse<Product> createProduct(@RequestBody Product product) {
-        return ApiResponse.success(productService.createProduct(product), "Táº¡o sáº£n pháº©m thÃ nh cÃ´ng");
+        return ApiResponse.success(productService.createProduct(product), "Tạo sản phẩm thành công");
     }
 
     /**
-     * Táº¡o sáº£n pháº©m má»›i kÃ¨m upload áº£nh
-     * Quyá»n háº¡n: SELLER, ADMIN
+     * Tạo sản phẩm mới kèm upload ảnh
+     * Quyền hạn: SELLER, ADMIN
      * 
      */
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
@@ -198,7 +198,7 @@ public class ProductController {
             product.setPrice(price);
             product.setStockQuantity(stockQuantity);
 
-            // Xá»­ lÃ½ nhiá»u áº£nh
+            // Xử lý nhiều ảnh
             if (imageFiles != null && imageFiles.length > 0) {
                 List<String> imageUrls = new ArrayList<>();
                 for (MultipartFile file : imageFiles) {
@@ -212,21 +212,21 @@ public class ProductController {
                     }
                 }
                 if (!imageUrls.isEmpty()) {
-                    product.setImageUrl(imageUrls.get(0)); // áº¢nh Ä‘áº§u tiÃªn lÃ m áº£nh Ä‘áº¡i diá»‡n
+                    product.setImageUrl(imageUrls.get(0)); // Ảnh đầu tiên làm ảnh đại diện
                     product.setImages(imageUrls);
                 }
             }
 
             return ApiResponse.success(productService.createProduct(product),
-                    "Táº¡o sáº£n pháº©m kÃ¨m áº£nh thÃ nh cÃ´ng");
+                    "Tạo sản phẩm kèm ảnh thành công");
         } catch (Exception e) {
-            return ApiResponse.error(500, "Lá»—i khi táº¡o sáº£n pháº©m: " + e.getMessage());
+            return ApiResponse.error(500, "Lỗi khi tạo sản phẩm: " + e.getMessage());
         }
     }
 
     /**
-     * Láº¥y danh sÃ¡ch sáº£n pháº©m cá»§a shop do user hiá»‡n táº¡i quáº£n lÃ½
-     * Quyá»n háº¡n: SELLER, ADMIN
+     * Lấy danh sách sản phẩm của shop do user hiện tại quản lý
+     * Quyền hạn: SELLER, ADMIN
      * 
      */
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
@@ -238,58 +238,58 @@ public class ProductController {
         User user = new User();
         user.setId(userId);
         return ApiResponse.success(productService.getProductsByOwner(user, page, size),
-                "Láº¥y danh sÃ¡ch sáº£n pháº©m cá»§a shop thÃ nh cÃ´ng");
+                "Lấy danh sách sản phẩm của shop thành công");
     }
 
     /**
-     * XÃ³a sáº£n pháº©m
-     * Quyá»n háº¡n: SELLER (chá»§ sáº£n pháº©m) hoáº·c ADMIN
+     * Xóa sản phẩm
+     * Quyền hạn: SELLER (chủ sản phẩm) hoặc ADMIN
      * 
      */
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
-        return ApiResponse.success(null, "XÃ³a sáº£n pháº©m thÃ nh cÃ´ng");
+        return ApiResponse.success(null, "Xóa sản phẩm thành công");
     }
 
     /**
-     * KhÃ³a sáº£n pháº©m (Ban) - dÃ nh cho Admin
-     * Quyá»n háº¡n: ADMIN
+     * Khóa sản phẩm (Ban) - dành cho Admin
+     * Quyền hạn: ADMIN
      * 
      */
     @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/ban")
     public ApiResponse<Product> banProduct(@PathVariable Long id, @RequestParam String reason) {
-        return ApiResponse.success(productService.banProduct(id, reason), "KhÃ³a sáº£n pháº©m thÃ nh cÃ´ng");
+        return ApiResponse.success(productService.banProduct(id, reason), "Khóa sản phẩm thành công");
     }
 
     /**
-     * Má»Ÿ khÃ³a sáº£n pháº©m (Unban) - dÃ nh cho Admin
-     * Quyá»n háº¡n: ADMIN
+     * Mở khóa sản phẩm (Unban) - dành cho Admin
+     * Quyền hạn: ADMIN
      * 
      */
     @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/unban")
     public ApiResponse<Product> unbanProduct(@PathVariable Long id) {
-        return ApiResponse.success(productService.unbanProduct(id), "Má»Ÿ khÃ³a sáº£n pháº©m thÃ nh cÃ´ng");
+        return ApiResponse.success(productService.unbanProduct(id), "Mở khóa sản phẩm thành công");
     }
 
     /**
-     * Cáº­p nháº­t thÃ´ng tin sáº£n pháº©m
-     * Quyá»n háº¡n: SELLER (chá»§ sáº£n pháº©m) hoáº·c ADMIN
+     * Cập nhật thông tin sản phẩm
+     * Quyền hạn: SELLER (chủ sản phẩm) hoặc ADMIN
      * 
      * stockQuantity, categoryId)
      */
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
     @PutMapping("/{id}")
     public ApiResponse<Product> updateProduct(@PathVariable Long id, @RequestBody Map<String, Object> body) {
-        return ApiResponse.success(productService.updateProduct(id, body), "Cáº­p nháº­t sáº£n pháº©m thÃ nh cÃ´ng");
+        return ApiResponse.success(productService.updateProduct(id, body), "Cập nhật sản phẩm thành công");
     }
 
     /**
-     * Cáº­p nháº­t sáº£n pháº©m kÃ¨m upload áº£nh má»›i
-     * Quyá»n háº¡n: SELLER (chá»§ sáº£n pháº©m) hoáº·c ADMIN
+     * Cập nhật sản phẩm kèm upload ảnh mới
+     * Quyền hạn: SELLER (chủ sản phẩm) hoặc ADMIN
      * 
      */
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
@@ -314,7 +314,7 @@ public class ProductController {
 
             Product product = productService.updateProduct(id, updates);
 
-            // Xá»­ lÃ½ nhiá»u áº£nh má»›i
+            // Xử lý nhiều ảnh mới
             if (imageFiles != null && imageFiles.length > 0) {
                 List<String> imageUrls = new ArrayList<>();
                 for (MultipartFile file : imageFiles) {
@@ -334,28 +334,28 @@ public class ProductController {
                 }
             }
 
-            return ApiResponse.success(product, "Cáº­p nháº­t sáº£n pháº©m thÃ nh cÃ´ng");
+            return ApiResponse.success(product, "Cập nhật sản phẩm thành công");
         } catch (Exception e) {
-            return ApiResponse.error(500, "Lá»—i khi cáº­p nháº­t sáº£n pháº©m: " + e.getMessage());
+            return ApiResponse.error(500, "Lỗi khi cập nhật sản phẩm: " + e.getMessage());
         }
     }
 
-    // ========== THUá»˜C TÃNH Sáº¢N PHáº¨M (ATTRIBUTES) ==========
+    // ========== THUỘC TÍNH SẢN PHẨM (ATTRIBUTES) ==========
 
     /**
-     * Láº¥y danh sÃ¡ch thuá»™c tÃ­nh cá»§a sáº£n pháº©m
-     * Quyá»n háº¡n: Public
+     * Lấy danh sách thuộc tính của sản phẩm
+     * Quyền hạn: Public
      * 
      */
     @GetMapping("/{productId}/attributes")
     public ApiResponse<List<ProductAttribute>> getProductAttributes(@PathVariable Long productId) {
         return ApiResponse.success(productService.getProductAttributes(productId),
-                "Láº¥y danh sÃ¡ch thuá»™c tÃ­nh thÃ nh cÃ´ng");
+                "Lấy danh sách thuộc tính thành công");
     }
 
     /**
-     * ThÃªm thuá»™c tÃ­nh má»›i cho sáº£n pháº©m
-     * Quyá»n háº¡n: SELLER, ADMIN (Cáº§n bá»• sung Authorization sau)
+     * Thêm thuộc tính mới cho sản phẩm
+     * Quyền hạn: SELLER, ADMIN (Cần bổ sung Authorization sau)
      * 
      */
     @PostMapping("/{productId}/attributes")
@@ -363,12 +363,12 @@ public class ProductController {
             @PathVariable Long productId,
             @RequestBody Map<String, Object> body) {
         return ApiResponse.success(productService.addAttribute(productId, (String) body.get("name")),
-                "ThÃªm thuá»™c tÃ­nh thÃ nh cÃ´ng");
+                "Thêm thuộc tính thành công");
     }
 
     /**
-     * ThÃªm tÃ¹y chá»n (option) cho thuá»™c tÃ­nh
-     * Quyá»n háº¡n: SELLER, ADMIN (Cáº§n bá»• sung Authorization sau)
+     * Thêm tùy chọn (option) cho thuộc tính
+     * Quyền hạn: SELLER, ADMIN (Cần bổ sung Authorization sau)
      * 
      */
     @PostMapping("/attributes/{attributeId}/options")
@@ -377,24 +377,24 @@ public class ProductController {
             @RequestBody Map<String, Object> body) {
         return ApiResponse.success(
                 productService.addOption(attributeId, (String) body.get("value"), (String) body.get("imageUrl")),
-                "ThÃªm tÃ¹y chá»n thÃ nh cÃ´ng");
+                "Thêm tùy chọn thành công");
     }
 
-    // ========== BIáº¾N THá»‚ Sáº¢N PHáº¨M (VARIANTS) ==========
+    // ========== BIẾN THỂ SẢN PHẨM (VARIANTS) ==========
 
     /**
-     * Láº¥y danh sÃ¡ch biáº¿n thá»ƒ cá»§a sáº£n pháº©m
-     * Quyá»n háº¡n: Public
+     * Lấy danh sách biến thể của sản phẩm
+     * Quyền hạn: Public
      * 
      */
     @GetMapping("/{productId}/variants")
     public ApiResponse<List<ProductVariant>> getVariants(@PathVariable Long productId) {
-        return ApiResponse.success(productService.getVariants(productId), "Láº¥y danh sÃ¡ch biáº¿n thá»ƒ thÃ nh cÃ´ng");
+        return ApiResponse.success(productService.getVariants(productId), "Lấy danh sách biến thể thành công");
     }
 
     /**
-     * ThÃªm biáº¿n thá»ƒ má»›i cho sáº£n pháº©m
-     * Quyá»n háº¡n: SELLER, ADMIN (Cáº§n bá»• sung Authorization sau)
+     * Thêm biến thể mới cho sản phẩm
+     * Quyền hạn: SELLER, ADMIN (Cần bổ sung Authorization sau)
      * 
      */
     @PostMapping("/{productId}/variants")
@@ -407,18 +407,18 @@ public class ProductController {
                 new BigDecimal(body.get("price").toString()),
                 Integer.parseInt(body.get("stockQuantity").toString()),
                 (String) body.get("imageUrl")),
-                "ThÃªm biáº¿n thá»ƒ thÃ nh cÃ´ng");
+                "Thêm biến thể thành công");
     }
 
     /**
-     * XÃ³a biáº¿n thá»ƒ
-     * Quyá»n háº¡n: SELLER, ADMIN (Cáº§n bá»• sung Authorization sau)
+     * Xóa biến thể
+     * Quyền hạn: SELLER, ADMIN (Cần bổ sung Authorization sau)
      * 
      */
     @DeleteMapping("/variants/{variantId}")
     public ApiResponse<Void> deleteVariant(@PathVariable Long variantId) {
         productService.deleteVariant(variantId);
-        return ApiResponse.success(null, "XÃ³a biáº¿n thá»ƒ thÃ nh cÃ´ng");
+        return ApiResponse.success(null, "Xóa biến thể thành công");
     }
 
     @GetMapping("/fix-images-final")
@@ -438,6 +438,6 @@ public class ProductController {
             p.setImageUrl(newUrl);
             productService.updateProductImage(p.getId(), newUrl);
         }
-        return ApiResponse.success("OK", "Đã gán API URL chuẩn cho " + products.size() + " SP");
+        return ApiResponse.success("OK", "�� g�n API URL chu?n cho " + products.size() + " SP");
     }
 }

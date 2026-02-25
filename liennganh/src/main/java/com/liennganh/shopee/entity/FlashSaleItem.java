@@ -27,7 +27,7 @@ public class FlashSaleItem {
 
     private BigDecimal discountedPrice; // Giá khuyến mãi
     private int stockQuantity; // Số lượng phân bổ cho Flash Sale
-    private int soldQuantity = 0; // Số lượng đã bán
+    private int soldQuantity = 0; // S? lu?ng d� b�n
 
     public Long getId() {
         return id;

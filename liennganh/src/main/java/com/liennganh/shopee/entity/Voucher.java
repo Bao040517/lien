@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * Entity đại diện cho Mã giảm giá (Voucher)
+ * Entity d?i di?n cho M� gi?m gi� (Voucher)
  */
 @Entity
 @Data
@@ -17,7 +17,7 @@ public class Voucher {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String code; // Mã code (VD: SALE50)
+    private String code; // M� code (VD: SALE50)
 
     @Enumerated(EnumType.STRING)
     @Column(name = "discount_type", nullable = false)

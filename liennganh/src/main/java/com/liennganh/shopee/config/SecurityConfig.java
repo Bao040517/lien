@@ -57,7 +57,7 @@ public class SecurityConfig {
 
     /**
      * Bean cung cấp PasswordEncoder (BCrypt)
-     * Dùng để mã hóa mật khẩu trước khi lưu xuống DB và kiểm tra khi đăng nhập
+     * D�ng d? m� h�a m?t kh?u tru?c khi luu xu?ng DB v� ki?m tra khi dang nh?p
      */
     @Bean
     public PasswordEncoder passwordEncoder() {

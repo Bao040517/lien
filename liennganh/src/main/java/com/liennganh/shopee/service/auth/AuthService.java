@@ -38,12 +38,12 @@ public class AuthService {
     public UserResponse register(RegisterRequest request) {
         log.info("Đang đăng ký user mới: {}", request.getUsername());
 
-        // Kiểm tra username đã tồn tại chưa
+        // Ki?m tra username d� t?n t?i chua
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USERNAME_ALREADY_EXISTS);
         }
 
-        // Kiểm tra email đã tồn tại chưa
+        // Ki?m tra email d� t?n t?i chua
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
@@ -51,7 +51,7 @@ public class AuthService {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword())); // Mã hóa mật khẩu
+        user.setPassword(passwordEncoder.encode(request.getPassword())); // M� h�a m?t kh?u
         user.setRole(User.Role.USER);
         user.setIsLocked(false);
 
@@ -84,7 +84,7 @@ public class AuthService {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword())); // Mã hóa mật khẩu
+        user.setPassword(passwordEncoder.encode(request.getPassword())); // M� h�a m?t kh?u
         user.setRole(User.Role.SELLER);
         user.setSellerStatus(User.SellerStatus.PENDING); // Trạng thái chờ duyệt
         user.setIsLocked(false);

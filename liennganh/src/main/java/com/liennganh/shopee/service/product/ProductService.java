@@ -209,7 +209,7 @@ public class ProductService {
             notificationService.createNotification(
                     product.getShop().getOwner(),
                     "Sản phẩm bị khóa: " + product.getName(),
-                    "Sản phẩm của bạn đã bị khóa vì lý do: " + reason,
+                    "S?n ph?m c?a b?n d� b? kh�a v� l� do: " + reason,
                     com.liennganh.shopee.entity.Notification.NotificationType.PRODUCT_BAN,
                     product.getId());
         }
@@ -231,7 +231,7 @@ public class ProductService {
             notificationService.createNotification(
                     product.getShop().getOwner(),
                     "Sản phẩm được khôi phục: " + product.getName(),
-                    "Sản phẩm của bạn đã được mở khóa. Bạn có thể bán lại bình thường.",
+                    "S?n ph?m c?a b?n d� du?c m? kh�a. B?n c� th? b�n l?i b�nh thu?ng.",
                     com.liennganh.shopee.entity.Notification.NotificationType.PRODUCT_UNBAN,
                     product.getId());
         }
