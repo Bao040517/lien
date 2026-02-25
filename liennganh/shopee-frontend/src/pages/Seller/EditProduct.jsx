@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api';
+import { getImageUrl } from '../../utils';
 import { Save, ArrowLeft, Package, Plus, Trash2, Image as ImageIcon, X } from 'lucide-react';
 
 const EditProduct = () => {
@@ -240,7 +241,7 @@ const EditProduct = () => {
                         {/* Existing images */}
                         {existingImages.map((url, index) => (
                             <div key={`existing-${index}`} className="relative w-24 h-24 rounded-lg overflow-hidden border-2 border-gray-200 group">
-                                <img src={url} alt={`img-${index}`} className="w-full h-full object-cover" />
+                                <img src={getImageUrl(url)} alt={`img-${index}`} className="w-full h-full object-cover" />
                                 {index === 0 && existingImages.length > 0 && newImageFiles.length === 0 && (
                                     <span className="absolute top-0.5 left-0.5 bg-primary-dark text-white text-[10px] px-1.5 py-0.5 rounded font-medium">Bìa</span>
                                 )}

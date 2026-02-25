@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
@@ -64,11 +63,7 @@ public class CategoryController {
 
             if (imageFile != null && !imageFile.isEmpty()) {
                 String fileName = fileStorageService.storeFile(imageFile);
-                String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path("/api/files/")
-                        .path(fileName)
-                        .toUriString();
-                category.setImageUrl(imageUrl);
+                category.setImageUrl(fileName);
             }
 
             return ApiResponse.success(categoryService.createCategory(category),
@@ -92,11 +87,7 @@ public class CategoryController {
         try {
             String imageUrl = null;
             if (imageFile != null && !imageFile.isEmpty()) {
-                String fileName = fileStorageService.storeFile(imageFile);
-                imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path("/api/files/")
-                        .path(fileName)
-                        .toUriString();
+                imageUrl = fileStorageService.storeFile(imageFile);
             }
 
             Category updated = categoryService.updateCategory(id, name, description, imageUrl);

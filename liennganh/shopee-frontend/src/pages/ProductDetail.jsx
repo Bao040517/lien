@@ -219,7 +219,7 @@ const ProductDetail = () => {
                     <div className="w-full md:w-1/3">
                         <div className="aspect-square bg-gray-200 rounded flex items-center justify-center overflow-hidden">
                             {displayImage ? (
-                                <img src={displayImage} alt={product.name} className="w-full h-full object-cover" />
+                                <img src={getImageUrl(displayImage)} alt={product.name} className="w-full h-full object-cover" />
                             ) : (
                                 <ShoppingCart className="w-20 h-20 text-gray-400" />
                             )}

@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/liennganhmoi
-    username: postgres
-    password: admin
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/liennganhmoi}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:admin}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -23,7 +23,7 @@ spring:
       max-request-size: 10MB
 
 file:
-  upload-dir: C:/Users/Admin/Desktop/liennganh/uploads
+  upload-dir: ${FILE_UPLOAD_DIR:uploads}
 
 # JWT Configuration
 jwt:

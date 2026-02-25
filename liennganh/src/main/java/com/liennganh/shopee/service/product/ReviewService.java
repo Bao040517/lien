@@ -168,14 +168,8 @@ public class ReviewService {
                 org.springframework.web.multipart.MultipartFile file = imageFiles[i];
                 if (!file.isEmpty()) {
                     try {
-                        // Sử dụng FileStorageService để upload
                         String fileName = fileStorageService.storeFile(file);
-                        String fileUrl = org.springframework.web.servlet.support.ServletUriComponentsBuilder
-                                .fromCurrentContextPath()
-                                .path("/api/files/")
-                                .path(fileName)
-                                .toUriString();
-                        imageUrls.add(fileUrl);
+                        imageUrls.add(fileName);
                     } catch (Exception e) {
                         // Log lỗi nhưng không fail toàn bộ review
                         System.err.println("Error uploading image: " + e.getMessage());

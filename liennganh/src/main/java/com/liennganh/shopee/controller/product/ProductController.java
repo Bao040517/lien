@@ -7,7 +7,6 @@ import com.liennganh.shopee.service.common.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -204,11 +203,7 @@ public class ProductController {
                 for (MultipartFile file : imageFiles) {
                     if (!file.isEmpty()) {
                         String fileName = fileStorageService.storeFile(file);
-                        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
-                                .path("/api/files/")
-                                .path(fileName)
-                                .toUriString();
-                        imageUrls.add(url);
+                        imageUrls.add(fileName);
                     }
                 }
                 if (!imageUrls.isEmpty()) {
@@ -348,11 +343,7 @@ public class ProductController {
                 for (MultipartFile file : imageFiles) {
                     if (!file.isEmpty()) {
                         String fileName = fileStorageService.storeFile(file);
-                        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
-                                .path("/api/files/")
-                                .path(fileName)
-                                .toUriString();
-                        imageUrls.add(url);
+                        imageUrls.add(fileName);
                     }
                 }
                 if (!imageUrls.isEmpty()) {
