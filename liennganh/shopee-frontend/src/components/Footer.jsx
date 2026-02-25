@@ -24,7 +24,7 @@ const Footer = () => {
 
                     {/* Về Shopee */}
                     <div>
-                        <h3 className="text-sm font-bold text-gray-700 uppercase mb-4">Về Shopee Clone</h3>
+                        <h3 className="text-sm font-bold text-gray-700 uppercase mb-4">Về Nikki</h3>
                         <ul className="space-y-2 text-sm text-gray-500">
                             <li><Link to="/" className="hover:text-primary-dark transition">Giới Thiệu</Link></li>
                             <li><Link to="/" className="hover:text-primary-dark transition">Tuyển Dụng</Link></li>
@@ -98,7 +98,7 @@ const Footer = () => {
             <div className="border-t border-gray-200 bg-gray-50">
                 <div className="container mx-auto px-4 py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-400">
-                        <p>&copy; 2024 Shopee Clone. Đồ án thực hành — Tất cả quyền được bảo lưu.</p>
+                        <p>&copy; 2024 Nikki. Đồ án thực hành — Tất cả quyền được bảo lưu.</p>
                         <div className="flex gap-4">
                             <span>Quốc gia: 🇻🇳 Việt Nam</span>
                         </div>
