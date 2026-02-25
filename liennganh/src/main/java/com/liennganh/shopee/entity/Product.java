@@ -52,8 +52,29 @@ public class Product {
     @BatchSize(size = 50)
     private List<String> images; // Danh sách ảnh sản phẩm (nhiều ảnh)
 
-    private boolean isBanned = false; // Trạng thái cấm bán (Vi phạm chính sách)
-    private String violationReason; // Lý do vi phạm
+    @Column(name = "product_status", columnDefinition = "varchar(20) default 'PENDING'")
+    private String productStatus = "PENDING"; // PENDING, APPROVED, REJECTED, BANNED
+
+    private String violationReason; // Lý do vi phạm / từ chối
+
+    // Backward-compatible getters cho JSON serialization
+    public boolean isBanned() {
+        return "BANNED".equals(productStatus);
+    }
+
+    public boolean isApproved() {
+        return "APPROVED".equals(productStatus);
+    }
+
+    public void setBanned(boolean banned) {
+        if (banned) this.productStatus = "BANNED";
+        else if ("BANNED".equals(this.productStatus)) this.productStatus = "APPROVED";
+    }
+
+    public void setApproved(boolean approved) {
+        if (approved) this.productStatus = "APPROVED";
+        else if ("APPROVED".equals(this.productStatus)) this.productStatus = "PENDING";
+    }
 
     public String getViolationReason() {
         return violationReason;
@@ -83,10 +104,6 @@ public class Product {
     @JsonIgnoreProperties("product")
     @BatchSize(size = 50)
     private List<ProductVariant> variants; // Danh sách biến thể (SKU)
-
-    public void setBanned(boolean banned) {
-        isBanned = banned;
-    }
 
     public Long getId() {
         return id;
@@ -166,10 +183,6 @@ public class Product {
 
     public void setCategory(Category category) {
         this.category = category;
-    }
-
-    public boolean isBanned() {
-        return isBanned;
     }
 
     public Long getSold() {

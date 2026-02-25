@@ -1,11 +1,26 @@
 import { useState, useEffect } from 'react';
 import api from '../../api';
-import { Search, Plus, Trash2, Edit, Save, X, Ban, Settings, CheckCircle, Package, ExternalLink, ShieldAlert, ShieldCheck, Sparkles } from 'lucide-react';
+import { Search, Trash2, Package, ExternalLink, ShieldAlert, ShieldCheck, Sparkles, CheckCircle, Clock, XCircle, Filter } from 'lucide-react';
 import Pagination from '../../components/Pagination';
 import ConfirmModal from '../../components/Admin/ConfirmModal';
 import PromptModal from '../../components/Admin/PromptModal';
 import BadWordWarning from '../../components/BadWordWarning';
 import { getImageUrl } from '../../utils';
+
+const TABS = [
+    { value: 'ALL', label: 'Tất cả' },
+    { value: 'PENDING', label: 'Chờ duyệt' },
+    { value: 'APPROVED', label: 'Đã duyệt' },
+    { value: 'REJECTED', label: 'Đã từ chối' },
+    { value: 'BANNED', label: 'Tạm khóa' },
+];
+
+const STATUS_STYLES = {
+    PENDING: { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200', icon: Clock, label: 'Chờ duyệt' },
+    APPROVED: { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200', icon: CheckCircle, label: 'Đã duyệt' },
+    REJECTED: { bg: 'bg-orange-50', text: 'text-orange-700', border: 'border-orange-200', icon: XCircle, label: 'Đã từ chối' },
+    BANNED: { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200', icon: ShieldAlert, label: 'Tạm khóa' },
+};
 
 const AdminProducts = () => {
     const [products, setProducts] = useState([]);
@@ -13,15 +28,14 @@ const AdminProducts = () => {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [catFilter, setCatFilter] = useState('ALL');
+    const [activeTab, setActiveTab] = useState('ALL');
     const [lastSeenMaxId, setLastSeenMaxId] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 10;
     const [confirmModal, setConfirmModal] = useState({ isOpen: false, type: 'danger', title: '', message: '', targetId: null, action: '' });
-    const [promptModal, setPromptModal] = useState({ isOpen: false, title: '', message: '', targetId: null, targetName: '' });
-
+    const [promptModal, setPromptModal] = useState({ isOpen: false, title: '', message: '', targetId: null, targetName: '', action: '' });
 
     useEffect(() => {
-        // Lấy maxId đã xem lần trước từ localStorage
         const savedMaxId = parseInt(localStorage.getItem('admin_products_last_seen_max_id') || '0');
         setLastSeenMaxId(savedMaxId);
         fetchData();
@@ -29,16 +43,13 @@ const AdminProducts = () => {
 
     const fetchData = () => {
         Promise.all([
-            api.get('/products/all', { params: { size: 1000 } }), // Fetch virtually all for client-side pagination or increase size
+            api.get('/products/all', { params: { size: 1000 } }),
             api.get('/categories', { params: { size: 1000 } })
         ]).then(([pRes, cRes]) => {
             const allProducts = pRes.data.data?.content || pRes.data.data || [];
-            // Sắp xếp theo ID giảm dần → sản phẩm mới nhất lên đầu
             allProducts.sort((a, b) => b.id - a.id);
             setProducts(allProducts);
             setCategories(cRes.data.data?.content || cRes.data.data || []);
-
-            // Lưu maxId hiện tại vào localStorage để lần sau biết đâu là "mới"
             if (allProducts.length > 0) {
                 const currentMaxId = Math.max(...allProducts.map(p => p.id));
                 localStorage.setItem('admin_products_last_seen_max_id', currentMaxId.toString());
@@ -47,18 +58,12 @@ const AdminProducts = () => {
             .finally(() => setLoading(false));
     };
 
-    // Kiểm tra sản phẩm có phải mới tạo không (ID > lastSeenMaxId)
     const isNewProduct = (product) => lastSeenMaxId > 0 && product.id > lastSeenMaxId;
 
+    const getStatus = (p) => p.productStatus || 'PENDING';
+
     const handleDelete = (id, name) => {
-        setConfirmModal({
-            isOpen: true,
-            type: 'danger',
-            title: `Xoá sản phẩm "${name}"?`,
-            message: 'Hành động này không thể hoàn tác.',
-            targetId: id,
-            action: 'delete'
-        });
+        setConfirmModal({ isOpen: true, type: 'danger', title: `Xoá sản phẩm "${name}"?`, message: 'Hành động này không thể hoàn tác.', targetId: id, action: 'delete' });
     };
 
     const confirmDelete = async (id) => {
@@ -69,72 +74,81 @@ const AdminProducts = () => {
         setConfirmModal(prev => ({ ...prev, isOpen: false }));
     };
 
-    const handleBan = (id, name) => {
-        setPromptModal({
-            isOpen: true,
-            title: `Khóa sản phẩm "${name}"`,
-            message: 'Vui lòng nhập lý do khóa sản phẩm:',
-            targetId: id,
-            targetName: name
-        });
+    const handleStatusChange = async (productId, newStatus) => {
+        if (newStatus === 'BANNED' || newStatus === 'REJECTED') {
+            const product = products.find(p => p.id === productId);
+            setPromptModal({
+                isOpen: true,
+                title: newStatus === 'BANNED' ? `Khóa sản phẩm "${product?.name}"` : `Từ chối sản phẩm "${product?.name}"`,
+                message: newStatus === 'BANNED' ? 'Nhập lý do khóa sản phẩm:' : 'Nhập lý do từ chối:',
+                targetId: productId,
+                targetName: product?.name,
+                action: newStatus
+            });
+            return;
+        }
+
+        try {
+            const res = await api.put(`/products/${productId}/status`, null, { params: { status: newStatus } });
+            const updated = res.data.data;
+            setProducts(prev => prev.map(p => p.id === productId ? { ...p, ...updated } : p));
+        } catch (e) {
+            alert('Lỗi: ' + (e.response?.data?.message || e.message));
+        }
     };
 
-    const confirmBan = async (reason) => {
-        const id = promptModal.targetId;
+    const confirmPromptAction = async (reason) => {
+        const { targetId, action } = promptModal;
         try {
-            await api.put(`/products/${id}/ban`, null, { params: { reason } });
-            setProducts(prev => prev.map(p =>
-                p.id === id ? { ...p, banned: true, isBanned: true, violationReason: reason } : p
-            ));
+            const res = await api.put(`/products/${targetId}/status`, null, { params: { status: action, reason } });
+            const updated = res.data.data;
+            setProducts(prev => prev.map(p => p.id === targetId ? { ...p, ...updated } : p));
         } catch (e) {
-            alert('Khóa thất bại: ' + (e.response?.data?.message || e.message));
+            alert('Lỗi: ' + (e.response?.data?.message || e.message));
         }
         setPromptModal(prev => ({ ...prev, isOpen: false }));
     };
 
-    const handleUnban = (id, name) => {
-        setConfirmModal({
-            isOpen: true,
-            type: 'success',
-            title: `Mở khóa sản phẩm "${name}"?`,
-            message: 'Sản phẩm sẽ được hiển thị trở lại bình thường.',
-            targetId: id,
-            action: 'unban'
-        });
-    };
-
-    const confirmUnban = async (id) => {
-        try {
-            await api.put(`/products/${id}/unban`);
-            setProducts(prev => prev.map(p =>
-                p.id === id ? { ...p, banned: false, isBanned: false, violationReason: null } : p
-            ));
-        } catch (e) {
-            alert('Mở khóa thất bại: ' + (e.response?.data?.message || e.message));
-        }
-        setConfirmModal(prev => ({ ...prev, isOpen: false }));
-    };
-
     const formatPrice = (p) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p);
 
-    const newCount = products.filter(p => isNewProduct(p)).length;
+    const tabCounts = {
+        ALL: products.length,
+        PENDING: products.filter(p => getStatus(p) === 'PENDING').length,
+        APPROVED: products.filter(p => getStatus(p) === 'APPROVED').length,
+        REJECTED: products.filter(p => getStatus(p) === 'REJECTED').length,
+        BANNED: products.filter(p => getStatus(p) === 'BANNED').length,
+    };
 
     const filtered = products.filter(p => {
         const matchSearch = p.name?.toLowerCase().includes(search.toLowerCase());
         const matchCat = catFilter === 'ALL' || p.category?.id?.toString() === catFilter;
-        return matchSearch && matchCat;
+        const matchTab = activeTab === 'ALL' || getStatus(p) === activeTab;
+        return matchSearch && matchCat && matchTab;
     });
 
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [search, catFilter]);
+    useEffect(() => { setCurrentPage(1); }, [search, catFilter, activeTab]);
 
-    const indexOfLastProduct = currentPage * productsPerPage;
-    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-    const currentProducts = filtered.slice(indexOfFirstProduct, indexOfLastProduct);
+    const indexOfLast = currentPage * productsPerPage;
+    const indexOfFirst = indexOfLast - productsPerPage;
+    const currentProducts = filtered.slice(indexOfFirst, indexOfLast);
     const totalPages = Math.ceil(filtered.length / productsPerPage);
 
-
+    const StatusDropdown = ({ product }) => {
+        const status = getStatus(product);
+        const style = STATUS_STYLES[status] || STATUS_STYLES.PENDING;
+        return (
+            <select
+                value={status}
+                onChange={e => handleStatusChange(product.id, e.target.value)}
+                className={`text-xs font-bold px-2.5 py-1.5 rounded-lg border cursor-pointer outline-none transition-all ${style.bg} ${style.text} ${style.border} hover:shadow-sm`}
+            >
+                <option value="PENDING">⏳ Chờ duyệt</option>
+                <option value="APPROVED">✅ Đã duyệt</option>
+                <option value="REJECTED">❌ Đã từ chối</option>
+                <option value="BANNED">🔒 Tạm khóa</option>
+            </select>
+        );
+    };
 
     return (
         <div>
@@ -145,18 +159,29 @@ const AdminProducts = () => {
                 </div>
             </div>
 
-            {/* Banner thông báo sản phẩm mới */}
-            {newCount > 0 && (
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 mb-6 flex items-center gap-3 animate-pulse">
-                    <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Sparkles className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                        <p className="text-green-800 font-semibold">🎉 Có {newCount} sản phẩm mới vừa được tạo!</p>
-                        <p className="text-green-600 text-sm">Sản phẩm mới đã được đưa lên đầu danh sách và đánh dấu nổi bật.</p>
-                    </div>
-                </div>
-            )}
+            {/* Tabs */}
+            <div className="bg-white rounded-xl border border-gray-100 p-1.5 mb-6 flex items-center gap-1 overflow-x-auto">
+                {TABS.map(tab => (
+                    <button
+                        key={tab.value}
+                        onClick={() => setActiveTab(tab.value)}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                            activeTab === tab.value
+                                ? 'bg-blue-500 text-white shadow-sm'
+                                : 'text-gray-600 hover:bg-gray-50'
+                        }`}
+                    >
+                        {tab.label}
+                        <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${
+                            activeTab === tab.value
+                                ? 'bg-white/25 text-white'
+                                : 'bg-gray-100 text-gray-500'
+                        }`}>
+                            {tabCounts[tab.value]}
+                        </span>
+                    </button>
+                ))}
+            </div>
 
             {/* Filters */}
             <div className="bg-white rounded-xl border border-gray-100 p-4 mb-6 flex flex-col sm:flex-row gap-3">
@@ -190,36 +215,33 @@ const AdminProducts = () => {
                                     <th className="px-6 py-3">Sản phẩm</th>
                                     <th className="px-6 py-3">Giá</th>
                                     <th className="px-6 py-3">Kho</th>
-                                    <th className="px-6 py-3">Trạng thái</th>
                                     <th className="px-6 py-3">Danh mục / Shop</th>
+                                    <th className="px-6 py-3">Trạng thái</th>
                                     <th className="px-6 py-3 text-center">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
                                 {currentProducts.map(product => {
-                                    const isBanned = product.banned || product.isBanned;
+                                    const status = getStatus(product);
                                     const isNew = isNewProduct(product);
+                                    const rowColor = status === 'BANNED' ? 'bg-red-50/70 border-l-4 border-red-500'
+                                        : status === 'REJECTED' ? 'bg-orange-50/50 border-l-4 border-orange-400'
+                                        : status === 'PENDING' ? 'bg-amber-50/40 border-l-4 border-amber-400'
+                                        : isNew ? 'bg-green-50 border-l-4 border-green-500'
+                                        : '';
                                     return (
-                                        <tr key={product.id} className={`hover:bg-gray-50/50 transition-colors ${isBanned ? 'bg-red-100 border-l-4 border-red-500'
-                                            : isNew ? 'bg-green-50 border-l-4 border-green-500'
-                                                : ''
-                                            }`}>
+                                        <tr key={product.id} className={`hover:bg-gray-50/50 transition-colors ${rowColor}`}>
                                             <td className="px-6 py-3">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 relative">
                                                         {product.imageUrl ? (
-                                                            <img src={getImageUrl(product.imageUrl)} alt="" className={`w-full h-full object-cover ${isBanned ? 'grayscale' : ''}`} />
+                                                            <img src={getImageUrl(product.imageUrl)} alt="" className={`w-full h-full object-cover ${status === 'BANNED' || status === 'REJECTED' ? 'grayscale opacity-60' : ''}`} />
                                                         ) : (
                                                             <Package className="w-5 h-5 text-gray-300 m-auto mt-3.5" />
                                                         )}
-                                                        {isBanned && (
-                                                            <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center">
-                                                                <ShieldAlert className="w-6 h-6 text-red-600 drop-shadow-sm" />
-                                                            </div>
-                                                        )}
                                                     </div>
                                                     <div className="min-w-0">
-                                                        <p className={`text-sm font-medium max-w-xs flex items-center ${isBanned ? 'text-red-800' : isNew ? 'text-green-800' : 'text-gray-800'}`}>
+                                                        <p className="text-sm font-medium max-w-xs flex items-center text-gray-800">
                                                             <span className="truncate">{product.name}</span>
                                                             <BadWordWarning productName={product.name} variant="admin" />
                                                             {isNew && (
@@ -229,6 +251,11 @@ const AdminProducts = () => {
                                                             )}
                                                         </p>
                                                         <p className="text-xs text-gray-400">ID: {product.id}</p>
+                                                        {product.violationReason && (status === 'BANNED' || status === 'REJECTED') && (
+                                                            <p className="text-xs text-red-500 italic mt-0.5 truncate max-w-[200px]" title={product.violationReason}>
+                                                                Lý do: {product.violationReason}
+                                                            </p>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </td>
@@ -236,31 +263,21 @@ const AdminProducts = () => {
                                                 <span className="text-sm font-bold text-blue-600">{formatPrice(product.price)}</span>
                                             </td>
                                             <td className="px-6 py-3">
-                                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${product.stockQuantity > 10 ? 'bg-green-50 text-green-700'
-                                                    : product.stockQuantity > 0 ? 'bg-yellow-50 text-yellow-700'
-                                                        : 'bg-red-50 text-red-700'
-                                                    }`}>{product.stockQuantity}</span>
-                                            </td>
-                                            <td className="px-6 py-3">
-                                                {isBanned ? (
-                                                    <div className="text-xs text-red-700 bg-red-100 px-2 py-1 rounded border border-red-200 inline-block">
-                                                        <span className="font-bold block flex items-center gap-1"><ShieldAlert className="w-3 h-3" /> BỊ KHÓA</span>
-                                                        <span className="italic max-w-[150px] truncate block mt-0.5" title={product.violationReason}>{product.violationReason}</span>
-                                                    </div>
-                                                ) : (
-                                                    <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded border border-green-200">Đang bán</span>
-                                                )}
+                                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${product.stockQuantity > 10 ? 'bg-green-50 text-green-700' : product.stockQuantity > 0 ? 'bg-yellow-50 text-yellow-700' : 'bg-red-50 text-red-700'}`}>
+                                                    {product.stockQuantity}
+                                                </span>
                                             </td>
                                             <td className="px-6 py-3">
                                                 <div className="flex flex-col">
                                                     <span className="text-sm text-gray-800">{product.category?.name || '—'}</span>
                                                     <span className="text-xs text-gray-500">
                                                         {product.shop?.name || '—'}
-                                                        {product.shop?.ownerUsername && (
-                                                            <span className="text-gray-400"> ({product.shop.ownerUsername})</span>
-                                                        )}
+                                                        {product.shop?.ownerUsername && <span className="text-gray-400"> ({product.shop.ownerUsername})</span>}
                                                     </span>
                                                 </div>
+                                            </td>
+                                            <td className="px-6 py-3">
+                                                <StatusDropdown product={product} />
                                             </td>
                                             <td className="px-6 py-3">
                                                 <div className="flex items-center justify-center gap-1">
@@ -268,19 +285,6 @@ const AdminProducts = () => {
                                                         className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition" title="Xem">
                                                         <ExternalLink className="w-4 h-4" />
                                                     </a>
-
-                                                    {isBanned ? (
-                                                        <button onClick={() => handleUnban(product.id, product.name)}
-                                                            className="p-2 text-white bg-green-500 hover:bg-green-600 rounded-lg transition shadow-sm" title="Gỡ khóa">
-                                                            <ShieldCheck className="w-4 h-4" />
-                                                        </button>
-                                                    ) : (
-                                                        <button onClick={() => handleBan(product.id, product.name)}
-                                                            className="p-2 text-white bg-primary-dark hover:bg-primary-darker rounded-lg transition shadow-sm" title="Khóa / Cảnh báo">
-                                                            <ShieldAlert className="w-4 h-4" />
-                                                        </button>
-                                                    )}
-
                                                     <button onClick={() => handleDelete(product.id, product.name)}
                                                         className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition" title="Xoá vĩnh viễn">
                                                         <Trash2 className="w-4 h-4" />
@@ -288,7 +292,7 @@ const AdminProducts = () => {
                                                 </div>
                                             </td>
                                         </tr>
-                                    )
+                                    );
                                 })}
                             </tbody>
                         </table>
@@ -299,39 +303,25 @@ const AdminProducts = () => {
                             </div>
                         )}
                         <Pagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            onPageChange={setCurrentPage}
-                            totalItems={filtered.length}
-                            startItem={indexOfFirstProduct + 1}
-                            endItem={Math.min(indexOfLastProduct, filtered.length)}
-                            itemLabel="sản phẩm"
-                            accentColor="blue"
+                            currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}
+                            totalItems={filtered.length} startItem={indexOfFirst + 1}
+                            endItem={Math.min(indexOfLast, filtered.length)} itemLabel="sản phẩm" accentColor="blue"
                         />
                     </div>
                 )}
             </div>
 
-            {/* Modals */}
             <ConfirmModal
-                isOpen={confirmModal.isOpen}
-                type={confirmModal.type}
-                title={confirmModal.title}
-                message={confirmModal.message}
-                onConfirm={() => {
-                    if (confirmModal.action === 'delete') confirmDelete(confirmModal.targetId);
-                    else if (confirmModal.action === 'unban') confirmUnban(confirmModal.targetId);
-                }}
+                isOpen={confirmModal.isOpen} type={confirmModal.type} title={confirmModal.title} message={confirmModal.message}
+                onConfirm={() => { if (confirmModal.action === 'delete') confirmDelete(confirmModal.targetId); }}
                 onCancel={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
             />
 
             <PromptModal
-                isOpen={promptModal.isOpen}
-                title={promptModal.title}
-                message={promptModal.message}
-                defaultValue="Vi phạm tiêu chuẩn cộng đồng"
+                isOpen={promptModal.isOpen} title={promptModal.title} message={promptModal.message}
+                defaultValue={promptModal.action === 'BANNED' ? 'Vi phạm tiêu chuẩn cộng đồng' : 'Không đạt tiêu chuẩn'}
                 placeholder="Nhập lý do..."
-                onConfirm={confirmBan}
+                onConfirm={confirmPromptAction}
                 onCancel={() => setPromptModal(prev => ({ ...prev, isOpen: false }))}
             />
         </div>

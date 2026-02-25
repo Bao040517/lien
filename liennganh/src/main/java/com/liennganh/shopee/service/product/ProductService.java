@@ -18,15 +18,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-/**
- * Service quản lý sản phẩm
- * Bao gồm CRUD sản phẩm, tìm kiếm, lọc, và quản lý biến thể (variants)
- */
 @Service
 public class ProductService {
     @Autowired
     private ProductRepository productRepository;
-
     @Autowired
     private com.liennganh.shopee.repository.shop.ShopRepository shopRepository;
     @Autowired
@@ -41,18 +36,19 @@ public class ProductService {
     private org.springframework.context.ApplicationContext context;
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private com.liennganh.shopee.service.common.BadWordService badWordService;
 
     /**
-     * Lấy danh sách sản phẩm chưa bị khóa (Public view)
-     * 
+     * Public view — chỉ sản phẩm APPROVED
      */
     public Page<Product> getAllProducts(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return productRepository.findByIsBannedFalse(pageable);
+        return productRepository.findByProductStatus("APPROVED", pageable);
     }
 
     /**
-     * Lấy tất cả sản phẩm kể cả bị khóa (Admin only)
+     * Admin view — tất cả sản phẩm
      */
     public Page<Product> getAllProductsIncludingBanned(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -60,18 +56,15 @@ public class ProductService {
     }
 
     /**
-     * Lấy danh sách sản phẩm theo danh mục (chưa bị khóa)
-     * 
+     * Public — theo danh mục, chỉ APPROVED
      */
     public Page<Product> getProductsByCategory(Long categoryId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return productRepository.findByCategoryIdAndIsBannedFalse(categoryId, pageable);
+        return productRepository.findByCategoryIdAndProductStatus(categoryId, "APPROVED", pageable);
     }
 
     /**
-     * Tạo sản phẩm mới
-     * 
-     * @throws AppException SHOP_NOT_FOUND, CATEGORY_NOT_FOUND
+     * Tạo sản phẩm — mặc định PENDING
      */
     @org.springframework.transaction.annotation.Transactional
     public Product createProduct(Product product) {
@@ -86,17 +79,15 @@ public class ProductService {
             product.setCategory(category);
         }
 
-        // Khởi tạo đánh giá
         product.setAverageRating(0.0);
         product.setReviewCount(0L);
+        product.setProductStatus("PENDING");
 
         return productRepository.save(product);
     }
 
     /**
-     * Cập nhật thông tin sản phẩm
-     * 
-     * stockQuantity, categoryId)
+     * Cập nhật sản phẩm — seller sửa nội dung → quay về PENDING
      */
     @org.springframework.transaction.annotation.Transactional
     public Product updateProduct(Long id, java.util.Map<String, Object> body) {
@@ -117,20 +108,17 @@ public class ProductService {
             product.setCategory(category);
         }
 
+        if (body.containsKey("name") || body.containsKey("description")) {
+            product.setProductStatus("PENDING");
+        }
+
         return productRepository.save(product);
     }
 
-    /**
-     * Cập nhật ảnh đại diện sản phẩm
-     * Đồng thời cập nhật ảnh cho tất cả biến thể của sản phẩm đó
-     * 
-     */
     @org.springframework.transaction.annotation.Transactional
     public Product updateProductImage(Long id, String imageUrl) {
         Product product = getProductById(id);
         product.setImageUrl(imageUrl);
-
-        // Đồng bộ ảnh cho variants
         List<ProductVariant> variants = variantRepository.findByProductId(id);
         for (ProductVariant v : variants) {
             v.setImageUrl(imageUrl);
@@ -139,35 +127,24 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    /**
-     * Lưu trực tiếp entity Product vào DB
-     */
     public Product saveProduct(Product product) {
         return productRepository.save(product);
     }
 
-    /**
-     * Lấy thông tin chi tiết sản phẩm
-     * 
-     * @throws AppException PRODUCT_NOT_FOUND
-     */
     public Product getProductById(Long id) {
         return productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
     }
 
     /**
-     * Tìm kiếm sản phẩm theo tên (không phân biệt hoa thường, chưa bị khóa)
-     * 
+     * Public search — chỉ APPROVED
      */
     public Page<Product> searchProducts(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return productRepository.findByNameContainingIgnoreCaseAndIsBannedFalse(keyword, pageable);
+        return productRepository.findByProductStatusAndNameContainingIgnoreCase("APPROVED", keyword, pageable);
     }
 
     /**
-     * Lọc và sắp xếp sản phẩm nâng cao
-     * 
-     * best_selling, rating_desc)
+     * Public filter — chỉ APPROVED
      */
     public Page<Product> filterProducts(String keyword, Long categoryId, BigDecimal minPrice, BigDecimal maxPrice,
             String sortBy, int page, int size) {
@@ -175,71 +152,90 @@ public class ProductService {
         Specification<Product> spec = Specification.where(ProductSpecification.nameContains(keyword))
                 .and(ProductSpecification.hasCategory(categoryId))
                 .and(ProductSpecification.hasPriceBetween(minPrice, maxPrice))
-                .and(ProductSpecification.isNotBanned());
+                .and(ProductSpecification.isApprovedStatus());
 
         Sort sort = Sort.unsorted();
-        if ("price_asc".equals(sortBy)) {
-            sort = Sort.by("price").ascending();
-        } else if ("price_desc".equals(sortBy)) {
-            sort = Sort.by("price").descending();
-        } else if ("newest".equals(sortBy)) {
-            sort = Sort.by("id").descending();
-        } else if ("best_selling".equals(sortBy)) {
-            sort = Sort.by("reviewCount").descending(); // Tạm dùng reviewCount làm proxy cho bán chạy
-        } else if ("rating_desc".equals(sortBy)) {
-            sort = Sort.by("averageRating").descending();
-        }
+        if ("price_asc".equals(sortBy)) sort = Sort.by("price").ascending();
+        else if ("price_desc".equals(sortBy)) sort = Sort.by("price").descending();
+        else if ("newest".equals(sortBy)) sort = Sort.by("id").descending();
+        else if ("best_selling".equals(sortBy)) sort = Sort.by("reviewCount").descending();
+        else if ("rating_desc".equals(sortBy)) sort = Sort.by("averageRating").descending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
         return productRepository.findAll(spec, pageable);
     }
 
-    /**
-     * Khóa sản phẩm (Admin only)
-     * 
-     */
+    // ========== ADMIN: THAY ĐỔI TRẠNG THÁI SẢN PHẨM ==========
+
+    public Product changeProductStatus(Long id, String newStatus, String reason) {
+        Product product = getProductById(id);
+        String oldStatus = product.getProductStatus();
+        product.setProductStatus(newStatus);
+
+        if ("BANNED".equals(newStatus) || "REJECTED".equals(newStatus)) {
+            product.setViolationReason(reason);
+        } else {
+            product.setViolationReason(null);
+        }
+
+        Product saved = productRepository.save(product);
+
+        if (product.getShop() != null && product.getShop().getOwner() != null) {
+            String title;
+            String message;
+            Notification.NotificationType type;
+
+            switch (newStatus) {
+                case "APPROVED":
+                    title = "Sản phẩm đã được duyệt: " + product.getName();
+                    message = "Sản phẩm của bạn đã được duyệt và hiển thị cho người mua.";
+                    type = Notification.NotificationType.SYSTEM;
+                    break;
+                case "REJECTED":
+                    title = "Sản phẩm bị từ chối: " + product.getName();
+                    message = "Sản phẩm bị từ chối. Lý do: " + (reason != null ? reason : "Không đạt tiêu chuẩn");
+                    type = Notification.NotificationType.SYSTEM;
+                    break;
+                case "BANNED":
+                    title = "Sản phẩm bị khóa: " + product.getName();
+                    message = "Sản phẩm bị khóa. Lý do: " + (reason != null ? reason : "Vi phạm chính sách");
+                    type = Notification.NotificationType.PRODUCT_BAN;
+                    break;
+                case "PENDING":
+                    title = "Sản phẩm chuyển về chờ duyệt: " + product.getName();
+                    message = "Sản phẩm đã được chuyển về trạng thái chờ duyệt.";
+                    type = Notification.NotificationType.SYSTEM;
+                    break;
+                default:
+                    return saved;
+            }
+
+            notificationService.createNotification(
+                    product.getShop().getOwner(), title, message, type, product.getId());
+        }
+
+        return saved;
+    }
+
+    // Backward-compatible convenience methods
     public Product banProduct(Long id, String reason) {
-        Product product = getProductById(id);
-        product.setBanned(true);
-        product.setViolationReason(reason);
-        Product savedProduct = productRepository.save(product);
-
-        // Thông báo cho Seller
-        if (product.getShop() != null && product.getShop().getOwner() != null) {
-            notificationService.createNotification(
-                    product.getShop().getOwner(),
-                    "Sản phẩm bị khóa: " + product.getName(),
-                    "S?n ph?m c?a b?n d� b? kh�a v� l� do: " + reason,
-                    com.liennganh.shopee.entity.Notification.NotificationType.PRODUCT_BAN,
-                    product.getId());
-        }
-        return savedProduct;
+        return changeProductStatus(id, "BANNED", reason);
     }
 
-    /**
-     * Mở khóa sản phẩm (Admin only)
-     * 
-     */
     public Product unbanProduct(Long id) {
-        Product product = getProductById(id);
-        product.setBanned(false);
-        product.setViolationReason(null);
-        Product savedProduct = productRepository.save(product);
+        return changeProductStatus(id, "APPROVED", null);
+    }
 
-        // Thông báo cho Seller
-        if (product.getShop() != null && product.getShop().getOwner() != null) {
-            notificationService.createNotification(
-                    product.getShop().getOwner(),
-                    "Sản phẩm được khôi phục: " + product.getName(),
-                    "S?n ph?m c?a b?n d� du?c m? kh�a. B?n c� th? b�n l?i b�nh thu?ng.",
-                    com.liennganh.shopee.entity.Notification.NotificationType.PRODUCT_UNBAN,
-                    product.getId());
-        }
-        return savedProduct;
+    public Product approveProduct(Long id) {
+        return changeProductStatus(id, "APPROVED", null);
+    }
+
+    public Product rejectProduct(Long id) {
+        return changeProductStatus(id, "REJECTED", null);
     }
 
     /**
-     * Lấy danh sách sản phẩm của một chủ shop (User)
+     * Seller view — tất cả sản phẩm của shop
      */
     public Page<Product> getProductsByOwner(com.liennganh.shopee.entity.User owner, int page, int size) {
         com.liennganh.shopee.repository.shop.ShopRepository shopRepository = context
@@ -250,60 +246,43 @@ public class ProductService {
         return productRepository.findByShop(shop, pageable);
     }
 
-    /**
-     * Xóa sản phẩm vĩnh viễn
-     * Xóa tất cả dữ liệu liên quan (reviews, order items, cart items, flash sale
-     * items) trước
-     */
     @org.springframework.transaction.annotation.Transactional
     public void deleteProduct(Long id) {
         Product product = getProductById(id);
 
-        // Xóa reviews
         com.liennganh.shopee.repository.product.ReviewRepository reviewRepository = context
                 .getBean(com.liennganh.shopee.repository.product.ReviewRepository.class);
         reviewRepository.deleteByProductId(id);
 
-        // Xóa order items
         com.liennganh.shopee.repository.order.OrderItemRepository orderItemRepository = context
                 .getBean(com.liennganh.shopee.repository.order.OrderItemRepository.class);
         orderItemRepository.deleteByProductId(id);
 
-        // Xóa cart items & flash sale items qua EntityManager (không có repo riêng)
         jakarta.persistence.EntityManager em = context.getBean(jakarta.persistence.EntityManager.class);
         em.createNativeQuery("DELETE FROM cart_items WHERE product_id = :pid")
                 .setParameter("pid", id).executeUpdate();
         em.createNativeQuery("DELETE FROM flash_sale_items WHERE product_id = :pid")
                 .setParameter("pid", id).executeUpdate();
 
-        // Cuối cùng xóa product (attributes, variants, images sẽ cascade theo entity
-        // config)
         productRepository.delete(product);
     }
 
     /**
-     * Lấy danh sách sản phẩm theo Shop ID (Public view - chỉ hiện sản phẩm chưa bị
-     * khóa)
+     * Public view shop — chỉ APPROVED
      */
     public Page<Product> getProductsByShopId(Long shopId, int page, int size) {
         com.liennganh.shopee.entity.Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new AppException(ErrorCode.SHOP_NOT_FOUND));
         Pageable pageable = PageRequest.of(page, size);
-        return productRepository.findByShopAndIsBannedFalse(shop, pageable);
+        return productRepository.findByShopAndProductStatus(shop, "APPROVED", pageable);
     }
 
-    // ========== PRODUCT ATTRIBUTES & VARIANTS (PHÂN LOẠI & BIẾN THỂ) ==========
+    // ========== PRODUCT ATTRIBUTES & VARIANTS ==========
 
-    /**
-     * Lấy danh sách thuộc tính (Attribute) của sản phẩm
-     */
     public List<ProductAttribute> getProductAttributes(Long productId) {
         return attributeRepository.findByProductId(productId);
     }
 
-    /**
-     * Thêm thuộc tính cho sản phẩm (Ví dụ: Màu sắc, Size)
-     */
     @org.springframework.transaction.annotation.Transactional
     public ProductAttribute addAttribute(Long productId, String name) {
         Product product = getProductById(productId);
@@ -313,9 +292,6 @@ public class ProductService {
         return attributeRepository.save(attr);
     }
 
-    /**
-     * Thêm giá trị cho thuộc tính (Ví dụ: Đỏ, Xanh, S, M)
-     */
     @org.springframework.transaction.annotation.Transactional
     public ProductAttributeOption addOption(Long attributeId, String value, String imageUrl) {
         ProductAttribute attr = attributeRepository.findById(attributeId)
@@ -327,17 +303,10 @@ public class ProductService {
         return optionRepository.save(option);
     }
 
-    /**
-     * Lấy danh sách biến thể (Variant) của sản phẩm
-     */
     public List<ProductVariant> getVariants(Long productId) {
         return variantRepository.findByProductId(productId);
     }
 
-    /**
-     * Thêm biến thể sản phẩm (Variant)
-     * Mỗi variant là sự kết hợp của các options (ví dụ: Màu Đỏ - Size M)
-     */
     @org.springframework.transaction.annotation.Transactional
     public ProductVariant addVariant(Long productId, String attributesJson, java.math.BigDecimal price,
             Integer stockQuantity, String imageUrl) {
@@ -351,9 +320,6 @@ public class ProductService {
         return variantRepository.save(variant);
     }
 
-    /**
-     * Xóa biến thể sản phẩm
-     */
     @org.springframework.transaction.annotation.Transactional
     public void deleteVariant(Long variantId) {
         variantRepository.deleteById(variantId);

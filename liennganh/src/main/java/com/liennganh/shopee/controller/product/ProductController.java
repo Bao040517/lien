@@ -254,9 +254,21 @@ public class ProductController {
     }
 
     /**
+     * Thay đổi trạng thái sản phẩm (Admin only)
+     * status: PENDING, APPROVED, REJECTED, BANNED
+     */
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}/status")
+    public ApiResponse<Product> changeProductStatus(
+            @PathVariable Long id,
+            @RequestParam String status,
+            @RequestParam(required = false) String reason) {
+        return ApiResponse.success(productService.changeProductStatus(id, status, reason),
+                "Cập nhật trạng thái sản phẩm thành công");
+    }
+
+    /**
      * Khóa sản phẩm (Ban) - dành cho Admin
-     * Quyền hạn: ADMIN
-     * 
      */
     @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/ban")
@@ -266,13 +278,29 @@ public class ProductController {
 
     /**
      * Mở khóa sản phẩm (Unban) - dành cho Admin
-     * Quyền hạn: ADMIN
-     * 
      */
     @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/unban")
     public ApiResponse<Product> unbanProduct(@PathVariable Long id) {
         return ApiResponse.success(productService.unbanProduct(id), "Mở khóa sản phẩm thành công");
+    }
+
+    /**
+     * Duyệt sản phẩm - dành cho Admin
+     */
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}/approve")
+    public ApiResponse<Product> approveProduct(@PathVariable Long id) {
+        return ApiResponse.success(productService.approveProduct(id), "Duyệt sản phẩm thành công");
+    }
+
+    /**
+     * Từ chối duyệt sản phẩm - dành cho Admin
+     */
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}/reject")
+    public ApiResponse<Product> rejectProduct(@PathVariable Long id) {
+        return ApiResponse.success(productService.rejectProduct(id), "Từ chối duyệt sản phẩm thành công");
     }
 
     /**

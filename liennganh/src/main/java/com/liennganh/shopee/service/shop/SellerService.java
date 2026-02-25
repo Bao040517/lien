@@ -23,6 +23,7 @@ public class SellerService {
     private final UserRepository userRepository;
     private final ShopRepository shopRepository;
     private final ProductRepository productRepository;
+    private final com.liennganh.shopee.service.common.BadWordService badWordService;
 
     public Shop getMyShop(Long sellerId) {
         User seller = userRepository.findById(sellerId)
@@ -120,8 +121,10 @@ public class SellerService {
         product.setShop(shop);
         product.setCategory(productData.getCategory());
 
+        product.setProductStatus("PENDING");
+
         Product savedProduct = productRepository.save(product);
-        log.info("Product created: {} by shop: {}", savedProduct.getName(), shop.getName());
+        log.info("Product created: {} by shop: {} (PENDING)", savedProduct.getName(), shop.getName());
 
         return savedProduct;
     }
@@ -160,8 +163,10 @@ public class SellerService {
         product.setImageUrl(productData.getImageUrl());
         product.setCategory(productData.getCategory());
 
+        product.setProductStatus("PENDING");
+
         Product updatedProduct = productRepository.save(product);
-        log.info("Product updated: {}", updatedProduct.getName());
+        log.info("Product updated: {} (PENDING)", updatedProduct.getName());
 
         return updatedProduct;
     }
