@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import api from '../api';
-import { MapPin, CreditCard, Store, Truck, Tag, Coins, X, ChevronRight } from 'lucide-react';
+import { MapPin, CreditCard, Store, Truck, Tag, Coins, X, ChevronRight, Plus, Check } from 'lucide-react';
 import Breadcrumb from '../components/Breadcrumb';
 import { useToast } from '../context/ToastContext';
 
@@ -26,14 +26,17 @@ const Checkout = () => {
 
     // Address Modal States
     const [showAddressModal, setShowAddressModal] = useState(false);
+    const [addressModalView, setAddressModalView] = useState('list'); // 'list' | 'add'
+    const [tempSelectedAddress, setTempSelectedAddress] = useState(null);
     const [addressForm, setAddressForm] = useState({
+        recipientName: '',
         phoneNumber: '',
         city: '',
         district: '',
         ward: '',
         street: '',
         addressType: 'HOME',
-        isDefault: true,
+        isDefault: false,
     });
     const [savingAddress, setSavingAddress] = useState(false);
 
@@ -43,12 +46,11 @@ const Checkout = () => {
     const [wards, setWards] = useState([]);
     const [loadingLocation, setLoadingLocation] = useState(false);
 
-    // Fetch provinces on modal open
     useEffect(() => {
-        if (showAddressModal && provinces.length === 0) {
+        if (showAddressModal && addressModalView === 'add' && provinces.length === 0) {
             fetchProvinces();
         }
-    }, [showAddressModal]);
+    }, [showAddressModal, addressModalView]);
 
     const fetchProvinces = async () => {
         try {
@@ -160,6 +162,7 @@ const Checkout = () => {
     };
 
     const handleSaveAddress = async () => {
+        if (!addressForm.recipientName.trim()) { toast.warning("Vui lòng nhập tên người nhận."); return; }
         if (!addressForm.phoneNumber.trim()) { toast.warning("Vui lòng nhập số điện thoại."); return; }
         if (!addressForm.city.trim()) { toast.warning("Vui lòng nhập Tỉnh/Thành phố."); return; }
         if (!addressForm.district.trim()) { toast.warning("Vui lòng nhập Quận/Huyện."); return; }
@@ -169,7 +172,7 @@ const Checkout = () => {
         setSavingAddress(true);
         try {
             const payload = {
-                recipientName: user.username,
+                recipientName: addressForm.recipientName,
                 phoneNumber: addressForm.phoneNumber,
                 city: addressForm.city,
                 district: addressForm.district,
@@ -179,20 +182,38 @@ const Checkout = () => {
             };
             const res = await api.post(`/addresses/user/${user.id}`, payload);
             const newAddress = res.data.data || res.data;
-            setAddresses(prev => [...prev, newAddress]);
-            setSelectedAddress(newAddress);
-            setShowAddressModal(false);
+            const updatedList = [...addresses, newAddress];
+            setAddresses(updatedList);
+            setTempSelectedAddress(newAddress);
+            setAddressModalView('list');
             setAddressForm({
-                phoneNumber: '', city: '', district: '', ward: '', street: '', addressType: 'HOME', isDefault: true
+                recipientName: '', phoneNumber: '', city: '', district: '', ward: '', street: '', addressType: 'HOME', isDefault: false
             });
             setDistricts([]);
             setWards([]);
+            toast.success("Thêm địa chỉ mới thành công!");
         } catch (error) {
             console.error("Error saving address:", error);
-            toast.info("Lưu địa chỉ thất bại: " + (error.response?.data?.message || error.message));
+            toast.error("Lưu địa chỉ thất bại: " + (error.response?.data?.message || error.message));
         } finally {
             setSavingAddress(false);
         }
+    };
+
+    const handleConfirmAddress = () => {
+        if (tempSelectedAddress) {
+            setSelectedAddress(tempSelectedAddress);
+        }
+        setShowAddressModal(false);
+    };
+
+    const openAddNewAddressForm = () => {
+        setAddressForm({
+            recipientName: user.username, phoneNumber: '', city: '', district: '', ward: '', street: '', addressType: 'HOME', isDefault: false
+        });
+        setDistricts([]);
+        setWards([]);
+        setAddressModalView('add');
     };
 
     const getShopSubtotal = (shopId) => {
@@ -264,6 +285,7 @@ const Checkout = () => {
 
     const handlePlaceOrder = async () => {
         if (!selectedAddress) {
+            setAddressModalView(addresses.length > 0 ? 'list' : 'add');
             setShowAddressModal(true);
             return;
         }
@@ -370,7 +392,7 @@ const Checkout = () => {
                                 <div className="border border-primary-dark text-primary-dark text-xs px-1 py-0.5">Mặc định</div>
                             )}
                             <button
-                                onClick={() => setShowAddressModal(true)}
+                                onClick={() => { setTempSelectedAddress(selectedAddress); setAddressModalView('list'); setShowAddressModal(true); }}
                                 className="text-blue-500 text-sm ml-4 hover:underline"
                             >Thay Đổi</button>
                         </div>
@@ -378,7 +400,7 @@ const Checkout = () => {
                         <div className="flex items-center gap-4">
                             <div className="text-gray-500">Chưa có địa chỉ.</div>
                             <button
-                                onClick={() => setShowAddressModal(true)}
+                                onClick={() => { setAddressModalView(addresses.length > 0 ? 'list' : 'add'); setShowAddressModal(true); }}
                                 className="text-blue-500 text-sm hover:underline"
                             >Thêm Địa Chỉ Mới</button>
                         </div>
@@ -543,51 +565,165 @@ const Checkout = () => {
             {showAddressModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center">
                     <div className="absolute inset-0 bg-black/50" onClick={() => { if (selectedAddress) setShowAddressModal(false); }}></div>
-                    <div className="relative bg-white rounded-md shadow-xl w-full max-w-[420px] max-h-[85vh] mx-4 animate-[fadeIn_0.2s_ease-out] flex flex-col">
-                        <div className="px-6 pt-6 pb-2 flex-shrink-0">
-                            <h2 className="text-lg font-medium text-gray-800">Địa chỉ mới</h2>
-                        </div>
-                        <div className="px-6 py-3 space-y-3 overflow-y-auto flex-1">
-                            <input
-                                type="text" placeholder="Số điện thoại liên hệ"
-                                value={addressForm.phoneNumber} onChange={(e) => setAddressForm({ ...addressForm, phoneNumber: e.target.value })}
-                                className="w-full border border-gray-300 rounded px-4 py-3 text-sm outline-none focus:border-primary-dark"
-                            />
-                            {/* ... (Provinces/Districts/Wards Selects - Simplified for brevity but logic remains) ... */}
-                            <select
-                                value={provinces.find(p => p.name === addressForm.city)?.code || ''} onChange={handleProvinceChange}
-                                className="w-full border border-gray-300 rounded px-4 py-3 text-sm outline-none bg-white"
-                            >
-                                <option value="">-- Chọn Tỉnh/Thành phố --</option>
-                                {provinces.map(p => <option key={p.code} value={p.code}>{p.name}</option>)}
-                            </select>
+                    <div className="relative bg-white rounded-lg shadow-xl w-full max-w-[520px] max-h-[85vh] mx-4 animate-[fadeIn_0.2s_ease-out] flex flex-col">
 
-                            <select
-                                value={districts.find(d => d.name === addressForm.district)?.code || ''} onChange={handleDistrictChange}
-                                className="w-full border border-gray-300 rounded px-4 py-3 text-sm outline-none bg-white"
-                            >
-                                <option value="">-- Chọn Quận/Huyện --</option>
-                                {districts.map(d => <option key={d.code} value={d.code}>{d.name}</option>)}
-                            </select>
+                        {/* ===== LIST VIEW ===== */}
+                        {addressModalView === 'list' && (
+                            <>
+                                <div className="px-6 pt-6 pb-3 flex items-center justify-between flex-shrink-0 border-b border-gray-100">
+                                    <h2 className="text-lg font-semibold text-gray-800">Địa Chỉ Của Tôi</h2>
+                                    <button onClick={() => setShowAddressModal(false)} className="text-gray-400 hover:text-gray-600">
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                </div>
+                                <div className="overflow-y-auto flex-1 px-6 py-4">
+                                    {addresses.length === 0 ? (
+                                        <div className="text-center py-10">
+                                            <MapPin className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+                                            <p className="text-gray-500 text-sm">Bạn chưa có địa chỉ nào.</p>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-2">
+                                            {addresses.map(addr => {
+                                                const isSelected = tempSelectedAddress?.id === addr.id;
+                                                return (
+                                                    <div
+                                                        key={addr.id}
+                                                        onClick={() => setTempSelectedAddress(addr)}
+                                                        className={`border rounded-lg p-4 cursor-pointer transition-all ${isSelected
+                                                            ? 'border-primary-dark bg-primary/5 ring-1 ring-primary-dark/20'
+                                                            : 'border-gray-200 hover:border-gray-300'
+                                                        }`}
+                                                    >
+                                                        <div className="flex items-start gap-3">
+                                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${isSelected ? 'border-primary-dark bg-primary-dark' : 'border-gray-300'}`}>
+                                                                {isSelected && <Check className="w-3 h-3 text-white" />}
+                                                            </div>
+                                                            <div className="flex-1 min-w-0">
+                                                                <div className="flex items-center gap-2 mb-1">
+                                                                    <span className="font-semibold text-gray-800 text-sm">{addr.recipientName}</span>
+                                                                    <span className="text-gray-300">|</span>
+                                                                    <span className="text-gray-500 text-sm">{addr.phoneNumber}</span>
+                                                                    {(addr.isDefault || addr.default) && (
+                                                                        <span className="text-[10px] border border-primary-dark text-primary-dark px-1.5 py-0.5 rounded ml-1">Mặc định</span>
+                                                                    )}
+                                                                </div>
+                                                                <p className="text-sm text-gray-600 leading-relaxed">{addr.street}</p>
+                                                                <p className="text-sm text-gray-400">{addr.ward}, {addr.district}, {addr.city}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="px-6 pb-5 pt-3 flex items-center justify-between flex-shrink-0 border-t border-gray-100">
+                                    <button
+                                        onClick={openAddNewAddressForm}
+                                        className="flex items-center gap-1.5 text-sm text-primary-dark font-medium hover:underline"
+                                    >
+                                        <Plus className="w-4 h-4" /> Thêm Địa Chỉ Mới
+                                    </button>
+                                    <div className="flex gap-3">
+                                        <button
+                                            onClick={() => setShowAddressModal(false)}
+                                            className="px-5 py-2 text-sm text-gray-600 hover:text-gray-800 rounded hover:bg-gray-50 transition"
+                                        >Hủy</button>
+                                        <button
+                                            onClick={handleConfirmAddress}
+                                            disabled={!tempSelectedAddress}
+                                            className="px-6 py-2 bg-primary-dark text-white rounded text-sm font-medium hover:bg-primary-darker transition disabled:opacity-40"
+                                        >Xác Nhận</button>
+                                    </div>
+                                </div>
+                            </>
+                        )}
 
-                            <select
-                                value={wards.find(w => w.name === addressForm.ward)?.code || ''} onChange={handleWardChange}
-                                className="w-full border border-gray-300 rounded px-4 py-3 text-sm outline-none bg-white"
-                            >
-                                <option value="">-- Chọn Phường/Xã --</option>
-                                {wards.map(w => <option key={w.code} value={w.code}>{w.name}</option>)}
-                            </select>
-
-                            <textarea
-                                placeholder="Địa chỉ cụ thể"
-                                value={addressForm.street} onChange={(e) => setAddressForm({ ...addressForm, street: e.target.value })}
-                                className="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none"
-                            ></textarea>
-                        </div>
-                        <div className="px-6 pb-5 pt-3 flex items-center justify-end gap-3 flex-shrink-0">
-                            <button onClick={() => { if (selectedAddress) setShowAddressModal(false); else navigate('/'); }} className="px-6 py-2 text-sm text-gray-600 hover:text-gray-800">Trở Lại</button>
-                            <button onClick={handleSaveAddress} disabled={savingAddress} className="px-6 py-2 bg-primary-dark text-white rounded text-sm font-medium hover:bg-primary-darker">{savingAddress ? 'Đang lưu...' : 'Hoàn thành'}</button>
-                        </div>
+                        {/* ===== ADD NEW ADDRESS VIEW ===== */}
+                        {addressModalView === 'add' && (
+                            <>
+                                <div className="px-6 pt-6 pb-3 flex items-center justify-between flex-shrink-0 border-b border-gray-100">
+                                    <h2 className="text-lg font-semibold text-gray-800">Thêm Địa Chỉ Mới</h2>
+                                    <button onClick={() => setShowAddressModal(false)} className="text-gray-400 hover:text-gray-600">
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                </div>
+                                <div className="px-6 py-4 space-y-3 overflow-y-auto flex-1">
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-500 mb-1">Tên người nhận</label>
+                                        <input
+                                            type="text" placeholder="Họ và tên"
+                                            value={addressForm.recipientName} onChange={(e) => setAddressForm({ ...addressForm, recipientName: e.target.value })}
+                                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-primary-dark"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-500 mb-1">Số điện thoại</label>
+                                        <input
+                                            type="text" placeholder="Số điện thoại liên hệ"
+                                            value={addressForm.phoneNumber} onChange={(e) => setAddressForm({ ...addressForm, phoneNumber: e.target.value })}
+                                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-primary-dark"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-500 mb-1">Tỉnh/Thành phố</label>
+                                        <select
+                                            value={provinces.find(p => p.name === addressForm.city)?.code || ''} onChange={handleProvinceChange}
+                                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm outline-none bg-white focus:border-primary-dark"
+                                        >
+                                            <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                                            {provinces.map(p => <option key={p.code} value={p.code}>{p.name}</option>)}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-500 mb-1">Quận/Huyện</label>
+                                        <select
+                                            value={districts.find(d => d.name === addressForm.district)?.code || ''} onChange={handleDistrictChange}
+                                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm outline-none bg-white focus:border-primary-dark"
+                                        >
+                                            <option value="">-- Chọn Quận/Huyện --</option>
+                                            {districts.map(d => <option key={d.code} value={d.code}>{d.name}</option>)}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-500 mb-1">Phường/Xã</label>
+                                        <select
+                                            value={wards.find(w => w.name === addressForm.ward)?.code || ''} onChange={handleWardChange}
+                                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm outline-none bg-white focus:border-primary-dark"
+                                        >
+                                            <option value="">-- Chọn Phường/Xã --</option>
+                                            {wards.map(w => <option key={w.code} value={w.code}>{w.name}</option>)}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-500 mb-1">Địa chỉ cụ thể</label>
+                                        <textarea
+                                            placeholder="Số nhà, tên đường..."
+                                            value={addressForm.street} onChange={(e) => setAddressForm({ ...addressForm, street: e.target.value })}
+                                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-primary-dark resize-none"
+                                            rows={2}
+                                        ></textarea>
+                                    </div>
+                                    <label className="flex items-center gap-2 cursor-pointer select-none">
+                                        <input
+                                            type="checkbox"
+                                            checked={addressForm.isDefault}
+                                            onChange={e => setAddressForm({ ...addressForm, isDefault: e.target.checked })}
+                                            className="w-4 h-4 rounded border-gray-300 text-primary-dark focus:ring-primary-dark"
+                                        />
+                                        <span className="text-sm text-gray-600">Đặt làm địa chỉ mặc định</span>
+                                    </label>
+                                </div>
+                                <div className="px-6 pb-5 pt-3 flex items-center justify-end gap-3 flex-shrink-0 border-t border-gray-100">
+                                    <button
+                                        onClick={() => { addresses.length > 0 ? setAddressModalView('list') : setShowAddressModal(false); }}
+                                        className="px-5 py-2 text-sm text-gray-600 hover:text-gray-800 rounded hover:bg-gray-50 transition"
+                                    >Trở Lại</button>
+                                    <button onClick={handleSaveAddress} disabled={savingAddress} className="px-6 py-2 bg-primary-dark text-white rounded text-sm font-medium hover:bg-primary-darker transition disabled:opacity-50">{savingAddress ? 'Đang lưu...' : 'Hoàn thành'}</button>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             )}

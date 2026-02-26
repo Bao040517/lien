@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import api from '../../api';
-import { Users, Search, Lock, Unlock, Shield, Sparkles } from 'lucide-react';
+import { Users, Search, Lock, Unlock, Shield, Sparkles, KeyRound } from 'lucide-react';
 import Pagination from '../../components/Pagination';
 import ConfirmModal from '../../components/Admin/ConfirmModal';
+import PasswordModal from '../../components/Admin/PasswordModal';
 import { useToast } from '../../context/ToastContext';
 
 const roleLabels = { USER: 'Người dùng', SELLER: 'Người bán', ADMIN: 'Quản trị viên' };
@@ -23,6 +24,28 @@ const AdminUsers = () => {
     const usersPerPage = 10;
 
     const [confirmModal, setConfirmModal] = useState({ isOpen: false, type: 'danger', title: '', message: '', action: null, targetId: null });
+    const [passwordModal, setPasswordModal] = useState({ isOpen: false, username: '', password: '' });
+
+    const handleResetPassword = (id) => {
+        setConfirmModal({
+            isOpen: true,
+            type: 'warning',
+            title: 'Reset mật khẩu tài khoản này?',
+            message: 'Mật khẩu sẽ được đặt lại ngẫu nhiên (10 ký tự). Người dùng cần đổi mật khẩu sau khi đăng nhập.',
+            targetId: id,
+            action: 'reset-password'
+        });
+    };
+
+    const confirmResetPassword = async (id) => {
+        try {
+            const res = await api.put(`/admin/users/${id}/reset-password`);
+            const newPassword = res.data.data;
+            const user = users.find(u => u.id === id);
+            setPasswordModal({ isOpen: true, username: user?.username || '', password: newPassword });
+        } catch { toast.error('Reset mật khẩu thất bại!'); }
+        setConfirmModal({ ...confirmModal, isOpen: false });
+    };
 
     useEffect(() => {
         setCurrentPage(1);
@@ -211,19 +234,26 @@ const AdminUsers = () => {
                                             <td className="px-6 py-3 text-sm text-gray-400">
                                                 {user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : '—'}
                                             </td>
-                                            <td className="px-6 py-3 text-center">
+                                            <td className="px-6 py-3 text-center space-x-1">
                                                 {user.role !== 'ADMIN' && (
-                                                    isLocked ? (
-                                                        <button onClick={() => handleUnlock(user.id)}
-                                                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white text-xs rounded-lg hover:bg-green-600 transition">
-                                                            <Unlock className="w-3 h-3" /> Mở khoá
+                                                    <>
+                                                        {isLocked ? (
+                                                            <button onClick={() => handleUnlock(user.id)}
+                                                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white text-xs rounded-lg hover:bg-green-600 transition">
+                                                                <Unlock className="w-3 h-3" /> Mở khoá
+                                                            </button>
+                                                        ) : (
+                                                            <button onClick={() => handleLock(user.id)}
+                                                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600 transition">
+                                                                <Lock className="w-3 h-3" /> Khoá
+                                                            </button>
+                                                        )}
+                                                        <button onClick={() => handleResetPassword(user.id)}
+                                                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-amber-500 text-white text-xs rounded-lg hover:bg-amber-600 transition"
+                                                            title="Reset mật khẩu về 123456">
+                                                            <KeyRound className="w-3 h-3" /> Reset MK
                                                         </button>
-                                                    ) : (
-                                                        <button onClick={() => handleLock(user.id)}
-                                                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600 transition">
-                                                            <Lock className="w-3 h-3" /> Khoá
-                                                        </button>
-                                                    )
+                                                    </>
                                                 )}
                                             </td>
                                         </tr>
@@ -256,8 +286,16 @@ const AdminUsers = () => {
                 onConfirm={() => {
                     if (confirmModal.action === 'lock') confirmLock(confirmModal.targetId);
                     else if (confirmModal.action === 'unlock') confirmUnlock(confirmModal.targetId);
+                    else if (confirmModal.action === 'reset-password') confirmResetPassword(confirmModal.targetId);
                 }}
                 onCancel={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+            />
+
+            <PasswordModal
+                isOpen={passwordModal.isOpen}
+                username={passwordModal.username}
+                password={passwordModal.password}
+                onClose={() => setPasswordModal({ isOpen: false, username: '', password: '' })}
             />
         </div>
     );

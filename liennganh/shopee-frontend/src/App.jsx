@@ -34,6 +34,7 @@ import CategoryProducts from './pages/CategoryProducts';
 import OrderHistory from './pages/OrderHistory';
 import ShopProfile from './pages/ShopProfile';
 import ChatPage from './pages/ChatPage';
+import MyAccount from './pages/MyAccount';
 import { useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import PrivateRoute from './components/PrivateRoute';
@@ -59,6 +60,7 @@ const App = () => {
           <Route path="search" element={<SearchResults />} />
           <Route path="category/:id" element={<CategoryProducts />} />
           <Route path="purchase" element={<PrivateRoute><OrderHistory /></PrivateRoute>} />
+          <Route path="profile" element={<PrivateRoute><MyAccount /></PrivateRoute>} />
           <Route path="messages" element={<PrivateRoute><ChatPage /></PrivateRoute>} />
         </Route>
 

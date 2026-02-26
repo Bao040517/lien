@@ -1,5 +1,6 @@
 package com.liennganh.shopee.controller.auth;
 
+import com.liennganh.shopee.dto.request.ChangePasswordRequest;
 import com.liennganh.shopee.dto.request.LoginRequest;
 import com.liennganh.shopee.dto.request.RegisterRequest;
 import com.liennganh.shopee.dto.response.ApiResponse;
@@ -9,6 +10,7 @@ import com.liennganh.shopee.service.auth.AuthService;
 import com.liennganh.shopee.service.auth.JwtService;
 import com.liennganh.shopee.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -50,6 +52,17 @@ public class AuthController {
         Long userId = SecurityUtils.getCurrentUserId(jwtService);
         UserResponse user = authService.getUserResponseById(userId);
         return ApiResponse.success(user, "Lấy thông tin người dùng thành công");
+    }
+
+    /**
+     * Đổi mật khẩu (yêu cầu đăng nhập)
+     */
+    @PreAuthorize("hasAnyRole('USER', 'SELLER', 'ADMIN')")
+    @PutMapping("/change-password")
+    public ApiResponse<String> changePassword(@RequestBody ChangePasswordRequest request) {
+        Long userId = SecurityUtils.getCurrentUserId(jwtService);
+        authService.changePassword(userId, request.getCurrentPassword(), request.getNewPassword());
+        return ApiResponse.success(null, "Đổi mật khẩu thành công");
     }
 }
 

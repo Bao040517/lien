@@ -22,6 +22,7 @@ public enum ErrorCode {
     EMAIL_ALREADY_EXISTS(2005, "Email đã được sử dụng", HttpStatus.BAD_REQUEST),
     USERNAME_ALREADY_EXISTS(2006, "Tên đăng nhập đã tồn tại", HttpStatus.BAD_REQUEST),
     PASSWORD_TOO_SHORT(2007, "Mật khẩu phải có ít nhất 8 ký tự", HttpStatus.BAD_REQUEST),
+    WRONG_PASSWORD(2008, "Mật khẩu hiện tại không đúng", HttpStatus.BAD_REQUEST),
 
     // Nhóm lỗi Người bán (Seller) - 3xxx
     SELLER_NOT_APPROVED(3001, "Người bán chưa được duyệt", HttpStatus.FORBIDDEN),

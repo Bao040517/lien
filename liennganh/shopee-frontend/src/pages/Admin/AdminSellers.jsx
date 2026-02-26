@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import api from '../../api';
-import { UserCheck, Search, Check, X, Ban, Store, Sparkles } from 'lucide-react';
+import { UserCheck, Search, Check, X, Ban, Store, Sparkles, KeyRound } from 'lucide-react';
 import Pagination from '../../components/Pagination';
 import ConfirmModal from '../../components/Admin/ConfirmModal';
+import PasswordModal from '../../components/Admin/PasswordModal';
 import { useToast } from '../../context/ToastContext';
 
 const statusConfig = {
@@ -24,6 +25,7 @@ const AdminSellers = () => {
     const sellersPerPage = 10;
 
     const [confirmModal, setConfirmModal] = useState({ isOpen: false, type: 'danger', title: '', message: '', targetId: null, actionType: null });
+    const [passwordModal, setPasswordModal] = useState({ isOpen: false, username: '', password: '' });
 
     useEffect(() => {
         setCurrentPage(1);
@@ -66,7 +68,8 @@ const AdminSellers = () => {
         const msgs = {
             approve: { title: 'Duyệt người bán này?', type: 'success', msg: 'Họ sẽ được phép đăng sản phẩm và bán hàng.' },
             reject: { title: 'Từ chối người bán này?', type: 'danger', msg: 'Yêu cầu mở shop sẽ bị huỷ bỏ.' },
-            suspend: { title: 'Tạm khoá người bán này?', type: 'warning', msg: 'Họ sẽ không thể truy cập trang quản trị shop.' }
+            suspend: { title: 'Tạm khoá người bán này?', type: 'warning', msg: 'Họ sẽ không thể truy cập trang quản trị shop.' },
+            'reset-password': { title: 'Reset mật khẩu người bán này?', type: 'warning', msg: 'Mật khẩu sẽ được đặt lại ngẫu nhiên (10 ký tự). Người bán cần đổi mật khẩu sau khi đăng nhập.' }
         };
 
         if (actionType === 'approve') {
@@ -86,12 +89,19 @@ const AdminSellers = () => {
 
     const confirmAction = async (id, action) => {
         try {
-            await api.put(`/admin/sellers/${id}/${action}`);
-            const newStatus = action === 'approve' ? 'APPROVED' : action === 'reject' ? 'REJECTED' : 'SUSPENDED';
-            setSellers(prev => prev.map(s =>
-                s.id === id ? { ...s, sellerStatus: newStatus } : s
-            ));
-            setPending(prev => prev.filter(s => s.id !== id));
+            if (action === 'reset-password') {
+                const res = await api.put(`/admin/users/${id}/reset-password`);
+                const newPassword = res.data.data;
+                const seller = [...sellers, ...pending].find(s => s.id === id);
+                setPasswordModal({ isOpen: true, username: seller?.username || '', password: newPassword });
+            } else {
+                await api.put(`/admin/sellers/${id}/${action}`);
+                const newStatus = action === 'approve' ? 'APPROVED' : action === 'reject' ? 'REJECTED' : 'SUSPENDED';
+                setSellers(prev => prev.map(s =>
+                    s.id === id ? { ...s, sellerStatus: newStatus } : s
+                ));
+                setPending(prev => prev.filter(s => s.id !== id));
+            }
         } catch (err) { toast.error('Thao tác thất bại: ' + (err.response?.data?.message || err.message)); }
         setConfirmModal({ ...confirmModal, isOpen: false });
     };
@@ -247,6 +257,11 @@ const AdminSellers = () => {
                                                         <Check className="w-3 h-3" /> Duyệt lại
                                                     </button>
                                                 )}
+                                                <button onClick={() => handleActionClick(seller.id, 'reset-password')}
+                                                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-amber-500 text-white text-xs rounded-lg hover:bg-amber-600 transition"
+                                                    title="Reset mật khẩu về 123456">
+                                                    <KeyRound className="w-3 h-3" /> Reset MK
+                                                </button>
                                             </td>
                                         </tr>
                                     );
@@ -280,6 +295,13 @@ const AdminSellers = () => {
                 message={confirmModal.message}
                 onConfirm={() => confirmAction(confirmModal.targetId, confirmModal.actionType)}
                 onCancel={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+            />
+
+            <PasswordModal
+                isOpen={passwordModal.isOpen}
+                username={passwordModal.username}
+                password={passwordModal.password}
+                onClose={() => setPasswordModal({ isOpen: false, username: '', password: '' })}
             />
         </div>
     );

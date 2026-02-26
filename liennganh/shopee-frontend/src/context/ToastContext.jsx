@@ -35,16 +35,16 @@ export const ToastProvider = ({ children }) => {
 
     const addToast = useCallback((message, type = 'info', duration = 3500) => {
         const id = ++toastId;
-        setToasts(prev => [...prev, { id, message, type, exiting: false }]);
+        setToasts(prev => [...prev, { id, message, type, duration, exiting: false }]);
         if (duration > 0) setTimeout(() => removeToast(id), duration);
         return id;
     }, [removeToast]);
 
     const toast = useCallback((message) => addToast(message, 'info'), [addToast]);
-    toast.success = useCallback((msg) => addToast(msg, 'success'), [addToast]);
-    toast.error = useCallback((msg) => addToast(msg, 'error', 5000), [addToast]);
-    toast.warning = useCallback((msg) => addToast(msg, 'warning', 4000), [addToast]);
-    toast.info = useCallback((msg) => addToast(msg, 'info'), [addToast]);
+    toast.success = useCallback((msg, duration) => addToast(msg, 'success', duration || 3500), [addToast]);
+    toast.error = useCallback((msg, duration) => addToast(msg, 'error', duration || 5000), [addToast]);
+    toast.warning = useCallback((msg, duration) => addToast(msg, 'warning', duration || 4000), [addToast]);
+    toast.info = useCallback((msg, duration) => addToast(msg, 'info', duration || 3500), [addToast]);
 
     return (
         <ToastContext.Provider value={toast}>
@@ -71,7 +71,7 @@ export const ToastProvider = ({ children }) => {
                             </button>
                             {/* Progress bar */}
                             <div className={`absolute bottom-0 left-0 h-0.5 rounded-b-xl ${color.bar} toast-progress`}
-                                style={{ animationDuration: t.type === 'error' ? '5s' : '3.5s' }} />
+                                style={{ animationDuration: `${(t.duration || 3500) / 1000}s` }} />
                         </div>
                     );
                 })}

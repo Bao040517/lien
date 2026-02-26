@@ -7,9 +7,11 @@ import com.liennganh.shopee.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
 import java.util.List;
 
 /**
@@ -22,9 +24,16 @@ import java.util.List;
 public class AdminService {
 
     private static final Logger log = LoggerFactory.getLogger(AdminService.class);
+    private static final String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String LOWER = "abcdefghijklmnopqrstuvwxyz";
+    private static final String DIGITS = "0123456789";
+    private static final String SPECIAL = "!@#$%&*";
+    private static final String ALL_CHARS = UPPER + LOWER + DIGITS + SPECIAL;
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     private final UserRepository userRepository;
     private final com.liennganh.shopee.repository.shop.ShopRepository shopRepository;
+    private final PasswordEncoder passwordEncoder;
 
     // ========== QUẢN LÝ NGƯỜI DÙNG (USER MANAGEMENT) ==========
 
@@ -55,7 +64,7 @@ public class AdminService {
         User user = getUserById(userId);
         user.setIsLocked(true);
         User lockedUser = userRepository.save(user);
-        log.info("�� kh�a t�i kho?n user: {}", user.getUsername());
+        log.info("Đã khóa tài khoản user: {}", user.getUsername());
         return lockedUser;
     }
 
@@ -68,8 +77,56 @@ public class AdminService {
         User user = getUserById(userId);
         user.setIsLocked(false);
         User unlockedUser = userRepository.save(user);
-        log.info("�� m? kh�a t�i kho?n user: {}", user.getUsername());
+        log.info("Đã mở khóa tài khoản user: {}", user.getUsername());
         return unlockedUser;
+    }
+
+    /**
+     * Sinh mật khẩu ngẫu nhiên (10 ký tự)
+     * Đảm bảo có ít nhất 1 chữ hoa, 1 chữ thường, 1 số, 1 ký tự đặc biệt
+     */
+    private String generateRandomPassword() {
+        int length = 10;
+        StringBuilder sb = new StringBuilder(length);
+
+        // Đảm bảo mỗi loại ký tự xuất hiện ít nhất 1 lần
+        sb.append(UPPER.charAt(RANDOM.nextInt(UPPER.length())));
+        sb.append(LOWER.charAt(RANDOM.nextInt(LOWER.length())));
+        sb.append(DIGITS.charAt(RANDOM.nextInt(DIGITS.length())));
+        sb.append(SPECIAL.charAt(RANDOM.nextInt(SPECIAL.length())));
+
+        // Điền phần còn lại ngẫu nhiên
+        for (int i = 4; i < length; i++) {
+            sb.append(ALL_CHARS.charAt(RANDOM.nextInt(ALL_CHARS.length())));
+        }
+
+        // Xáo trộn thứ tự ký tự
+        char[] chars = sb.toString().toCharArray();
+        for (int i = chars.length - 1; i > 0; i--) {
+            int j = RANDOM.nextInt(i + 1);
+            char tmp = chars[i];
+            chars[i] = chars[j];
+            chars[j] = tmp;
+        }
+
+        return new String(chars);
+    }
+
+    /**
+     * Reset mật khẩu người dùng bằng mật khẩu ngẫu nhiên (10 ký tự)
+     * Dùng khi admin hỗ trợ seller/user quên mật khẩu
+     *
+     * @return mật khẩu mới (plain text) để admin gửi cho user
+     * @throws AppException USER_NOT_FOUND nếu không tìm thấy
+     */
+    @Transactional
+    public String resetUserPassword(Long userId) {
+        User user = getUserById(userId);
+        String newPassword = generateRandomPassword();
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        log.info("Đã reset mật khẩu user: {}", user.getUsername());
+        return newPassword;
     }
 
     // ========== QUẢN LÝ NGƯỜI BÁN (SELLER MANAGEMENT) ==========
