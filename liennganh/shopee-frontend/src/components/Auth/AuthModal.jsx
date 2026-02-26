@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { X, User, Lock, Mail, Store, ArrowRight, Eye, EyeOff, CheckCircle2, Github, Chrome } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 
 const AuthModal = () => {
     const { isAuthModalOpen, closeAuthModal, authModalMode, setAuthModalMode, login, register } = useAuth();
     const toast = useToast();
+    const navigate = useNavigate();
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -53,6 +55,9 @@ const AuthModal = () => {
                 if (result.success) {
                     toast.success('Chào mừng bạn quay trở lại!');
                     closeAuthModal();
+                    const role = result.user?.role;
+                    if (role === 'ADMIN') navigate('/admin');
+                    else if (role === 'SELLER') navigate('/seller');
                 } else {
                     setError(result.message);
                 }
