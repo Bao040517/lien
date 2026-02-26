@@ -52,6 +52,8 @@ public enum ErrorCode {
     CART_EMPTY(6001, "Giỏ hàng trống", HttpStatus.BAD_REQUEST),
     CART_ITEM_NOT_FOUND(6002, "Không tìm thấy sản phẩm trong giỏ hàng", HttpStatus.NOT_FOUND),
     INVALID_QUANTITY(6003, "Số lượng không hợp lệ", HttpStatus.BAD_REQUEST),
+    QUANTITY_EXCEEDS_STOCK(6004, "Số lượng vượt quá tồn kho", HttpStatus.BAD_REQUEST),
+    PRODUCT_NOT_AVAILABLE(6005, "Sản phẩm chưa được duyệt hoặc đã bị cấm", HttpStatus.BAD_REQUEST),
 
     // Nhóm lỗi Danh mục (Category) - 7xxx
     CATEGORY_NOT_FOUND(7001, "Không tìm thấy danh mục", HttpStatus.NOT_FOUND),
