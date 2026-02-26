@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
@@ -12,6 +15,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Entity
 @Data
 @Table(name = "flash_sales")
+@SQLDelete(sql = "UPDATE flash_sales SET deleted = true, deleted_at = NOW() WHERE id = ?")
+@Where(clause = "deleted = false")
 public class FlashSale {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +32,13 @@ public class FlashSale {
 
     @Column(name = "is_active")
     private boolean isActive = true; // Trạng thái hoạt động
+
+    // Soft Delete
+    @Column(name = "deleted", columnDefinition = "boolean default false")
+    private Boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @OneToMany(mappedBy = "flashSale", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FlashSaleItem> items; // Danh sách sản phẩm trong chương trình

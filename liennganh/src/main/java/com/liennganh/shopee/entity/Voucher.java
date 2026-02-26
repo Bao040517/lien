@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 /**
  * Entity d?i di?n cho M� gi?m gi� (Voucher)
@@ -11,6 +13,8 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Table(name = "vouchers")
+@SQLDelete(sql = "UPDATE vouchers SET deleted = true, deleted_at = NOW() WHERE id = ?")
+@Where(clause = "deleted = false")
 public class Voucher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,6 +47,13 @@ public class Voucher {
     @ManyToOne
     @JoinColumn(name = "shop_id")
     private Shop shop; // Shop tạo voucher (Null nếu là voucher sàn/system)
+
+    // Soft Delete
+    @Column(name = "deleted", columnDefinition = "boolean default false")
+    private Boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     public enum DiscountType {
         PERCENTAGE, // Giảm theo phần trăm

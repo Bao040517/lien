@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.math.BigDecimal;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import java.time.LocalDateTime;
 
 /**
  * Entity đại diện cho Sản phẩm trong giỏ hàng (CartItem)
@@ -11,6 +14,8 @@ import java.math.BigDecimal;
 @Entity
 @Data
 @Table(name = "cart_items")
+@SQLDelete(sql = "UPDATE cart_items SET deleted = true, deleted_at = NOW() WHERE id = ?")
+@Where(clause = "deleted = false")
 public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +32,13 @@ public class CartItem {
 
     @Column(nullable = false)
     private Integer quantity;
+
+    // Soft Delete
+    @Column(name = "deleted", columnDefinition = "boolean default false")
+    private Boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     public Long getId() {
         return id;

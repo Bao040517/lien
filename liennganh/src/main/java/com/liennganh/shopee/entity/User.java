@@ -2,6 +2,8 @@ package com.liennganh.shopee.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import java.time.LocalDateTime;
 
 /**
@@ -10,6 +12,8 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Table(name = "users")
+@SQLDelete(sql = "UPDATE users SET deleted = true, deleted_at = NOW() WHERE id = ?")
+@Where(clause = "deleted = false")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +41,13 @@ public class User {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    // Soft Delete
+    @Column(name = "deleted", columnDefinition = "boolean default false")
+    private Boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @OneToOne(mappedBy = "owner")
     @lombok.EqualsAndHashCode.Exclude

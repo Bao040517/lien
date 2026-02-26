@@ -3,6 +3,10 @@ package com.liennganh.shopee.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import java.time.LocalDateTime;
+
 /**
  * Entity đại diện cho Danh mục sản phẩm (Category)
  * Ví dụ: Điện thoại, Quần áo, Gia dụng...
@@ -10,6 +14,8 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "categories")
+@SQLDelete(sql = "UPDATE categories SET deleted = true, deleted_at = NOW() WHERE id = ?")
+@Where(clause = "deleted = false")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +29,13 @@ public class Category {
 
     @Column
     private String imageUrl; // URL ảnh đại diện danh mục
+
+    // Soft Delete
+    @Column(name = "deleted", columnDefinition = "boolean default false")
+    private Boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     public Long getId() {
         return id;

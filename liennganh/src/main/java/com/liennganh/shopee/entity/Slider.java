@@ -4,11 +4,15 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "sliders")
+@SQLDelete(sql = "UPDATE sliders SET deleted = true, deleted_at = NOW() WHERE id = ?")
+@Where(clause = "deleted = false")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -40,4 +44,11 @@ public class Slider {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    // Soft Delete
+    @Column(name = "deleted", columnDefinition = "boolean default false")
+    private Boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 }

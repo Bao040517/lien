@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import java.time.LocalDateTime;
 
 /**
  * Entity đại diện cho Sản phẩm trong Flash Sale
@@ -11,6 +14,8 @@ import java.math.BigDecimal;
 @Entity
 @Data
 @Table(name = "flash_sale_items")
+@SQLDelete(sql = "UPDATE flash_sale_items SET deleted = true, deleted_at = NOW() WHERE id = ?")
+@Where(clause = "deleted = false")
 public class FlashSaleItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +32,14 @@ public class FlashSaleItem {
 
     private BigDecimal discountedPrice; // Giá khuyến mãi
     private int stockQuantity; // Số lượng phân bổ cho Flash Sale
-    private int soldQuantity = 0; // S? lu?ng d� b�n
+    private int soldQuantity = 0; // Số lượng đã bán
+
+    // Soft Delete
+    @Column(name = "deleted", columnDefinition = "boolean default false")
+    private Boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     public Long getId() {
         return id;
