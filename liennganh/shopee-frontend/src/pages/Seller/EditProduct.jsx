@@ -3,10 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api';
 import { getImageUrl } from '../../utils';
 import { Save, ArrowLeft, Package, Plus, Trash2, Image as ImageIcon, X } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
 
 const EditProduct = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const toast = useToast();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
@@ -63,7 +65,7 @@ const EditProduct = () => {
             }
         } catch (error) {
             console.error("Error fetching product:", error);
-            alert('Không tìm thấy sản phẩm!');
+            toast.info('Không tìm thấy sản phẩm!');
             navigate('/seller/products');
         } finally {
             setLoading(false);
@@ -75,7 +77,7 @@ const EditProduct = () => {
         const files = Array.from(e.target.files);
         const totalImages = existingImages.length + newImageFiles.length + files.length;
         if (totalImages > 9) {
-            alert('Tối đa 9 ảnh sản phẩm!');
+            toast.info('Tối đa 9 ảnh sản phẩm!');
             return;
         }
         setNewImageFiles(prev => [...prev, ...files]);
@@ -124,7 +126,7 @@ const EditProduct = () => {
             await api.delete(`/products/variants/${variantId}`);
             setVariants(prev => prev.filter(v => v.id !== variantId));
         } catch (error) {
-            alert('Xoá biến thể thất bại!');
+            toast.info('Xoá biến thể thất bại!');
         }
     };
 
@@ -170,11 +172,11 @@ const EditProduct = () => {
                 });
             }
 
-            alert('Cập nhật sản phẩm thành công!');
+            toast.info('Cập nhật sản phẩm thành công!');
             navigate('/seller/products');
         } catch (error) {
             console.error("Error updating:", error);
-            alert('Cập nhật thất bại! ' + (error.response?.data?.message || error.message));
+            toast.info('Cập nhật thất bại! ' + (error.response?.data?.message || error.message));
         } finally {
             setSaving(false);
         }

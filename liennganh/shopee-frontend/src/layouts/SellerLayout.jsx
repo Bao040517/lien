@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Breadcrumb from "../components/Breadcrumb";
 import { getImageUrl } from "../utils";
+import { useToast } from '../context/ToastContext';
 
 const menuItems = [
   { path: "/seller", label: "Dashboard", icon: LayoutDashboard },
@@ -32,6 +33,7 @@ const menuItems = [
 
 const SellerLayout = () => {
   const { user, logout, requestSellerUpgrade } = useAuth();
+    const toast = useToast();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -99,7 +101,7 @@ const SellerLayout = () => {
   const handleShopSetupSubmit = async (e) => {
     e.preventDefault();
     if (!shopName.trim()) {
-      alert("Vui lòng nhập tên Shop của bạn!");
+      toast.error("Vui lòng nhập tên Shop của bạn!");
       return;
     }
 
@@ -123,7 +125,7 @@ const SellerLayout = () => {
       }));
     } catch (error) {
       console.error("Lỗi cập nhật Shop:", error);
-      alert("Cập nhật thông tin Shop thất bại. Vui lòng thử lại!");
+      toast.error("Cập nhật thông tin Shop thất bại. Vui lòng thử lại!");
     } finally {
       setIsUpdatingShop(false);
     }

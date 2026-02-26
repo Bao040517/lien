@@ -6,6 +6,7 @@ import Pagination from '../../components/Pagination';
 import BadWordWarning from '../../components/BadWordWarning';
 import api from '../../api';
 import { getImageUrl } from '../../utils';
+import { useToast } from '../../context/ToastContext';
 
 const TABS = [
     { value: 'ALL', label: 'Tất cả' },
@@ -24,6 +25,7 @@ const STATUS_STYLES = {
 
 const SellerProducts = () => {
     const { user } = useAuth();
+    const toast = useToast();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -52,7 +54,7 @@ const SellerProducts = () => {
         try {
             await api.delete(`/products/${productId}`);
             setProducts(prev => prev.filter(p => p.id !== productId));
-        } catch { alert('Xoá sản phẩm thất bại!'); }
+        } catch { toast.info('Xoá sản phẩm thất bại!'); }
         finally { setDeleting(null); }
     };
 

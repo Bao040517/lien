@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import api from '../../api';
 import { Plus, Trash2, Edit, Image as ImageIcon, CheckCircle, XCircle, ArrowUp, ArrowDown } from 'lucide-react';
 import { getImageUrl } from '../../utils';
+import { useToast } from '../../context/ToastContext';
 
 const AdminSliders = () => {
     const [sliders, setSliders] = useState([]);
+    const toast = useToast();
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editingId, setEditingId] = useState(null);
@@ -68,7 +70,7 @@ const AdminSliders = () => {
         e.preventDefault();
 
         if (!selectedFile && !form.imageUrl) {
-            alert('Vui lòng tải lên một ảnh cho slider!');
+            toast.warning('Vui lòng tải lên một ảnh cho slider!');
             return;
         }
 
@@ -110,7 +112,7 @@ const AdminSliders = () => {
 
         } catch (error) {
             console.error(error);
-            alert('Lưu slider thất bại!');
+            toast.info('Lưu slider thất bại!');
         } finally {
             setUploading(false);
         }
@@ -135,7 +137,7 @@ const AdminSliders = () => {
                 fetchSliders();
             } catch (error) {
                 console.error(error);
-                alert('Xóa thất bại!');
+                toast.info('Xóa thất bại!');
             }
         }
     };
@@ -176,7 +178,7 @@ const AdminSliders = () => {
             fetchSliders();
         } catch (error) {
             console.error(error);
-            alert('Lỗi khi thay đổi thứ tự!');
+            toast.info('Lỗi khi thay đổi thứ tự!');
             fetchSliders(); // Revert back if fail
         }
     };

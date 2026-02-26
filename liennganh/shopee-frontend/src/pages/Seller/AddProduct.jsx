@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 import { Plus, Trash2, Package, Image as ImageIcon, Save, X } from 'lucide-react';
 
 const AddProduct = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
+    const toast = useToast();
 
     const [categories, setCategories] = useState([]);
     const [shops, setShops] = useState([]);
@@ -125,7 +127,7 @@ const AddProduct = () => {
     const handleImagesChange = (e) => {
         const files = Array.from(e.target.files);
         if (files.length + imageFiles.length > 9) {
-            alert('Tối đa 9 ảnh sản phẩm!');
+            toast.warning('Tối đa 9 ảnh sản phẩm!');
             return;
         }
         const newFiles = [...imageFiles, ...files];
@@ -203,11 +205,11 @@ const AddProduct = () => {
                 });
             }
 
-            alert('Tạo sản phẩm thành công!');
+            toast.success('Tạo sản phẩm thành công!');
             navigate('/seller');
         } catch (error) {
             console.error("Error creating product:", error);
-            alert('Tạo sản phẩm thất bại: ' + (error.response?.data?.message || error.message));
+            toast.error('Tạo sản phẩm thất bại: ' + (error.response?.data?.message || error.message));
         } finally {
             setLoading(false);
         }
