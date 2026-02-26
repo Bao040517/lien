@@ -57,11 +57,12 @@ public class Product {
 
     private String violationReason; // Lý do vi phạm / từ chối
 
-    // Backward-compatible getters cho JSON serialization
+    @Transient
     public boolean isBanned() {
         return "BANNED".equals(productStatus);
     }
 
+    @Transient
     public boolean isApproved() {
         return "APPROVED".equals(productStatus);
     }
