@@ -154,4 +154,27 @@ public class AuthService {
         return UserResponse.fromUser(user);
     }
 
+    /**
+     * Đổi mật khẩu
+     * 
+     * @throws AppException USER_NOT_FOUND, WRONG_PASSWORD, PASSWORD_TOO_SHORT
+     */
+    @Transactional
+    public void changePassword(Long userId, String currentPassword, String newPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new AppException(ErrorCode.WRONG_PASSWORD);
+        }
+
+        if (newPassword == null || newPassword.length() < 8) {
+            throw new AppException(ErrorCode.PASSWORD_TOO_SHORT);
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        log.info("User {} đã đổi mật khẩu thành công", user.getUsername());
+    }
+
 }

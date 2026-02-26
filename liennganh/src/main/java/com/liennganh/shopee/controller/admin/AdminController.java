@@ -71,6 +71,17 @@ public class AdminController {
         return ApiResponse.success(user, "Mở khóa người dùng thành công");
     }
 
+    /**
+     * Reset mật khẩu người dùng bằng mật khẩu ngẫu nhiên
+     * Quyền hạn: ADMIN
+     * 
+     */
+    @PutMapping("/users/{id}/reset-password")
+    public ApiResponse<String> resetUserPassword(@PathVariable Long id) {
+        String newPassword = adminService.resetUserPassword(id);
+        return ApiResponse.success(newPassword, "Reset mật khẩu thành công");
+    }
+
     // ========== QUẢN LÝ NGƯỜI BÁN (SELLER MANAGEMENT) ==========
 
     /**

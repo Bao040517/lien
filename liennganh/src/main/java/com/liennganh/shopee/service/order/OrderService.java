@@ -51,6 +51,7 @@ public class OrderService {
      * @throws AppException USER_NOT_FOUND, ADDRESS_NOT_FOUND, PRODUCT_NOT_FOUND,
      *                      PRODUCT_OUT_OF_STOCK
      */
+    @Transactional
     public Order createOrder(Long userId, List<OrderItem> items, String voucherCode, Long addressId,
             String paymentMethod) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -89,6 +90,10 @@ public class OrderService {
             Product product = productRepository.findById(item.getProduct().getId())
                     .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
+            if (!"APPROVED".equals(product.getProductStatus())) {
+                throw new AppException(ErrorCode.PRODUCT_NOT_AVAILABLE);
+            }
+
             // Kiểm tra tồn kho
             if (product.getStockQuantity() < item.getQuantity()) {
                 throw new AppException(ErrorCode.PRODUCT_OUT_OF_STOCK);
@@ -96,6 +101,7 @@ public class OrderService {
 
             // Trừ tồn kho
             product.setStockQuantity(product.getStockQuantity() - item.getQuantity());
+            product.setSold(product.getSold() + item.getQuantity());
             productRepository.save(product);
 
             // Set giá và thông tin cho order item

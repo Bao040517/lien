@@ -20,18 +20,43 @@ public class ProductStatusMigration {
     public void migrate() {
         // Bước 1: Migrate dữ liệu (nếu cột cũ còn tồn tại)
         try {
-            Boolean columnExists = jdbcTemplate.queryForObject(
+            Boolean isBannedExists = jdbcTemplate.queryForObject(
                     "SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'products' AND column_name = 'is_banned')",
                     Boolean.class);
 
-            if (Boolean.TRUE.equals(columnExists)) {
-                jdbcTemplate.execute(
-                        "UPDATE products SET product_status = CASE " +
-                                "WHEN is_banned = true THEN 'BANNED' " +
-                                "WHEN is_approved = true THEN 'APPROVED' " +
-                                "ELSE 'PENDING' END " +
-                                "WHERE product_status IS NULL OR product_status = 'PENDING'");
-                System.out.println("[Migration] product_status migrated from is_banned/is_approved");
+            if (Boolean.TRUE.equals(isBannedExists)) {
+                Boolean productStatusExists = jdbcTemplate.queryForObject(
+                        "SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'products' AND column_name = 'product_status')",
+                        Boolean.class);
+
+                if (!Boolean.TRUE.equals(productStatusExists)) {
+                    jdbcTemplate
+                            .execute("ALTER TABLE products ADD COLUMN product_status varchar(20) DEFAULT 'PENDING'");
+                }
+
+                Boolean isApprovedExists = jdbcTemplate.queryForObject(
+                        "SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'products' AND column_name = 'is_approved')",
+                        Boolean.class);
+
+                if (Boolean.TRUE.equals(isApprovedExists)) {
+                    jdbcTemplate.execute(
+                            "UPDATE products SET product_status = CASE " +
+                                    "WHEN is_banned = true THEN 'BANNED' " +
+                                    "WHEN is_approved = true THEN 'APPROVED' " +
+                                    "ELSE 'PENDING' END " +
+                                    "WHERE product_status IS NULL OR product_status = 'PENDING'");
+                    jdbcTemplate.execute("ALTER TABLE products DROP COLUMN is_approved");
+                    System.out.println("[Migration] Dropped is_approved column");
+                } else {
+                    jdbcTemplate.execute(
+                            "UPDATE products SET product_status = CASE " +
+                                    "WHEN is_banned = true THEN 'BANNED' " +
+                                    "ELSE 'PENDING' END " +
+                                    "WHERE product_status IS NULL OR product_status = 'PENDING'");
+                }
+
+                jdbcTemplate.execute("ALTER TABLE products DROP COLUMN is_banned");
+                System.out.println("[Migration] Dropped is_banned column, product_status is now the source of truth");
             }
         } catch (Exception e) {
             System.out.println("[Migration] Data migration skipped: " + e.getMessage());

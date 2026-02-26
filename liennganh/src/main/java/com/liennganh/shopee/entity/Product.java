@@ -70,10 +70,12 @@ public class Product {
     private LocalDateTime deletedAt;
 
     // Backward-compatible getters cho JSON serialization
+    @Transient
     public boolean isBanned() {
         return "BANNED".equals(productStatus);
     }
 
+    @Transient
     public boolean isApproved() {
         return "APPROVED".equals(productStatus);
     }

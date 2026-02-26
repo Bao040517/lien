@@ -68,13 +68,26 @@ public class CartService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        // Ki?m tra xem s?n ph?m d� c� trong gi? h�ng chua
+        if (!"APPROVED".equals(product.getProductStatus())) {
+            throw new AppException(ErrorCode.PRODUCT_NOT_AVAILABLE);
+        }
+
+        // Tính tổng số lượng sau khi thêm (bao gồm số đã có trong giỏ)
         Optional<CartItem> existingItem = cart.getItems().stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst();
 
+        int totalQuantity = quantity;
         if (existingItem.isPresent()) {
-            existingItem.get().setQuantity(existingItem.get().getQuantity() + quantity);
+            totalQuantity += existingItem.get().getQuantity();
+        }
+
+        if (product.getStockQuantity() < totalQuantity) {
+            throw new AppException(ErrorCode.QUANTITY_EXCEEDS_STOCK);
+        }
+
+        if (existingItem.isPresent()) {
+            existingItem.get().setQuantity(totalQuantity);
         } else {
             CartItem newItem = new CartItem();
             newItem.setCart(cart);
