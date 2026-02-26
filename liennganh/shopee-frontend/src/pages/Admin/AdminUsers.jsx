@@ -186,8 +186,8 @@ const AdminUsers = () => {
                                     <th className="px-6 py-3">ID</th>
                                     <th className="px-6 py-3">Người dùng</th>
                                     <th className="px-6 py-3">Email</th>
-                                    <th className="px-6 py-3">Vai trò</th>
-                                    <th className="px-6 py-3">Trạng thái</th>
+                                    <th className="px-6 py-3 text-center">Vai trò</th>
+                                    <th className="px-6 py-3 text-center">Trạng thái</th>
                                     <th className="px-6 py-3">Ngày tạo</th>
                                     <th className="px-6 py-3 text-center">Thao tác</th>
                                 </tr>
@@ -222,38 +222,38 @@ const AdminUsers = () => {
                                             </td>
                                             <td className="px-6 py-3 text-sm text-gray-500">{user.email}</td>
                                             <td className="px-6 py-3">
-                                                <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${roleColors[user.role] || 'bg-gray-100 text-gray-600'}`}>
+                                                <span className={`px-2.5 py-1 text-xs font-medium rounded-full whitespace-nowrap ${roleColors[user.role] || 'bg-gray-100 text-gray-600'}`}>
                                                     {roleLabels[user.role] || user.role}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-3">
-                                                <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${isLocked ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
+                                                <span className={`px-2.5 py-1 text-xs font-medium rounded-full whitespace-nowrap ${isLocked ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
                                                     {isLocked ? '🔒 Đã khoá' : '✅ Hoạt động'}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-3 text-sm text-gray-400">
                                                 {user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : '—'}
                                             </td>
-                                            <td className="px-6 py-3 text-center space-x-1">
+                                            <td className="px-6 py-3 text-center">
                                                 {user.role !== 'ADMIN' && (
-                                                    <>
+                                                    <div className="flex items-center justify-center gap-1 flex-nowrap">
                                                         {isLocked ? (
                                                             <button onClick={() => handleUnlock(user.id)}
-                                                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white text-xs rounded-lg hover:bg-green-600 transition">
+                                                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white text-xs rounded-lg hover:bg-green-600 transition whitespace-nowrap">
                                                                 <Unlock className="w-3 h-3" /> Mở khoá
                                                             </button>
                                                         ) : (
                                                             <button onClick={() => handleLock(user.id)}
-                                                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600 transition">
-                                                                <Lock className="w-3 h-3" /> Khoá
+                                                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600 transition whitespace-nowrap">
+                                                                <Lock className="w-3 h-3" /> Tạm khoá
                                                             </button>
                                                         )}
                                                         <button onClick={() => handleResetPassword(user.id)}
-                                                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-amber-500 text-white text-xs rounded-lg hover:bg-amber-600 transition"
+                                                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-amber-500 text-white text-xs rounded-lg hover:bg-amber-600 transition whitespace-nowrap"
                                                             title="Reset mật khẩu về 123456">
                                                             <KeyRound className="w-3 h-3" /> Reset MK
                                                         </button>
-                                                    </>
+                                                    </div>
                                                 )}
                                             </td>
                                         </tr>

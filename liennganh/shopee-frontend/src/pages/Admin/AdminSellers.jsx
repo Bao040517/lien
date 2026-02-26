@@ -226,42 +226,44 @@ const AdminSellers = () => {
                                                     {status.label}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-3 text-center space-x-1">
-                                                {seller.sellerStatus === 'PENDING' && (
-                                                    <>
+                                            <td className="px-6 py-3 text-center">
+                                                <div className="flex items-center justify-center gap-1 flex-nowrap">
+                                                    {seller.sellerStatus === 'PENDING' && (
+                                                        <>
+                                                            <button onClick={() => handleActionClick(seller.id, 'approve')}
+                                                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white text-xs rounded-lg hover:bg-green-600 transition whitespace-nowrap">
+                                                                <Check className="w-3 h-3" /> Duyệt
+                                                            </button>
+                                                            <button onClick={() => handleActionClick(seller.id, 'reject')}
+                                                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600 transition whitespace-nowrap">
+                                                                <X className="w-3 h-3" /> Từ chối
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                    {seller.sellerStatus === 'APPROVED' && (
+                                                        <button onClick={() => handleActionClick(seller.id, 'suspend')}
+                                                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600 transition whitespace-nowrap">
+                                                            <Ban className="w-3 h-3" /> Tạm khoá
+                                                        </button>
+                                                    )}
+                                                    {seller.sellerStatus === 'SUSPENDED' && (
                                                         <button onClick={() => handleActionClick(seller.id, 'approve')}
-                                                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white text-xs rounded-lg hover:bg-green-600 transition">
-                                                            <Check className="w-3 h-3" /> Duyệt
+                                                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white text-xs rounded-lg hover:bg-green-600 transition whitespace-nowrap">
+                                                            <Check className="w-3 h-3" /> Mở khoá
                                                         </button>
-                                                        <button onClick={() => handleActionClick(seller.id, 'reject')}
-                                                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600 transition">
-                                                            <X className="w-3 h-3" /> Từ chối
+                                                    )}
+                                                    {seller.sellerStatus === 'REJECTED' && (
+                                                        <button onClick={() => handleActionClick(seller.id, 'approve')}
+                                                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white text-xs rounded-lg hover:bg-green-600 transition whitespace-nowrap">
+                                                            <Check className="w-3 h-3" /> Duyệt lại
                                                         </button>
-                                                    </>
-                                                )}
-                                                {seller.sellerStatus === 'APPROVED' && (
-                                                    <button onClick={() => handleActionClick(seller.id, 'suspend')}
-                                                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-500 text-white text-xs rounded-lg hover:bg-gray-600 transition">
-                                                        <Ban className="w-3 h-3" /> Tạm khoá
+                                                    )}
+                                                    <button onClick={() => handleActionClick(seller.id, 'reset-password')}
+                                                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-amber-500 text-white text-xs rounded-lg hover:bg-amber-600 transition whitespace-nowrap"
+                                                        title="Reset mật khẩu về 123456">
+                                                        <KeyRound className="w-3 h-3" /> Reset MK
                                                     </button>
-                                                )}
-                                                {seller.sellerStatus === 'SUSPENDED' && (
-                                                    <button onClick={() => handleActionClick(seller.id, 'approve')}
-                                                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white text-xs rounded-lg hover:bg-green-600 transition">
-                                                        <Check className="w-3 h-3" /> Mở khoá
-                                                    </button>
-                                                )}
-                                                {seller.sellerStatus === 'REJECTED' && (
-                                                    <button onClick={() => handleActionClick(seller.id, 'approve')}
-                                                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white text-xs rounded-lg hover:bg-green-600 transition">
-                                                        <Check className="w-3 h-3" /> Duyệt lại
-                                                    </button>
-                                                )}
-                                                <button onClick={() => handleActionClick(seller.id, 'reset-password')}
-                                                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-amber-500 text-white text-xs rounded-lg hover:bg-amber-600 transition"
-                                                    title="Reset mật khẩu về 123456">
-                                                    <KeyRound className="w-3 h-3" /> Reset MK
-                                                </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     );
