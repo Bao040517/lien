@@ -2,9 +2,12 @@ package com.liennganh.shopee.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.BatchSize;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -13,6 +16,8 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "products")
+@SQLDelete(sql = "UPDATE products SET deleted = true, deleted_at = NOW() WHERE id = ?")
+@Where(clause = "deleted = false")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,6 +62,13 @@ public class Product {
 
     private String violationReason; // Lý do vi phạm / từ chối
 
+    // Soft Delete
+    @Column(name = "deleted", columnDefinition = "boolean default false")
+    private Boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
     // Backward-compatible getters cho JSON serialization
     public boolean isBanned() {
         return "BANNED".equals(productStatus);
@@ -67,13 +79,17 @@ public class Product {
     }
 
     public void setBanned(boolean banned) {
-        if (banned) this.productStatus = "BANNED";
-        else if ("BANNED".equals(this.productStatus)) this.productStatus = "APPROVED";
+        if (banned)
+            this.productStatus = "BANNED";
+        else if ("BANNED".equals(this.productStatus))
+            this.productStatus = "APPROVED";
     }
 
     public void setApproved(boolean approved) {
-        if (approved) this.productStatus = "APPROVED";
-        else if ("APPROVED".equals(this.productStatus)) this.productStatus = "PENDING";
+        if (approved)
+            this.productStatus = "APPROVED";
+        else if ("APPROVED".equals(this.productStatus))
+            this.productStatus = "PENDING";
     }
 
     public String getViolationReason() {

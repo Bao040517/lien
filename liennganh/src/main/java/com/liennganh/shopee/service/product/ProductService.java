@@ -155,11 +155,16 @@ public class ProductService {
                 .and(ProductSpecification.isApprovedStatus());
 
         Sort sort = Sort.unsorted();
-        if ("price_asc".equals(sortBy)) sort = Sort.by("price").ascending();
-        else if ("price_desc".equals(sortBy)) sort = Sort.by("price").descending();
-        else if ("newest".equals(sortBy)) sort = Sort.by("id").descending();
-        else if ("best_selling".equals(sortBy)) sort = Sort.by("reviewCount").descending();
-        else if ("rating_desc".equals(sortBy)) sort = Sort.by("averageRating").descending();
+        if ("price_asc".equals(sortBy))
+            sort = Sort.by("price").ascending();
+        else if ("price_desc".equals(sortBy))
+            sort = Sort.by("price").descending();
+        else if ("newest".equals(sortBy))
+            sort = Sort.by("id").descending();
+        else if ("best_selling".equals(sortBy))
+            sort = Sort.by("reviewCount").descending();
+        else if ("rating_desc".equals(sortBy))
+            sort = Sort.by("averageRating").descending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
         return productRepository.findAll(spec, pageable);
@@ -249,21 +254,7 @@ public class ProductService {
     @org.springframework.transaction.annotation.Transactional
     public void deleteProduct(Long id) {
         Product product = getProductById(id);
-
-        com.liennganh.shopee.repository.product.ReviewRepository reviewRepository = context
-                .getBean(com.liennganh.shopee.repository.product.ReviewRepository.class);
-        reviewRepository.deleteByProductId(id);
-
-        com.liennganh.shopee.repository.order.OrderItemRepository orderItemRepository = context
-                .getBean(com.liennganh.shopee.repository.order.OrderItemRepository.class);
-        orderItemRepository.deleteByProductId(id);
-
-        jakarta.persistence.EntityManager em = context.getBean(jakarta.persistence.EntityManager.class);
-        em.createNativeQuery("DELETE FROM cart_items WHERE product_id = :pid")
-                .setParameter("pid", id).executeUpdate();
-        em.createNativeQuery("DELETE FROM flash_sale_items WHERE product_id = :pid")
-                .setParameter("pid", id).executeUpdate();
-
+        // Soft delete: @SQLDelete trên Product sẽ tự UPDATE deleted = true
         productRepository.delete(product);
     }
 
