@@ -39,6 +39,9 @@ public class SecurityConfig {
                                 "/api/products/**", // Xem danh sách sản phẩm
                                 "/api/categories/**", // Xem danh mục
                                 "/api/reviews/**", // Xem đánh giá
+                                "/api/shops/**", // Xem/tìm kiếm shop (my-shop vẫn được bảo vệ bởi @PreAuthorize)
+                                "/api/flash-sales/**", // Xem Flash Sale
+                                "/api/sliders/**", // Xem banner slider
                                 "/seed-db/**", // Cho phép truy cập seeder không cần login
                                 "/uploads/**" // Cho phép tải ảnh công khai
                         ).permitAll()

@@ -38,6 +38,11 @@ public class AuthService {
     public UserResponse register(RegisterRequest request) {
         log.info("Đang đăng ký user mới: {}", request.getUsername());
 
+        // Validate password >= 8 ky tu
+        if (request.getPassword() == null || request.getPassword().length() < 8) {
+            throw new AppException(ErrorCode.PASSWORD_TOO_SHORT);
+        }
+
         // Ki?m tra username d� t?n t?i chua
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USERNAME_ALREADY_EXISTS);
@@ -70,6 +75,11 @@ public class AuthService {
     @Transactional
     public UserResponse registerSeller(RegisterRequest request) {
         log.info("Đang đăng ký seller mới: {}", request.getUsername());
+
+        // Validate password >= 8 ký tự
+        if (request.getPassword() == null || request.getPassword().length() < 8) {
+            throw new AppException(ErrorCode.PASSWORD_TOO_SHORT);
+        }
 
         // Kiểm tra username
         if (userRepository.existsByUsername(request.getUsername())) {
