@@ -43,8 +43,9 @@ public class SecurityConfig {
                                 "/api/flash-sales/**", // Xem Flash Sale
                                 "/api/sliders/**", // Xem banner slider
                                 "/seed-db/**", // Cho phép truy cập seeder không cần login
-                                "/uploads/**" // Cho phép tải ảnh công khai
-                        ).permitAll()
+                                "/uploads/**", // Cho phép tải ảnh công khai
+                                "/api/payment/**")
+                        .permitAll()
 
                         // Các requests còn lại bắt buộc phải đăng nhập (có token hợp lệ)
                         .anyRequest().authenticated())
