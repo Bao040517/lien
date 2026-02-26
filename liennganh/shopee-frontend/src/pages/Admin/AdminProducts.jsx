@@ -6,6 +6,7 @@ import ConfirmModal from '../../components/Admin/ConfirmModal';
 import PromptModal from '../../components/Admin/PromptModal';
 import BadWordWarning from '../../components/BadWordWarning';
 import { getImageUrl } from '../../utils';
+import { useToast } from '../../context/ToastContext';
 
 const TABS = [
     { value: 'ALL', label: 'Tất cả' },
@@ -24,6 +25,7 @@ const STATUS_STYLES = {
 
 const AdminProducts = () => {
     const [products, setProducts] = useState([]);
+    const toast = useToast();
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
@@ -70,7 +72,7 @@ const AdminProducts = () => {
         try {
             await api.delete(`/products/${id}`);
             setProducts(prev => prev.filter(p => p.id !== id));
-        } catch { alert('Xoá thất bại!'); }
+        } catch { toast.error('Xoá thất bại!'); }
         setConfirmModal(prev => ({ ...prev, isOpen: false }));
     };
 
@@ -93,7 +95,7 @@ const AdminProducts = () => {
             const updated = res.data.data;
             setProducts(prev => prev.map(p => p.id === productId ? { ...p, ...updated } : p));
         } catch (e) {
-            alert('Lỗi: ' + (e.response?.data?.message || e.message));
+            toast.error('Lỗi: ' + (e.response?.data?.message || e.message));
         }
     };
 
@@ -104,7 +106,7 @@ const AdminProducts = () => {
             const updated = res.data.data;
             setProducts(prev => prev.map(p => p.id === targetId ? { ...p, ...updated } : p));
         } catch (e) {
-            alert('Lỗi: ' + (e.response?.data?.message || e.message));
+            toast.error('Lỗi: ' + (e.response?.data?.message || e.message));
         }
         setPromptModal(prev => ({ ...prev, isOpen: false }));
     };

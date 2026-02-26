@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../api';
 import { Tag, Plus, Trash2, Calendar, DollarSign, Percent } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
 
 const AdminVouchers = () => {
     const [vouchers, setVouchers] = useState([]);
+    const toast = useToast();
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
 
@@ -38,7 +40,7 @@ const AdminVouchers = () => {
         try {
             // Validate
             if (!form.code || !form.discountValue || !form.expiryDate) {
-                alert('Vui lòng điền đầy đủ thông tin bắt buộc');
+                toast.warning('Vui lòng điền đầy đủ thông tin bắt buộc');
                 return;
             }
 
@@ -58,7 +60,7 @@ const AdminVouchers = () => {
             };
 
             const res = await api.post('/vouchers', payload);
-            alert('Tạo voucher thành công!');
+            toast.info('Tạo voucher thành công!');
             setVouchers([...vouchers, res.data.data || res.data]);
             setShowModal(false);
             setForm({
@@ -66,7 +68,7 @@ const AdminVouchers = () => {
             });
         } catch (error) {
             console.error(error);
-            alert('Tạo voucher thất bại: ' + (error.response?.data?.message || error.message));
+            toast.info('Tạo voucher thất bại: ' + (error.response?.data?.message || error.message));
         }
     };
 

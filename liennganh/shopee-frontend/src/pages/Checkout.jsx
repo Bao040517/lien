@@ -5,10 +5,12 @@ import { useCart } from '../context/CartContext';
 import api from '../api';
 import { MapPin, CreditCard, Store, Truck, Tag, Coins, X, ChevronRight } from 'lucide-react';
 import Breadcrumb from '../components/Breadcrumb';
+import { useToast } from '../context/ToastContext';
 
 const Checkout = () => {
     const { state } = useLocation();
     const navigate = useNavigate();
+    const toast = useToast();
     const { user } = useAuth();
     const { refreshCart } = useCart();
 
@@ -103,7 +105,7 @@ const Checkout = () => {
 
     useEffect(() => {
         if (!state || !state.items || state.items.length === 0) {
-            alert("Không có sản phẩm nào để thanh toán.");
+            toast.info("Không có sản phẩm nào để thanh toán.");
             navigate('/');
             return;
         }
@@ -158,11 +160,11 @@ const Checkout = () => {
     };
 
     const handleSaveAddress = async () => {
-        if (!addressForm.phoneNumber.trim()) { alert("Vui lòng nhập số điện thoại."); return; }
-        if (!addressForm.city.trim()) { alert("Vui lòng nhập Tỉnh/Thành phố."); return; }
-        if (!addressForm.district.trim()) { alert("Vui lòng nhập Quận/Huyện."); return; }
-        if (!addressForm.ward.trim()) { alert("Vui lòng nhập Phường/Xã."); return; }
-        if (!addressForm.street.trim()) { alert("Vui lòng nhập địa chỉ cụ thể."); return; }
+        if (!addressForm.phoneNumber.trim()) { toast.warning("Vui lòng nhập số điện thoại."); return; }
+        if (!addressForm.city.trim()) { toast.warning("Vui lòng nhập Tỉnh/Thành phố."); return; }
+        if (!addressForm.district.trim()) { toast.warning("Vui lòng nhập Quận/Huyện."); return; }
+        if (!addressForm.ward.trim()) { toast.warning("Vui lòng nhập Phường/Xã."); return; }
+        if (!addressForm.street.trim()) { toast.warning("Vui lòng nhập địa chỉ cụ thể."); return; }
 
         setSavingAddress(true);
         try {
@@ -187,7 +189,7 @@ const Checkout = () => {
             setWards([]);
         } catch (error) {
             console.error("Error saving address:", error);
-            alert("Lưu địa chỉ thất bại: " + (error.response?.data?.message || error.message));
+            toast.info("Lưu địa chỉ thất bại: " + (error.response?.data?.message || error.message));
         } finally {
             setSavingAddress(false);
         }
@@ -228,12 +230,12 @@ const Checkout = () => {
                 [shopId]: { ...prev[shopId], discount: Number(res.data.data), applied: true }
             }));
 
-            alert(`Áp dụng thành công! Giảm: ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(res.data.data)}`);
+            toast.info(`Áp dụng thành công! Giảm: ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(res.data.data)}`);
 
         } catch (error) {
             console.error(error);
             const msg = error.response?.data?.message || error.message || "Mã giảm giá không hợp lệ";
-            alert(msg);
+            toast.info(msg);
             setShopVouchers(prev => ({
                 ...prev,
                 [shopId]: { ...prev[shopId], discount: 0, applied: false }
@@ -306,14 +308,14 @@ const Checkout = () => {
 
             const failures = results.filter(r => r.status === 'error');
             if (failures.length === 0) {
-                alert(`Đặt hàng thành công! Bạn đã tạo ${results.length} đơn hàng.`);
+                toast.info(`Đặt hàng thành công! Bạn đã tạo ${results.length} đơn hàng.`);
                 refreshCart();
                 navigate('/');
             } else {
                 if (results.length === failures.length) {
-                    alert("Đặt hàng thất bại. Vui lòng thử lại.");
+                    toast.warning("Đặt hàng thất bại. Vui lòng thử lại.");
                 } else {
-                    alert(`Đặt hàng hoàn tất một phần. ${results.length - failures.length} đơn thành công, ${failures.length} đơn thất bại.`);
+                    toast.info(`Đặt hàng hoàn tất một phần. ${results.length - failures.length} đơn thành công, ${failures.length} đơn thất bại.`);
                     refreshCart();
                     navigate('/');
                 }
@@ -321,7 +323,7 @@ const Checkout = () => {
 
         } catch (error) {
             console.error("Order error:", error);
-            alert("Lỗi hệ thống khi đặt hàng.");
+            toast.info("Lỗi hệ thống khi đặt hàng.");
         } finally {
             setLoading(false);
         }

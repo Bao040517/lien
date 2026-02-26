@@ -3,6 +3,7 @@ import api from '../../api';
 import { UserCheck, Search, Check, X, Ban, Store, Sparkles } from 'lucide-react';
 import Pagination from '../../components/Pagination';
 import ConfirmModal from '../../components/Admin/ConfirmModal';
+import { useToast } from '../../context/ToastContext';
 
 const statusConfig = {
     PENDING: { label: 'Chờ duyệt', color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
@@ -13,6 +14,7 @@ const statusConfig = {
 
 const AdminSellers = () => {
     const [sellers, setSellers] = useState([]);
+    const toast = useToast();
     const [pending, setPending] = useState([]);
     const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState('ALL');
@@ -90,7 +92,7 @@ const AdminSellers = () => {
                 s.id === id ? { ...s, sellerStatus: newStatus } : s
             ));
             setPending(prev => prev.filter(s => s.id !== id));
-        } catch (err) { alert('Thao tác thất bại: ' + (err.response?.data?.message || err.message)); }
+        } catch (err) { toast.error('Thao tác thất bại: ' + (err.response?.data?.message || err.message)); }
         setConfirmModal({ ...confirmModal, isOpen: false });
     };
 

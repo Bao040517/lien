@@ -3,6 +3,7 @@ import api from '../../api';
 import { Users, Search, Lock, Unlock, Shield, Sparkles } from 'lucide-react';
 import Pagination from '../../components/Pagination';
 import ConfirmModal from '../../components/Admin/ConfirmModal';
+import { useToast } from '../../context/ToastContext';
 
 const roleLabels = { USER: 'Người dùng', SELLER: 'Người bán', ADMIN: 'Quản trị viên' };
 const roleColors = {
@@ -13,6 +14,7 @@ const roleColors = {
 
 const AdminUsers = () => {
     const [users, setUsers] = useState([]);
+    const toast = useToast();
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [roleFilter, setRoleFilter] = useState('ALL');
@@ -66,7 +68,7 @@ const AdminUsers = () => {
         try {
             await api.put(`/admin/users/${id}/lock`);
             setUsers(prev => prev.map(u => u.id === id ? { ...u, isLocked: true, locked: true } : u));
-        } catch { alert('Khoá thất bại!'); }
+        } catch { toast.info('Khoá thất bại!'); }
         setConfirmModal({ ...confirmModal, isOpen: false });
     };
 
@@ -85,7 +87,7 @@ const AdminUsers = () => {
         try {
             await api.put(`/admin/users/${id}/unlock`);
             setUsers(prev => prev.map(u => u.id === id ? { ...u, isLocked: false, locked: false } : u));
-        } catch { alert('Mở khoá thất bại!'); }
+        } catch { toast.info('Mở khoá thất bại!'); }
         setConfirmModal({ ...confirmModal, isOpen: false });
     };
 
