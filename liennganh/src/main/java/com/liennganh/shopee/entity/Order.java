@@ -65,7 +65,8 @@ public class Order {
 
     public enum PaymentMethod {
         COD, // Thanh toán khi nhận hàng
-        BANKING // Chuyển khoản ngân hàng
+        BANKING, // Chuyển khoản ngân hàng
+        VNPAY // Thanh toán qua VNPay
     }
 
     public Long getId() {

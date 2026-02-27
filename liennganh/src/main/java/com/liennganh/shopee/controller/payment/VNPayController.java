@@ -1,6 +1,8 @@
 package com.liennganh.shopee.controller.payment;
 
 import com.liennganh.shopee.config.VNPayConfig;
+import com.liennganh.shopee.entity.Order;
+import com.liennganh.shopee.service.order.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,9 @@ import java.util.*;
 public class VNPayController {
     @Autowired
     private VNPayConfig vnPayConfig;
+
+    @Autowired
+    private OrderService orderService;
 
     @GetMapping("/create")
     public Map<String, String> createPayment(@RequestParam long orderId, @RequestParam long amount,
@@ -39,89 +44,76 @@ public class VNPayController {
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
         params.put("vnp_CreateDate", df.format(cal.getTime()));
 
-        cal.add(Calendar.MINUTE, 15); // Hết hạn sau 15 phút
+        cal.add(Calendar.MINUTE, 15);
         params.put("vnp_ExpireDate", df.format(cal.getTime()));
 
         params.put("vnp_IpAddr", request.getRemoteAddr());
 
-        // === BƯỚC QUAN TRỌNG: Tạo chữ ký ===
-        // 1. Sort tên params theo A→Z
+        // === Tạo chữ ký ===
         List<String> fieldNames = new ArrayList<>(params.keySet());
         Collections.sort(fieldNames);
 
-        // 2. Ghép thành query string (để ký + để làm URL)
-        StringBuilder hashData = new StringBuilder(); // Chuỗi để ký
-        StringBuilder query = new StringBuilder(); // Chuỗi URL
+        StringBuilder hashData = new StringBuilder();
+        StringBuilder query = new StringBuilder();
 
         for (String fieldName : fieldNames) {
             String value = params.get(fieldName);
             if (value != null && !value.isEmpty()) {
-                // hashData: dùng để tạo chữ ký
                 hashData.append(fieldName).append('=')
                         .append(URLEncoder.encode(value, StandardCharsets.UTF_8));
-
-                // query: dùng để ghép URL
                 query.append(URLEncoder.encode(fieldName, StandardCharsets.UTF_8))
                         .append('=')
                         .append(URLEncoder.encode(value, StandardCharsets.UTF_8));
-
                 query.append('&');
                 hashData.append('&');
             }
         }
 
-        // Xóa dấu & cuối cùng
         if (hashData.length() > 0)
             hashData.setLength(hashData.length() - 1);
         if (query.length() > 0)
             query.setLength(query.length() - 1);
 
-        // 3. Ký HMAC
         String secureHash = vnPayConfig.hmacSHA512(hashData.toString());
-
-        // 4. Ghép URL cuối cùng
         String paymentUrl = vnPayConfig.payUrl + "?" + query + "&vnp_SecureHash=" + secureHash;
 
-        // 5. Trả về cho frontend
         Map<String, String> result = new HashMap<>();
         result.put("paymentUrl", paymentUrl);
         return result;
     }
 
     // === IPN URL: VNPay gọi server→server để thông báo kết quả ===
-    // Tại sao cần? Vì ReturnUrl chỉ redirect trình duyệt (có thể user tắt tab)
-    // IPN đảm bảo server bạn LUÔN nhận được kết quả
     @GetMapping("/vnpay-ipn")
     public Map<String, String> vnpayIPN(@RequestParam Map<String, String> params) {
         Map<String, String> response = new HashMap<>();
 
         try {
-            // Lấy SecureHash VNPay gửi về
             String vnpSecureHash = params.get("vnp_SecureHash");
-
-            // Xóa hash ra khỏi params trước khi verify (vì khi ký không có hash)
             params.remove("vnp_SecureHash");
             params.remove("vnp_SecureHashType");
 
-            // Tự tính lại hash từ các params còn lại
             String signValue = vnPayConfig.hashAllFields(params);
 
             if (signValue.equals(vnpSecureHash)) {
-                // ✅ Checksum hợp lệ → dữ liệu không bị sửa
                 String responseCode = params.get("vnp_ResponseCode");
+                String txnRef = params.get("vnp_TxnRef");
 
                 if ("00".equals(responseCode)) {
-                    // Giao dịch thành công → Cập nhật DB
-                    // TODO: orderService.updatePaymentStatus(orderId, "PAID")
+                    // Giao dịch thành công → Cập nhật trạng thái đơn hàng
+                    try {
+                        Long orderId = Long.parseLong(txnRef);
+                        orderService.updateStatus(orderId, Order.OrderStatus.PENDING);
+                        System.out.println("[VNPay IPN] Order " + orderId + " paid successfully");
+                    } catch (Exception e) {
+                        System.out.println("[VNPay IPN] Error updating order: " + e.getMessage());
+                    }
                     response.put("RspCode", "00");
                     response.put("Message", "Confirm Success");
                 } else {
-                    // Giao dịch thất bại
                     response.put("RspCode", "00");
                     response.put("Message", "Confirm Success");
                 }
             } else {
-                // ❌ Checksum không khớp → Có thể bị hack
                 response.put("RspCode", "97");
                 response.put("Message", "Invalid Checksum");
             }
@@ -134,8 +126,6 @@ public class VNPayController {
     }
 
     // === Return URL: Redirect trình duyệt về sau khi thanh toán ===
-    // CHÚ Ý: KHÔNG cập nhật DB ở đây (IPN đã làm rồi)
-    // Chỉ verify checksum + trả kết quả cho frontend hiển thị
     @GetMapping("/vnpay-return")
     public Map<String, String> vnpayReturn(@RequestParam Map<String, String> params) {
         String vnpSecureHash = params.get("vnp_SecureHash");
@@ -151,11 +141,13 @@ public class VNPayController {
             response.put("message", "00".equals(responseCode)
                     ? "Thanh toan thanh cong"
                     : "Thanh toan that bai");
+            response.put("orderId", params.get("vnp_TxnRef"));
+            response.put("amount", params.get("vnp_Amount"));
+            response.put("transactionNo", params.get("vnp_TransactionNo"));
         } else {
             response.put("code", "97");
             response.put("message", "Chu ky khong hop le");
         }
         return response;
     }
-
 }

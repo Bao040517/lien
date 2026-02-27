@@ -33,7 +33,7 @@ jwt:
 server:
   port: 8080
 vnpay:
-  tmn-code: DEMO_TMN
-  hash-secret: DEMO_SECRET
+  tmn-code: W1SNCKRG
+  hash-secret: 0W7SYHV64WX4THM4TZ4UY803VP441GAK
   pay-url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
   return-url: http://localhost:3000/payment/result
