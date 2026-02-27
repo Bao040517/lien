@@ -488,7 +488,7 @@ CREATE TABLE public.orders (
     shipping_address_id bigint,
     user_id bigint NOT NULL,
     voucher_id bigint,
-    CONSTRAINT orders_payment_method_check CHECK (((payment_method)::text = ANY ((ARRAY['COD'::character varying, 'BANKING'::character varying])::text[]))),
+    CONSTRAINT orders_payment_method_check CHECK (((payment_method)::text = ANY ((ARRAY['COD'::character varying, 'BANKING'::character varying, 'VNPAY'::character varying])::text[]))),
     CONSTRAINT orders_status_check CHECK (((status)::text = ANY ((ARRAY['PENDING'::character varying, 'SHIPPING'::character varying, 'DELIVERING'::character varying, 'DELIVERED'::character varying, 'CANCELLED'::character varying])::text[])))
 );
 

@@ -40,8 +40,9 @@ public class VNPayController {
         params.put("vnp_Amount", String.valueOf(amount * 100));
 
         // === NHÓM 3: Tự tạo ===
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+        df.setTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
         params.put("vnp_CreateDate", df.format(cal.getTime()));
 
         cal.add(Calendar.MINUTE, 15);
@@ -59,8 +60,7 @@ public class VNPayController {
         for (String fieldName : fieldNames) {
             String value = params.get(fieldName);
             if (value != null && !value.isEmpty()) {
-                hashData.append(fieldName).append('=')
-                        .append(URLEncoder.encode(value, StandardCharsets.UTF_8));
+                hashData.append(fieldName).append('=').append(value);
                 query.append(URLEncoder.encode(fieldName, StandardCharsets.UTF_8))
                         .append('=')
                         .append(URLEncoder.encode(value, StandardCharsets.UTF_8));
