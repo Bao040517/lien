@@ -18,12 +18,13 @@ public class VNPayConfig {
     @Value("${vnpay.return-url}")
     public String returnUrl;
 
-    public String hmacSHA512(String data) {
+    // Đúng theo VNPay demo: hmacSHA512(key, data) - 2 tham số
+    public static String hmacSHA512(String key, String data) {
         try {
             Mac hmac = Mac.getInstance("HmacSHA512");
-            SecretKeySpec key = new SecretKeySpec(
-                    hashSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA512");
-            hmac.init(key);
+            SecretKeySpec secretKey = new SecretKeySpec(
+                    key.getBytes(StandardCharsets.UTF_8), "HmacSHA512");
+            hmac.init(secretKey);
             byte[] hash = hmac.doFinal(data.getBytes(StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
             for (byte b : hash) {
@@ -37,17 +38,21 @@ public class VNPayConfig {
 
     public String hashAllFields(Map<String, String> fields) {
         List<String> keys = new ArrayList<>(fields.keySet());
-        Collections.sort(keys); // Sort A→Z
+        Collections.sort(keys);
         StringBuilder sb = new StringBuilder();
-        for (String key : keys) {
+        Iterator<String> itr = keys.iterator();
+        while (itr.hasNext()) {
+            String key = itr.next();
             String value = fields.get(key);
-            if (value != null && !value.isEmpty()) {
-                if (sb.length() > 0)
+            if (value != null && value.length() > 0) {
+                sb.append(key);
+                sb.append('=');
+                sb.append(value);
+                if (itr.hasNext()) {
                     sb.append('&');
-                sb.append(key).append('=').append(value);
+                }
             }
         }
-        return hmacSHA512(sb.toString());
+        return hmacSHA512(hashSecret, sb.toString());
     }
-
 }
