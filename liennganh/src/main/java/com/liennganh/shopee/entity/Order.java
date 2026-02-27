@@ -5,6 +5,9 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import java.time.LocalDateTime;
 
 /**
  * Entity đại diện cho Đơn hàng (Order)
@@ -12,6 +15,8 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "orders")
+@SQLDelete(sql = "UPDATE orders SET deleted = true, deleted_at = NOW() WHERE id = ?")
+@Where(clause = "deleted = false")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,6 +50,13 @@ public class Order {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    // Soft Delete
+    @Column(name = "deleted", columnDefinition = "boolean default false")
+    private Boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     @lombok.ToString.Exclude

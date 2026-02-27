@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+<<<<<<< HEAD
 import { useNavigate, Link } from 'react-router-dom';
 import { Rocket, User, Mail, Lock, Eye, EyeOff, ArrowRight, ShoppingBag } from 'lucide-react';
 
@@ -204,6 +205,22 @@ const Register = () => {
             </div>
         </div>
     );
+=======
+import { useNavigate } from 'react-router-dom';
+
+const Register = () => {
+    const { openAuthModal, user } = useAuth();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!user) {
+            openAuthModal('register');
+        }
+        navigate('/', { replace: true });
+    }, [user, navigate, openAuthModal]);
+
+    return null;
+>>>>>>> testing_thang
 };
 
 export default Register;

@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import api from '../../api';
-import { Plus, Edit, Trash2, Save, X, FolderOpen, Sparkles } from 'lucide-react';
+import { Plus, Trash2, X, FolderOpen, ImagePlus, Tag, Pencil } from 'lucide-react';
 import Pagination from '../../components/Pagination';
 import ConfirmModal from '../../components/Admin/ConfirmModal';
 import { useToast } from '../../context/ToastContext';
+import { getImageUrl } from '../../utils';
 
 const AdminCategories = () => {
     const [categories, setCategories] = useState([]);

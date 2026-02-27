@@ -5,6 +5,9 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import java.time.LocalDateTime;
 
 /**
  * Entity đại diện cho Giỏ hàng (Cart)
@@ -13,6 +16,8 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "carts")
+@SQLDelete(sql = "UPDATE carts SET deleted = true, deleted_at = NOW() WHERE id = ?")
+@Where(clause = "deleted = false")
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +32,13 @@ public class Cart {
 
     @Column(name = "total_price")
     private BigDecimal totalPrice = BigDecimal.ZERO; // Tổng tiền tạm tính
+
+    // Soft Delete
+    @Column(name = "deleted", columnDefinition = "boolean default false")
+    private Boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;

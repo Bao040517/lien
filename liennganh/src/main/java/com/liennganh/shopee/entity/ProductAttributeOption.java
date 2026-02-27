@@ -3,6 +3,9 @@ package com.liennganh.shopee.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import java.time.LocalDateTime;
 
 /**
  * Entity định nghĩa Giá trị thuộc tính (Option)
@@ -11,6 +14,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Data
 @Table(name = "product_attribute_options")
+@SQLDelete(sql = "UPDATE product_attribute_options SET deleted = true, deleted_at = NOW() WHERE id = ?")
+@Where(clause = "deleted = false")
 public class ProductAttributeOption {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +31,13 @@ public class ProductAttributeOption {
 
     @Column(name = "image_url")
     private String imageUrl; // Ảnh đại diện cho option (VD: Ảnh áo màu đỏ)
+
+    // Soft Delete
+    @Column(name = "deleted", columnDefinition = "boolean default false")
+    private Boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     public Long getId() {
         return id;

@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+<<<<<<< HEAD
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Lock, Eye, EyeOff, ArrowRight, ShoppingBag, AtSign } from 'lucide-react';
 
@@ -11,18 +12,30 @@ const Login = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const { login, user } = useAuth();
+=======
+import { useNavigate } from 'react-router-dom';
+
+const Login = () => {
+    const { openAuthModal, user } = useAuth();
+>>>>>>> testing_thang
     const navigate = useNavigate();
-    const location = useLocation();
 
     useEffect(() => {
+<<<<<<< HEAD
         if (user) {
             const from = location.state?.from?.pathname || '/';
             if (user.role === 'ADMIN') navigate('/admin', { replace: true });
             else if (user.role === 'SELLER') navigate('/seller', { replace: true });
             else navigate(from, { replace: true });
+=======
+        if (!user) {
+            openAuthModal('login');
+>>>>>>> testing_thang
         }
-    }, [user, navigate, location]);
+        navigate('/', { replace: true });
+    }, [user, navigate, openAuthModal]);
 
+<<<<<<< HEAD
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -184,6 +197,9 @@ const Login = () => {
             </div>
         </div>
     );
+=======
+    return null;
+>>>>>>> testing_thang
 };
 
 export default Login;

@@ -2,6 +2,9 @@ package com.liennganh.shopee.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import java.time.LocalDateTime;
 
 /**
  * Entity đại diện cho Địa chỉ giao hàng (Address)
@@ -9,6 +12,8 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "addresses")
+@SQLDelete(sql = "UPDATE addresses SET deleted = true, deleted_at = NOW() WHERE id = ?")
+@Where(clause = "deleted = false")
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +32,13 @@ public class Address {
 
     @Column(name = "is_default")
     private boolean isDefault = false; // Là địa chỉ mặc định
+
+    // Soft Delete
+    @Column(name = "deleted", columnDefinition = "boolean default false")
+    private Boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     public Long getId() {
         return id;

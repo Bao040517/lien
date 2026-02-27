@@ -6,7 +6,7 @@ import { useCart } from '../context/CartContext';
 import api from '../api';
 
 const Navbar = () => {
-    const { user, logout } = useAuth();
+    const { user, logout, openAuthModal } = useAuth();
     const { cartCount } = useCart();
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
@@ -57,10 +57,21 @@ const Navbar = () => {
                         <HelpCircle className="w-3 h-3" /> Hỗ Trợ
                     </div>
                     {!user && (
-                        <>
-                            <Link to="/register" className="font-bold hover:text-gray-200">Đăng Ký</Link>
-                            <Link to="/login" className="font-bold hover:text-gray-200">Đăng Nhập</Link>
-                        </>
+                        <div className="flex gap-4">
+                            <button
+                                onClick={() => openAuthModal('register')}
+                                className="font-bold hover:text-gray-200 transition-colors"
+                            >
+                                Đăng Ký
+                            </button>
+                            <div className="w-[1px] h-3 bg-white/30 my-auto"></div>
+                            <button
+                                onClick={() => openAuthModal('login')}
+                                className="font-bold hover:text-gray-200 transition-colors"
+                            >
+                                Đăng Nhập
+                            </button>
+                        </div>
                     )}
                     {user && (
                         <div className="flex items-center gap-2 cursor-pointer hover:text-gray-200 relative group pb-1">

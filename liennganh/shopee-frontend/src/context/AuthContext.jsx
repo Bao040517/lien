@@ -107,8 +107,23 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('token');
     };
 
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+    const [authModalMode, setAuthModalMode] = useState('login'); // 'login' or 'register'
+
+    const openAuthModal = (mode = 'login') => {
+        setAuthModalMode(mode);
+        setIsAuthModalOpen(true);
+    };
+
+    const closeAuthModal = () => {
+        setIsAuthModalOpen(false);
+    };
+
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, requestSellerUpgrade, refreshUser, loading }}>
+        <AuthContext.Provider value={{
+            user, login, register, logout, requestSellerUpgrade, refreshUser, loading,
+            isAuthModalOpen, authModalMode, setAuthModalMode, openAuthModal, closeAuthModal
+        }}>
             {children}
         </AuthContext.Provider>
     );

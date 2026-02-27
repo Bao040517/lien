@@ -1,5 +1,6 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import AuthModal from '../components/Auth/AuthModal';
 import { Outlet } from 'react-router-dom';
 
 const MainLayout = () => {
@@ -10,6 +11,7 @@ const MainLayout = () => {
                 <Outlet />
             </main>
             <Footer />
+            <AuthModal />
         </div>
     );
 };

@@ -3,6 +3,9 @@ package com.liennganh.shopee.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import java.time.LocalDateTime;
 
 /**
  * Entity đại diện cho Chi tiết đơn hàng (OrderItem)
@@ -11,6 +14,8 @@ import java.math.BigDecimal;
 @Entity
 @Data
 @Table(name = "order_items")
+@SQLDelete(sql = "UPDATE order_items SET deleted = true, deleted_at = NOW() WHERE id = ?")
+@Where(clause = "deleted = false")
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +36,13 @@ public class OrderItem {
 
     @Column(nullable = false)
     private BigDecimal price; // Giá tại thời điểm mua
+
+    // Soft Delete
+    @Column(name = "deleted", columnDefinition = "boolean default false")
+    private Boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @Transient
     private boolean isReviewed; // C? ki?m tra d� d�nh gi� chua (kh�ng luu DB)

@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 /**
  * Entity đại diện cho Hội thoại (Conversation)
@@ -12,6 +14,8 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "conversations")
+@SQLDelete(sql = "UPDATE conversations SET deleted = true, deleted_at = NOW() WHERE id = ?")
+@Where(clause = "deleted = false")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,6 +41,13 @@ public class Conversation {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt; // Cập nhật khi có tin nhắn mới
+
+    // Soft Delete
+    @Column(name = "deleted", columnDefinition = "boolean default false")
+    private Boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @Transient
     private String lastMessageContent; // Nội dung tin nhắn cuối (không lưu DB)
