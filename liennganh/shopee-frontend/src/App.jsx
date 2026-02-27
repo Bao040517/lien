@@ -29,6 +29,7 @@ import AdminSliders from './pages/Admin/AdminSliders';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
+import PaymentResult from './pages/PaymentResult';
 import SearchResults from './pages/SearchResults';
 import CategoryProducts from './pages/CategoryProducts';
 import OrderHistory from './pages/OrderHistory';
@@ -57,6 +58,7 @@ const App = () => {
           <Route path="shop/:id" element={<ShopProfile />} />
           <Route path="cart" element={<PrivateRoute><Cart /></PrivateRoute>} />
           <Route path="checkout" element={<PrivateRoute><Checkout /></PrivateRoute>} />
+          <Route path="payment/result" element={<PaymentResult />} />
           <Route path="search" element={<SearchResults />} />
           <Route path="category/:id" element={<CategoryProducts />} />
           <Route path="purchase" element={<PrivateRoute><OrderHistory /></PrivateRoute>} />

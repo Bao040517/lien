@@ -330,7 +330,30 @@ const Checkout = () => {
 
             const failures = results.filter(r => r.status === 'error');
             if (failures.length === 0) {
-                toast.info(`Đặt hàng thành công! Bạn đã tạo ${results.length} đơn hàng.`);
+                // Nếu chọn VNPay → redirect sang trang thanh toán VNPay
+                if (paymentMethod === 'VNPAY') {
+                    try {
+                        const totalAmount = getTotalPayment();
+                        const firstOrderId = results[0].orderId;
+                        const res = await api.get('/payment/create', {
+                            params: {
+                                orderId: firstOrderId,
+                                amount: totalAmount,
+                                orderInfo: 'Thanh toan don hang'
+                            }
+                        });
+                        const paymentUrl = res.data.paymentUrl;
+                        if (paymentUrl) {
+                            refreshCart();
+                            window.location.href = paymentUrl;
+                            return;
+                        }
+                    } catch (vnpayErr) {
+                        console.error('VNPay error:', vnpayErr);
+                        toast.error('Không thể kết nối VNPay. Đơn hàng đã tạo với trạng thái chờ thanh toán.');
+                    }
+                }
+                toast.success(`Đặt hàng thành công! Bạn đã tạo ${results.length} đơn hàng.`);
                 refreshCart();
                 navigate('/');
             } else {
@@ -513,18 +536,25 @@ const Checkout = () => {
                     <div className="flex items-center gap-2 text-lg mb-4">
                         <CreditCard className="w-5 h-5 text-gray-500" /> Phương Thức Thanh Toán
                     </div>
-                    <div className="flex gap-4">
+                    <div className="flex gap-4 flex-wrap">
                         <button
-                            className={`px-4 py-2 border rounded text-sm ${paymentMethod === 'COD' ? 'border-primary-dark text-primary-dark' : 'border-gray-300 hover:border-primary-dark'}`}
+                            className={`px-4 py-2 border rounded text-sm transition ${paymentMethod === 'COD' ? 'border-primary-dark text-primary-dark bg-primary-lighter' : 'border-gray-300 hover:border-primary-dark'}`}
                             onClick={() => setPaymentMethod('COD')}
                         >
                             Thanh toán khi nhận hàng (COD)
                         </button>
                         <button
-                            className={`px-4 py-2 border rounded text-sm ${paymentMethod === 'Banking' ? 'border-primary-dark text-primary-dark' : 'border-gray-300 hover:border-primary-dark'}`}
-                            onClick={() => setPaymentMethod('Banking')}
+                            className={`px-4 py-2 border rounded text-sm transition ${paymentMethod === 'BANKING' ? 'border-primary-dark text-primary-dark bg-primary-lighter' : 'border-gray-300 hover:border-primary-dark'}`}
+                            onClick={() => setPaymentMethod('BANKING')}
                         >
                             Chuyển khoản ngân hàng
+                        </button>
+                        <button
+                            className={`px-4 py-2 border rounded text-sm transition flex items-center gap-2 ${paymentMethod === 'VNPAY' ? 'border-primary-dark text-primary-dark bg-primary-lighter' : 'border-gray-300 hover:border-primary-dark'}`}
+                            onClick={() => setPaymentMethod('VNPAY')}
+                        >
+                            <img src="https://vnpay.vn/s1/statics.vnpay.vn/2023/9/06ncktiwd6dc1694418196384.png" alt="VNPay" className="h-5 w-auto" />
+                            VNPay
                         </button>
                     </div>
                 </div>
@@ -593,7 +623,7 @@ const Checkout = () => {
                                                         className={`border rounded-lg p-4 cursor-pointer transition-all ${isSelected
                                                             ? 'border-primary-dark bg-primary/5 ring-1 ring-primary-dark/20'
                                                             : 'border-gray-200 hover:border-gray-300'
-                                                        }`}
+                                                            }`}
                                                     >
                                                         <div className="flex items-start gap-3">
                                                             <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${isSelected ? 'border-primary-dark bg-primary-dark' : 'border-gray-300'}`}>
