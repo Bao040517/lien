@@ -116,7 +116,7 @@ const CategoryProducts = () => {
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="text-xs text-gray-500 pb-1">Đã bán {product.soldCount || 100}</div>
+                                        <div className="text-xs text-gray-500 pb-1">Đã bán {product.sold || 0}</div>
                                     </div>
                                 </div>
                             </Link>

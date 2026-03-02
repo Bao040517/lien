@@ -361,11 +361,14 @@ const Home = () => {
                                 // Flash Sale specific metrics
                                 const soldCount = item.soldQuantity || 0;
                                 const stockTotal = (item.stockQuantity || 0) + soldCount;
+                                const productTotalStock = (product.stockQuantity || 0) + (product.sold || 0);
                                 const soldPercent = isFlashSaleItem && stockTotal > 0
                                     ? Math.min(100, Math.round((soldCount / stockTotal) * 100))
-                                    : Math.floor(Math.random() * 50 + 10); // Fallback for random suggestion
+                                    : productTotalStock > 0
+                                    ? Math.min(100, Math.round(((product.sold || 0) / productTotalStock) * 100))
+                                    : 0;
 
-                                const displaySoldCount = isFlashSaleItem ? soldCount : Math.floor(Math.random() * 500 + 50);
+                                const displaySoldCount = isFlashSaleItem ? soldCount : (product.sold || 0);
 
                                 return (
                                     <Link
@@ -461,7 +464,7 @@ const Home = () => {
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="text-xs text-gray-500 pb-1">Đã bán {product.soldCount || Math.floor(Math.random() * 1000 + 50)}</div>
+                                        <div className="text-xs text-gray-500 pb-1">Đã bán {product.sold || 0}</div>
                                     </div>
                                 </div>
                             </Link>

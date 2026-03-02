@@ -241,7 +241,7 @@ const ProductDetail = () => {
                                 </div>
                             </div>
                             <div className="border-l pl-4 border-gray-300 text-gray-500">
-                                <span className="text-black font-medium border-b border-black pb-0.5 mr-1">{product.soldCount || 100}</span>
+                                <span className="text-black font-medium border-b border-black pb-0.5 mr-1">{product.sold || 0}</span>
                                 Đã Bán
                             </div>
                         </div>
