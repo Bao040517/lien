@@ -2,7 +2,7 @@ name: CI/CD to EC2
 
 on:
   push:
-    branches: ["main"]
+    branches: ["release_liennganh"]
 
 jobs:
   # Job 1: Build và Push (như đã hướng dẫn ở trên)
