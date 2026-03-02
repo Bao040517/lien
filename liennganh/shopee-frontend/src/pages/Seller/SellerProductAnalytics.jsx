@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
 import { Trophy, TrendingUp, Package, AlertTriangle, ArrowUpRight, DollarSign } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { getImageUrl } from '../../utils';
+import { getImageUrl, toProductSlug } from '../../utils';
 
 const SellerProductAnalytics = () => {
     const { user } = useAuth();
@@ -111,7 +111,7 @@ const SellerProductAnalytics = () => {
                                             )}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <Link to={`/product/${product.productId}`} target="_blank" className="font-medium text-gray-800 hover:text-primary-dark truncate block mb-1">
+                                            <Link to={toProductSlug(product.productName, product.productId)} target="_blank" className="font-medium text-gray-800 hover:text-primary-dark truncate block mb-1">
                                                 {product.productName}
                                             </Link>
                                             <div className="flex items-center gap-3 text-xs text-gray-500">
@@ -165,7 +165,7 @@ const SellerProductAnalytics = () => {
                                         </div>
                                         <div className="flex-1 min-w-0 flex items-center justify-between">
                                             <div className="pr-4">
-                                                <Link to={`/product/${product.productId}`} target="_blank" className="font-medium text-gray-800 hover:text-green-600 line-clamp-2 mb-1 text-sm">
+                                                <Link to={toProductSlug(product.productName, product.productId)} target="_blank" className="font-medium text-gray-800 hover:text-green-600 line-clamp-2 mb-1 text-sm">
                                                     {product.productName}
                                                 </Link>
                                                 <p className="text-xs text-gray-400">Giá: {formatPrice(getProductDetail(product.productId).price)}</p>
@@ -212,7 +212,7 @@ const SellerProductAnalytics = () => {
                                     return (
                                         <tr key={`list-${product.productId}`} className="hover:bg-gray-50 transition-colors">
                                             <td className="px-6 py-4">
-                                                <Link to={`/product/${product.productId}`} target="_blank" className="font-medium text-gray-800 hover:text-primary-dark flex items-center gap-3">
+                                                <Link to={toProductSlug(product.productName, product.productId)} target="_blank" className="font-medium text-gray-800 hover:text-primary-dark flex items-center gap-3">
                                                     <div className="w-10 h-10 shrink-0 rounded border border-gray-100 bg-gray-50 flex flex-col items-center justify-center overflow-hidden">
                                                         {detail.imageUrl ? (
                                                             <img src={getImageUrl(detail.imageUrl)} alt={product.productName} className="w-full h-full object-cover" />

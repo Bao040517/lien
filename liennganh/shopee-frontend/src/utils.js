@@ -1,3 +1,21 @@
+export const toProductSlug = (name, id) => {
+    const slug = (name || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd')
+        .replace(/[^a-z0-9\s-]/g, '')
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+    return `/product/${slug}-${id}`;
+};
+
+export const getProductIdFromSlug = (slug) => {
+    const parts = (slug || '').split('-');
+    return parseInt(parts[parts.length - 1], 10) || null;
+};
+
 export const getImageUrl = (url) => {
     if (!url) return '';
 

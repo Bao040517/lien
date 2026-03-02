@@ -5,11 +5,12 @@ import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { Star, ShoppingCart, Minus, Plus, MessageSquare, Store, ChevronLeft, ChevronRight } from 'lucide-react';
-import { getImageUrl } from '../utils';
+import { getImageUrl, getProductIdFromSlug, toProductSlug } from '../utils';
 import { useToast } from '../context/ToastContext';
 
 const ProductDetail = () => {
-    const { id } = useParams();
+    const { slug } = useParams();
+    const id = getProductIdFromSlug(slug);
     const navigate = useNavigate();
     const toast = useToast();
     const { user } = useAuth();
@@ -493,7 +494,7 @@ const ProductDetail = () => {
                         <div ref={relatedRef} className="overflow-x-auto snap-x flex scroll-smooth p-4 gap-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                             {relatedProducts.map((item) => (
                                 <Link
-                                    to={`/product/${item.id}`}
+                                    to={toProductSlug(item.name, item.id)}
                                     key={item.id}
                                     className="min-w-[180px] max-w-[180px] flex-shrink-0 border border-gray-100 hover:border-primary-dark rounded-lg overflow-hidden cursor-pointer block transition-all hover:shadow-md group bg-white snap-start"
                                 >

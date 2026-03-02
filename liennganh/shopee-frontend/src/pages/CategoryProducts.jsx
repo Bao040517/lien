@@ -3,7 +3,7 @@ import { useParams, Link, useLocation } from 'react-router-dom';
 import api from '../api';
 import { ShoppingBag, Filter } from 'lucide-react';
 import Breadcrumb from '../components/Breadcrumb';
-import { getImageUrl } from '../utils';
+import { getImageUrl, toProductSlug } from '../utils';
 
 const CategoryProducts = () => {
     const { id } = useParams();
@@ -90,7 +90,7 @@ const CategoryProducts = () => {
                 ) : products.length > 0 ? (
                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
                         {products.map((product) => (
-                            <Link to={`/product/${product.id}`} key={product.id} className="bg-white rounded hover:shadow-lg hover:-translate-y-0.5 transition duration-100 border border-transparent hover:border-primary-dark cursor-pointer overflow-hidden relative block group">
+                            <Link to={toProductSlug(product.name, product.id)} key={product.id} className="bg-white rounded hover:shadow-lg hover:-translate-y-0.5 transition duration-100 border border-transparent hover:border-primary-dark cursor-pointer overflow-hidden relative block group">
                                 <div className="aspect-square bg-gray-100 flex items-center justify-center relative">
                                     {product.imageUrl ? (
                                         <img src={getImageUrl(product.imageUrl)} alt={product.name} className="w-full h-full object-cover" />

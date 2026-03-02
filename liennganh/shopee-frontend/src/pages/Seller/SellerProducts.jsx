@@ -5,7 +5,7 @@ import { Package, Plus, Search, Trash2, Edit3, Eye, AlertTriangle, CheckCircle, 
 import Pagination from '../../components/Pagination';
 import BadWordWarning from '../../components/BadWordWarning';
 import api from '../../api';
-import { getImageUrl } from '../../utils';
+import { getImageUrl, toProductSlug } from '../../utils';
 import { useToast } from '../../context/ToastContext';
 
 const TABS = [
@@ -245,7 +245,7 @@ const SellerProducts = () => {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center justify-center gap-1">
-                                                    <Link to={`/product/${product.id}`} target="_blank"
+                                                    <Link to={toProductSlug(product.name, product.id)} target="_blank"
                                                         className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition" title="Xem">
                                                         <Eye className="w-4 h-4" />
                                                     </Link>

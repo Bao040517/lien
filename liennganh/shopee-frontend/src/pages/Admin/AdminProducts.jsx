@@ -6,7 +6,7 @@ import Pagination from '../../components/Pagination';
 import ConfirmModal from '../../components/Admin/ConfirmModal';
 import PromptModal from '../../components/Admin/PromptModal';
 import BadWordWarning from '../../components/BadWordWarning';
-import { getImageUrl } from '../../utils';
+import { getImageUrl, toProductSlug } from '../../utils';
 import { useToast } from '../../context/ToastContext';
 
 const TABS = [
@@ -285,7 +285,7 @@ const AdminProducts = () => {
                                             </td>
                                             <td className="px-6 py-3">
                                                 <div className="flex items-center justify-center gap-1">
-                                                    <a href={`/product/${product.id}`} target="_blank" rel="noreferrer"
+                                                    <a href={toProductSlug(product.name, product.id)} target="_blank" rel="noreferrer"
                                                         className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition" title="Xem">
                                                         <ExternalLink className="w-4 h-4" />
                                                     </a>
