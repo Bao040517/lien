@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../api';
-import { Search, Trash2, Package, ExternalLink, ShieldAlert, ShieldCheck, Sparkles, CheckCircle, Clock, XCircle, Filter } from 'lucide-react';
+import { Search, Trash2, Package, ExternalLink, ShieldAlert, ShieldCheck, Sparkles, CheckCircle, Clock, XCircle, Pencil } from 'lucide-react';
 import Pagination from '../../components/Pagination';
 import ConfirmModal from '../../components/Admin/ConfirmModal';
 import PromptModal from '../../components/Admin/PromptModal';
@@ -25,6 +26,7 @@ const STATUS_STYLES = {
 
 const AdminProducts = () => {
     const [products, setProducts] = useState([]);
+    const navigate = useNavigate();
     const toast = useToast();
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -287,6 +289,10 @@ const AdminProducts = () => {
                                                         className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition" title="Xem">
                                                         <ExternalLink className="w-4 h-4" />
                                                     </a>
+                                                    <button onClick={() => navigate(`/admin/edit-product/${product.id}`)}
+                                                        className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition" title="Chỉnh sửa">
+                                                        <Pencil className="w-4 h-4" />
+                                                    </button>
                                                     <button onClick={() => handleDelete(product.id, product.name)}
                                                         className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition" title="Xoá vĩnh viễn">
                                                         <Trash2 className="w-4 h-4" />

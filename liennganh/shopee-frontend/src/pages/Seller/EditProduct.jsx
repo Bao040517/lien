@@ -2,15 +2,17 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api';
 import { getImageUrl } from '../../utils';
-import { Save, ArrowLeft, Package, Plus, Trash2, Image as ImageIcon, X } from 'lucide-react';
+import { Save, ArrowLeft, Package, Plus, Trash2, X, ShieldCheck } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 
-const EditProduct = () => {
+const EditProduct = ({ isAdmin = false }) => {
     const { id } = useParams();
     const navigate = useNavigate();
     const toast = useToast();
+    const backPath = isAdmin ? '/admin/products' : '/seller/products';
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [productInfo, setProductInfo] = useState(null);
 
     const [form, setForm] = useState({
         name: '', description: '', price: '', stockQuantity: ''
@@ -38,6 +40,7 @@ const EditProduct = () => {
         try {
             const res = await api.get(`/products/${id}`);
             const product = res.data.data || res.data;
+            setProductInfo(product);
             setForm({
                 name: product.name || '',
                 description: product.description || '',
@@ -66,7 +69,7 @@ const EditProduct = () => {
         } catch (error) {
             console.error("Error fetching product:", error);
             toast.info('Không tìm thấy sản phẩm!');
-            navigate('/seller/products');
+            navigate(backPath);
         } finally {
             setLoading(false);
         }
@@ -173,7 +176,7 @@ const EditProduct = () => {
             }
 
             toast.info('Cập nhật sản phẩm thành công!');
-            navigate('/seller/products');
+            navigate(backPath);
         } catch (error) {
             console.error("Error updating:", error);
             toast.info('Cập nhật thất bại! ' + (error.response?.data?.message || error.message));
@@ -194,15 +197,36 @@ const EditProduct = () => {
 
     return (
         <div className="max-w-4xl mx-auto">
-            <button onClick={() => navigate('/seller/products')}
+            <button onClick={() => navigate(backPath)}
                 className="flex items-center gap-2 text-gray-500 hover:text-primary-dark mb-4 transition">
                 <ArrowLeft className="w-4 h-4" /> Quay lại danh sách
             </button>
 
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-3 mb-2">
                 <Package className="w-8 h-8 text-primary-dark" />
                 <h1 className="text-2xl font-bold text-gray-800">Chỉnh sửa sản phẩm</h1>
+                {isAdmin && (
+                    <span className="ml-auto flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-600 border border-blue-200 rounded-full text-sm font-medium">
+                        <ShieldCheck className="w-4 h-4" /> Quyền Admin
+                    </span>
+                )}
             </div>
+
+            {isAdmin && productInfo && (
+                <div className="mb-6 p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm text-gray-600 flex flex-wrap gap-4">
+                    <span>ID: <strong className="text-gray-800">{productInfo.id}</strong></span>
+                    {productInfo.shop?.name && (
+                        <span>Shop: <strong className="text-gray-800">{productInfo.shop.name}</strong>
+                            {productInfo.shop.ownerUsername && <span className="text-gray-400"> ({productInfo.shop.ownerUsername})</span>}
+                        </span>
+                    )}
+                    {productInfo.category?.name && (
+                        <span>Danh mục: <strong className="text-gray-800">{productInfo.category.name}</strong></span>
+                    )}
+                    <span>Trạng thái: <strong className="text-gray-800">{productInfo.productStatus || 'PENDING'}</strong></span>
+                </div>
+            )}
+            {!isAdmin && <div className="mb-6" />}
 
             <form onSubmit={handleSave} className="space-y-6">
                 {/* Basic Info */}
@@ -395,7 +419,7 @@ const EditProduct = () => {
                         <Save className="w-5 h-5" />
                         {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
                     </button>
-                    <button type="button" onClick={() => navigate('/seller/products')}
+                    <button type="button" onClick={() => navigate(backPath)}
                         className="px-8 py-3 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition">
                         Huỷ
                     </button>
