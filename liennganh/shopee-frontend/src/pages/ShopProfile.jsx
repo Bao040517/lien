@@ -289,7 +289,7 @@ const ShopProfile = () => {
                           {formatPrice(product.price)}
                         </span>
                         <span className="text-xs text-gray-500">
-                          Đã bán {product.soldCount || 0}
+                          Đã bán {product.sold || 0}
                         </span>
                       </div>
                     </div>
