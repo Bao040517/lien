@@ -36,6 +36,7 @@ import OrderHistory from './pages/OrderHistory';
 import ShopProfile from './pages/ShopProfile';
 import ChatPage from './pages/ChatPage';
 import MyAccount from './pages/MyAccount';
+import ErrorPage from './pages/ErrorPage';
 import { useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import PrivateRoute from './components/PrivateRoute';
@@ -64,6 +65,7 @@ const App = () => {
           <Route path="purchase" element={<PrivateRoute><OrderHistory /></PrivateRoute>} />
           <Route path="profile" element={<PrivateRoute><MyAccount /></PrivateRoute>} />
           <Route path="messages" element={<PrivateRoute><ChatPage /></PrivateRoute>} />
+          <Route path="error" element={<ErrorPage />} />
         </Route>
 
         {/* Admin Routes — Dark Sidebar Layout */}
@@ -95,7 +97,7 @@ const App = () => {
           <Route path="settings" element={<SellerSettings />} />
         </Route>
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/error?type=404" replace />} />
       </Routes>
     </CartProvider>
   );

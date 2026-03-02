@@ -60,6 +60,7 @@ const ProductDetail = () => {
 
             } catch (error) {
                 console.error("Error fetching product details:", error);
+                navigate('/error?type=product_not_found', { replace: true });
             } finally {
                 setLoading(false);
             }
