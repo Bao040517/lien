@@ -183,7 +183,7 @@ const OrderHistory = () => {
                                     {order.orderItems && order.orderItems.map((item, idx) => {
                                         const productImg = item.variant?.imageUrl || item.product?.imageUrl;
                                         const imageUrl = productImg
-                                            ? (productImg.startsWith('http') ? productImg : `http://localhost:8080${productImg}`)
+                                            ? (productImg.startsWith('http') ? productImg : `/api${productImg}`)
                                             : null;
 
                                         return (

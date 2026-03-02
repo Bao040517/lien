@@ -21,8 +21,10 @@ public class CorsConfig {
 
         // Cho phép các nguồn (origins) truy cập
         config.setAllowedOrigins(Arrays.asList(
-                "http://localhost:5173", // Vite default port (React/Vue)
-                "http://localhost:3000", // React default port (backup)
+                "https://abshoem.id.vn",
+                "http://abshoem.id.vn",
+                "http://localhost:5173",
+                "http://localhost:3000",
                 "http://127.0.0.1:5173"));
 
         // Cho phép tất cả các HTTP methods (GET, POST, PUT, DELETE...)

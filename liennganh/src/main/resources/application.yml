@@ -36,4 +36,4 @@ vnpay:
   tmn-code: W1SNCKRG
   hash-secret: MDGGIOZUEOMEMTY1GPV30C43PKH5YYZN
   pay-url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
-  return-url: http://localhost:3000/payment/result
+  return-url: https://abshoem.id.vn/payment/result
