@@ -30,7 +30,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./liennganh
+          file: ./liennganh/Dockerfile
           push: true
           # Sử dụng biến env.REPO_LOWER đã được viết thường
           tags: ghcr.io/${{ env.REPO_LOWER }}:latest
