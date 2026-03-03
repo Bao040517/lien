@@ -65,7 +65,7 @@ services:
       - "5432"
     volumes:
       - db-data:/var/lib/postgresql/data
-      - ./plaindata.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./redo2.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d liennganhmoi"]
       interval: 10s
