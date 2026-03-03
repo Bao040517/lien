@@ -1,0 +1,814 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0" version="22.0.0">
+  <diagram id="act_det_1" name="Tìm kiếm và Lọc sản phẩm">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Khách Vãng Lai)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Tìm kiếm và Lọc sản phẩm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Tiếp nhận từ khóa" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Lọc dữ liệu Giá và Danh mục" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Truy xuất danh sách Sản phẩm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Trả kết quả Trình bày trang" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_2" name="Xem danh sách Danh mục">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Khách Vãng Lai)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Xem danh sách Danh mục" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Gửi Yêu cầu cấp Danh mục" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Kiểm tra Dữ liệu Phân nhánh" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Lấy toàn bộ Nhóm hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Định dạng cấu trúc kiểu phân cấp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_3" name="Xem Chi tiết Sản phẩm">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Khách Vãng Lai)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Xem Chi tiết Sản phẩm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Phân tích Mã số Sản phẩm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Lọc danh sách Biến thể phân loại" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Tổng hợp Số lượng và Giá Cả" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Trả dữ liệu Giao diện hiển thị" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_4" name="Xem Đánh giá">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Khách Vãng Lai)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Xem Đánh giá" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Kiểm tra Mã Sản phẩm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Lọc đánh giá điểm của Khách Hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Tính toán Tổng Điểm Sao" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Xuất danh sách Bình luận" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_5" name="Xem Hồ sơ Cửa hàng">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Khách Vãng Lai)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Xem Hồ sơ Cửa hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Nhận yêu cầu Mở Trang Cửa hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Lấy dữ liệu Tôn tin người bán" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Lấy Sản phẩm của Cửa hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Trả dữ liệu hiển thị gian hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_6" name="Đăng nhập và Đăng ký">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Mua)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Đăng nhập và Đăng ký" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Kiểm tra Cú pháp Thư điện tử" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: So sánh Mật khẩu Mã hóa" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Phát hành Mã xác thực" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Cấp quyền làm việc trên hệ thống" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_7" name="Quản lý Hồ sơ cá nhân">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Mua)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Quản lý Hồ sơ cá nhân" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Nhận Dữ liệu Cập nhật Mới" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Xác thực Quyền Tài khoản Sở hữu" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Thay thế Trường thông tin" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Lưu trữ vững bền dữ liệu cá nhân" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_8" name="Quản lý Địa chỉ Giao hàng">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Mua)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Quản lý Địa chỉ Giao hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Thêm, Sửa hoặc Xóa biểu mẫu" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Kiểm tra giới hạn Khu vực" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Thiết lập cờ Địa chỉ Mặc định" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Ghi nhận vào Danh sách" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_9" name="Thao tác Giỏ hàng">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Mua)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Thao tác Giỏ hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Khởi tạo lệnh Thêm Sản phẩm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Kiểm tra Sức chứa Tồn kho" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Cộng gộp với Sản phẩm trùng lặp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Cập nhật Bộ nhớ Giỏ hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_10" name="Áp dụng Mã giảm giá">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Mua)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Áp dụng Mã giảm giá" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Tiếp nhận Đoạn mã khuyến mãi" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Kiểm tra Thời hạn Mã giảm giá" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Tính toán Mức giảm phần trăm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Trừ thẳng vào Tổng tiền thanh toán" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_11" name="Tiến hành Đặt hàng">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Mua)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Tiến hành Đặt hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Thu thập thông tin Giao nhận" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Triển khai Hóa đơn Chờ xử lý" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Cấn trừ Tồn kho Hệ thống" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Làm sạch Giỏ hàng Mua sắm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_12" name="Thanh toán Trực tuyến VNPay">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Mua)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Thanh toán Trực tuyến VNPay" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Khởi tạo Mã Đơn chuẩn bị thanh toán" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Mã hóa Chữ ký hệ thống bảo vệ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Chuyển giao diện Sang Hệ sinh thái VNPay" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Lắng nghe Phản hồi Giao dịch thành công" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_13" name="Theo dõi và Hủy đơn">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Mua)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Theo dõi và Hủy đơn" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Kiểm duyệt Điều kiện cho phép hủy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Xác thực gói hàng chưa rời kho" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Hoàn nhập sản phẩm Phục hồi Tồn kho" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Cập nhật Trạng Thái Đã Hủy bỏ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_14" name="Đánh giá Sản phẩm và Cửa hàng">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Mua)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Đánh giá Sản phẩm và Cửa hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Xác minh Khách đã nhận hàng thành công" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Kiểm duyệt nội dung Ngôn từ đánh giá" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Lưu nội dung Đánh giá Sao" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Tính toán lại Điểm trung bình Cửa hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_15" name="Nhắn tin trực tiếp">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Mua)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Nhắn tin trực tiếp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Yêu cầu thiết lập Phòng Trò Chuyện" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Trao đổi tin nhắn trong mạch Thời gian thực" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Lưu Lịch sử tin nhắn vĩnh viễn" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Đổ dữ liệu lên Giao diện Trò chuyện" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_16" name="Nhận Thông báo">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Mua)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Nhận Thông báo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Kích hoạt Ống Lắng nghe Thông báo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Lọc tin nhắn dành riêng Của bản thân" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Thao tác Đánh dấu Trạng thái Đã Đọc" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Dọn dẹp Các luồng thông báo quá hạn" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_17" name="Yêu cầu mở Cửa hàng">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Mua)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Yêu cầu mở Cửa hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Tiếp nhận Đơn xin xét duyệt Bán hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Kiểm duyệt Thông tin cá nhân cơ bản" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Chuyển Đơn sang Trạng thái Chờ Duyệt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Gửi Phản hồi Cấp phép Mở Bán" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_18" name="Theo dõi gian hàng">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Mua)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Theo dõi gian hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Tiếp nhận lệnh Nhấn Nút Theo Dõi" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Xác minh Mã cửa hàng vẫn tồn tại" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Thêm dữ liệu vào Danh sách Ưa Thích" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Gửi thông báo có tương tác tới Người bán" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_19" name="Quản lý Thông tin Cửa hàng">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Bán)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Quản lý Thông tin Cửa hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Khởi chạy Bảng tính năng Cửa hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Xác nhận Quyền hạn Chủ cửa hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Tải lên Biểu trưng và Ảnh bìa" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Lưu trữ cấu hình Hiện diện Cửa hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_20" name="Quản lý Sản phẩm tải lên">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Bán)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Quản lý Sản phẩm tải lên" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Phân tích dữ liệu Sản phẩm biên soạn" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Gắn định danh Sở Hữu Cửa Hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Kiểm tra Hợp lệ Đơn giá giao dịch" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Phê chuẩn Sản phẩm xuất hiện lên mạng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_21" name="Quản lý Phân loại và Biến thể">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Bán)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Quản lý Phân loại và Biến thể" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Biên dịch Tiêu chí Kích cỡ và Màu sắc" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Phát sinh nhánh Biến thể theo Tổ hợp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Xác nhận Giá tiền và Số lượng Kho" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Lưu trữ Hệ cấu trúc chuẩn phân loại" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_22" name="Quản lý Đơn đặt hàng">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Bán)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Quản lý Đơn đặt hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Tìm kiếm Danh sách Đơn hàng mới in" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Tiếp nhận Lệnh Xác nhận Giao hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Điều hợp Đơn sang Trạng thái Vận chuyển" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Phát tín hiệu Đi đường Tới người mua" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_23" name="Tạo và Quản lý Mã giảm giá">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Bán)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Tạo và Quản lý Mã giảm giá" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Khởi tạo chuỗi Mã khuyến mãi đặc biệt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Cài đặt khóa giới hạn Khung giờ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Phân bổ số lượng Tổng Lượt sử dụng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Phát hành Danh sách Chờ Lấy mã" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_24" name="Trả lời Tin nhắn Khách hàng">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Bán)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Trả lời Tin nhắn Khách hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Tiếp nhận Soạn nội dung Trả lời" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Tra cứu cuộc hộp thoại khách hàng gốc" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Đẩy nhanh dữ liệu tới Hộp thoại Giao tiếp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Phát tiếng Thông báo nảy tới Người dùng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_25" name="Xem Biểu đồ Thống kê">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Người Bán)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Xem Biểu đồ Thống kê" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Lọc Loại bỏ Đơn Hủy và Đơn Trả hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Tổng hợp Tổng Doanh thu Hóa Đơn Tịnh" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Phân tích tần suất Lượt Mua Sản phẩm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Kẻ hình Kết xuất Dữ liệu Biểu đồ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_26" name="Duyệt Đơn Đăng ký Bán hàng">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Quản Trị Viên)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Duyệt Đơn Đăng ký Bán hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Liệt kê Luồng Đơn xin cấp phép đang chờ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Thẩm định Giấy pháp Danh tính hợp lệ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Thiết lập Quyền Chủ Cửa hàng Toàn tuyến" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Giải phóng Kích hoạt Trạng thái Chấp nhận" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_27" name="Quản trị Người dùng">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Quản Trị Viên)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Quản trị Người dùng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Mở Bảng màn Giám sát Tài khoản Toàn hệ thống" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Căn thiệp Nhấn Khóa Tài khoản Có Vi phạm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Gửi Tín hiệu Vô hiệu Chặn Quyền Dữ liệu" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Gửi Tự động Thư Cảnh báo Trừng phạt nặng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_28" name="Quản trị Danh mục Hàng hóa">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Quản Trị Viên)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Quản trị Danh mục Hàng hóa" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Biên soạn cấu trúc Bảng Danh mục Mới nhất" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Phân bổ Cây Điểm Nhánh Cha và Nhánh Con" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Gắn lưu Hệ thống Thư mục định vị" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Làm mới Menu Tái thiết lại Thanh Điều Hướng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_29" name="Cấu hình Quảng cáo và Khuyến mãi">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Quản Trị Viên)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Cấu hình Quảng cáo và Khuyến mãi" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Tải Ảnh cho Bảng quảng cáo chiến dịch Mới" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Lập Trình Khung giờ Đồng hồ Đếm Ngược" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Nhập mã Sản phẩm vào Giảm giá chớp nhoáng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Cho phép Chạy chiến dịch Trực tiếp Công Khai" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="act_det_30" name="Tạo Dữ liệu Mẫu Thử nghiệm Hệ thống">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+       
+        <mxCell id="e1" edge="1" parent="1" source="st" target="an1" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="an1" target="an2" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="an2" target="an3" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="an3" target="an4" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="an4" target="an5" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="an5" target="an6" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="an6" target="en" style="endArrow=classic;html=1;strokeColor=#1a1a1a;strokeWidth=1.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="an1" value="Bước 1: Khởi động giao diện&lt;br&gt;(Quản Trị Viên)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="120" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an2" value="Bước 2: Ghi nhận thao tác&lt;br&gt;Tạo Dữ liệu Mẫu Thử nghiệm Hệ thống" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="220" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="an3" value="Bước 3: Thực thi Kịch bản giả lập Sinh lượng lớn dữ liệu" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="330" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an4" value="Bước 4: Bảo dưỡng Xóa Dọn dẹp Thùng Rác Cặn Bộ nhớ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="430" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an5" value="Bước 5: Tạo Danh sách Hàng loạt Khách Hàng Ảo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="530" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="an6" value="Bước 6: Bơm trực tiếp Dữ liệu Trưng Bày lên trang chủ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="300" y="630" width="200" height="60" as="geometry" /></mxCell>
+        
+        <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="385" y="740" width="30" height="30" as="geometry" /></mxCell>
+          </root>
+    </mxGraphModel>
+  </diagram>
+
+</mxfile>

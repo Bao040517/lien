@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0" version="22.0.0">
+  <diagram id="act_all" name="Activity Tổng quát">
+    <mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+  <mxCell id="st" value="" style="ellipse;html=1;shape=startState;fillColor=#000;" vertex="1" parent="1"><mxGeometry x="385" y="40" width="30" height="30" as="geometry" /></mxCell>
+  
+  <mxCell id="e1" edge="1" parent="1" source="st" target="a1" style="endArrow=none;html=1;rounded=0;strokeColor=#666666;strokeWidth=1.5;endArrow=classic;"><mxGeometry relative="1" as="geometry" /></mxCell>
+  <mxCell id="e2" edge="1" parent="1" source="a1" target="a2" style="endArrow=none;html=1;rounded=0;strokeColor=#666666;strokeWidth=1.5;endArrow=classic;"><mxGeometry relative="1" as="geometry" /></mxCell>
+  <mxCell id="e3" edge="1" parent="1" source="a2" target="a3" style="endArrow=none;html=1;rounded=0;strokeColor=#666666;strokeWidth=1.5;endArrow=classic;"><mxGeometry relative="1" as="geometry" /></mxCell>
+  <mxCell id="e4" edge="1" parent="1" source="a3" target="a4" style="endArrow=none;html=1;rounded=0;strokeColor=#666666;strokeWidth=1.5;endArrow=classic;"><mxGeometry relative="1" as="geometry" /></mxCell>
+  <mxCell id="e5" edge="1" parent="1" source="a4" target="a5" style="endArrow=none;html=1;rounded=0;strokeColor=#666666;strokeWidth=1.5;endArrow=classic;"><mxGeometry relative="1" as="geometry" /></mxCell>
+  <mxCell id="e6" edge="1" parent="1" source="a5" target="a6" style="endArrow=none;html=1;rounded=0;strokeColor=#666666;strokeWidth=1.5;endArrow=classic;"><mxGeometry relative="1" as="geometry" /></mxCell>
+  <mxCell id="e7" edge="1" parent="1" source="a6" target="a7" style="endArrow=none;html=1;rounded=0;strokeColor=#666666;strokeWidth=1.5;endArrow=classic;"><mxGeometry relative="1" as="geometry" /></mxCell>
+  <mxCell id="e8" edge="1" parent="1" source="a7" target="en" style="endArrow=none;html=1;rounded=0;strokeColor=#666666;strokeWidth=1.5;endArrow=classic;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+  <mxCell id="a1" value="Khách Xem Hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="330" y="120" width="140" height="50" as="geometry" /></mxCell>
+  <mxCell id="a2" value="Đăng nhập TK" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="330" y="220" width="140" height="50" as="geometry" /></mxCell>
+  <mxCell id="a3" value="Thêm Giỏ Hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="330" y="320" width="140" height="50" as="geometry" /></mxCell>
+  <mxCell id="a4" value="Tiến Hành Đặt Hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="330" y="420" width="140" height="50" as="geometry" /></mxCell>
+  <mxCell id="a5" value="Thanh Toán (VNPay/COD)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;" vertex="1" parent="1"><mxGeometry x="330" y="520" width="140" height="50" as="geometry" /></mxCell>
+  <mxCell id="a6" value="Seller Duyệt Đơn" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1"><mxGeometry x="330" y="620" width="140" height="50" as="geometry" /></mxCell>
+  <mxCell id="a7" value="Giao Hàng &amp; Nhận Tiền" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=30;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1"><mxGeometry x="330" y="720" width="140" height="50" as="geometry" /></mxCell>
+  <mxCell id="en" value="" style="ellipse;html=1;shape=endState;fillColor=#000;" vertex="1" parent="1"><mxGeometry x="385" y="820" width="30" height="30" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+</mxfile>
