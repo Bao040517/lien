@@ -33,7 +33,7 @@ jwt:
 server:
   port: 8080
 vnpay:
-  tmn-code: W1SNCKRG
+  tmn-code: LZYEREQ2
   hash-secret: 9WRZXQNIG7F5ML4ANX6TA07SHHSD7M38
   pay-url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
   return-url: https://abshoem.id.vn/payment/result
