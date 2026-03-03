@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { Trash2, Minus, Plus, ShoppingBag, Store } from 'lucide-react';
 import Breadcrumb from '../components/Breadcrumb';
-import { getImageUrl } from '../utils';
+import { getImageUrl, toProductSlug } from '../utils';
 import { useToast } from '../context/ToastContext';
 
 const Cart = () => {
@@ -185,7 +185,7 @@ const Cart = () => {
 
                                     {/* Product Info */}
                                     <div className="col-span-4 flex items-center gap-3">
-                                        <Link to={`/product/${item.product.id}`}>
+                                        <Link to={toProductSlug(item.product.name, item.product.id)}>
                                             <div className="w-20 h-20 bg-gray-100 rounded flex items-center justify-center overflow-hidden shrink-0">
                                                 {item.product.imageUrl ? (
                                                     <img src={getImageUrl(item.product.imageUrl)} alt={item.product.name} className="w-full h-full object-cover" />
@@ -195,7 +195,7 @@ const Cart = () => {
                                             </div>
                                         </Link>
                                         <div className="min-w-0">
-                                            <Link to={`/product/${item.product.id}`} className="text-sm text-gray-800 line-clamp-2 hover:text-primary-dark">
+                                            <Link to={toProductSlug(item.product.name, item.product.id)} className="text-sm text-gray-800 line-clamp-2 hover:text-primary-dark">
                                                 {item.product.name}
                                             </Link>
                                         </div>

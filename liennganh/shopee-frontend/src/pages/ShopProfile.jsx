@@ -12,7 +12,7 @@ import {
   ChevronRight,
   ChevronLeft,
 } from "lucide-react";
-import { getImageUrl } from "../utils";
+import { getImageUrl, toProductSlug } from "../utils";
 
 const ShopProfile = () => {
   const { id } = useParams();
@@ -258,7 +258,7 @@ const ShopProfile = () => {
                 {products.map((product) => (
                   <Link
                     key={product.id}
-                    to={`/product/${product.id}`}
+                    to={toProductSlug(product.name, product.id)}
                     className="bg-white border hover:border-primary-dark transition rounded-sm overflow-hidden group"
                   >
                     <div className="aspect-square bg-gray-200 relative">
@@ -289,7 +289,7 @@ const ShopProfile = () => {
                           {formatPrice(product.price)}
                         </span>
                         <span className="text-xs text-gray-500">
-                          Đã bán {product.soldCount || 0}
+                          Đã bán {product.sold || 0}
                         </span>
                       </div>
                     </div>

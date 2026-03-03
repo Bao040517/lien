@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import api from '../api';
 import { ShoppingBag, ChevronRight, Zap, ChevronLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { getImageUrl } from '../utils';
+import { getImageUrl, toProductSlug } from '../utils';
 
 // Countdown Timer Component (Moved outside)
 const CountdownTimer = ({ targetDate }) => {
@@ -361,15 +361,18 @@ const Home = () => {
                                 // Flash Sale specific metrics
                                 const soldCount = item.soldQuantity || 0;
                                 const stockTotal = (item.stockQuantity || 0) + soldCount;
+                                const productTotalStock = (product.stockQuantity || 0) + (product.sold || 0);
                                 const soldPercent = isFlashSaleItem && stockTotal > 0
                                     ? Math.min(100, Math.round((soldCount / stockTotal) * 100))
-                                    : Math.floor(Math.random() * 50 + 10); // Fallback for random suggestion
+                                    : productTotalStock > 0
+                                    ? Math.min(100, Math.round(((product.sold || 0) / productTotalStock) * 100))
+                                    : 0;
 
-                                const displaySoldCount = isFlashSaleItem ? soldCount : Math.floor(Math.random() * 500 + 50);
+                                const displaySoldCount = isFlashSaleItem ? soldCount : (product.sold || 0);
 
                                 return (
                                     <Link
-                                        to={`/product/${product.id}`}
+                                        to={toProductSlug(product.name, product.id)}
                                         key={item.id || product.id || idx}
                                         className="min-w-[160px] max-w-[160px] flex-shrink-0 border border-gray-100 hover:border-primary-dark rounded-lg overflow-hidden cursor-pointer block transition-all hover:shadow-md group bg-white"
                                     >
@@ -434,7 +437,7 @@ const Home = () => {
 
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                         {currentProducts.map((product) => (
-                            <Link to={`/product/${product.id}`} key={product.id} className="bg-white rounded hover:shadow-lg hover:-translate-y-0.5 transition duration-100 border border-transparent hover:border-primary-dark cursor-pointer overflow-hidden relative block group">
+                            <Link to={toProductSlug(product.name, product.id)} key={product.id} className="bg-white rounded hover:shadow-lg hover:-translate-y-0.5 transition duration-100 border border-transparent hover:border-primary-dark cursor-pointer overflow-hidden relative block group">
                                 <div className="aspect-square bg-gray-100 flex items-center justify-center relative">
                                     {product.imageUrl ? (
                                         <img src={getImageUrl(product.imageUrl)} alt={product.name} className="w-full h-full object-cover" />
@@ -461,7 +464,7 @@ const Home = () => {
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="text-xs text-gray-500 pb-1">Đã bán {product.soldCount || Math.floor(Math.random() * 1000 + 50)}</div>
+                                        <div className="text-xs text-gray-500 pb-1">Đã bán {product.sold || 0}</div>
                                     </div>
                                 </div>
                             </Link>

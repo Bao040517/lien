@@ -59,8 +59,12 @@ public class ProductController {
     public ApiResponse<Product> getProductById(@PathVariable Long id) {
         Product product = productService.getProductById(id);
 
-        // Nếu sản phẩm bị khóa → kiểm tra quyền xem
-        if (product.isBanned()) {
+        // Sản phẩm chưa duyệt (PENDING/REJECTED) hoặc bị khóa (BANNED):
+        // chỉ ADMIN và SELLER chủ sản phẩm mới được xem
+        String status = product.getProductStatus();
+        boolean isRestricted = "BANNED".equals(status) || "PENDING".equals(status) || "REJECTED".equals(status);
+
+        if (isRestricted) {
             org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
                     .getContext().getAuthentication();
 

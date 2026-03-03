@@ -5,11 +5,12 @@ import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { Star, ShoppingCart, Minus, Plus, MessageSquare, Store, ChevronLeft, ChevronRight } from 'lucide-react';
-import { getImageUrl } from '../utils';
+import { getImageUrl, getProductIdFromSlug, toProductSlug } from '../utils';
 import { useToast } from '../context/ToastContext';
 
 const ProductDetail = () => {
-    const { id } = useParams();
+    const { slug } = useParams();
+    const id = getProductIdFromSlug(slug);
     const navigate = useNavigate();
     const toast = useToast();
     const { user } = useAuth();
@@ -60,6 +61,7 @@ const ProductDetail = () => {
 
             } catch (error) {
                 console.error("Error fetching product details:", error);
+                navigate('/error?type=product_not_found', { replace: true });
             } finally {
                 setLoading(false);
             }
@@ -240,7 +242,7 @@ const ProductDetail = () => {
                                 </div>
                             </div>
                             <div className="border-l pl-4 border-gray-300 text-gray-500">
-                                <span className="text-black font-medium border-b border-black pb-0.5 mr-1">{product.soldCount || 100}</span>
+                                <span className="text-black font-medium border-b border-black pb-0.5 mr-1">{product.sold || 0}</span>
                                 Đã Bán
                             </div>
                         </div>
@@ -492,7 +494,7 @@ const ProductDetail = () => {
                         <div ref={relatedRef} className="overflow-x-auto snap-x flex scroll-smooth p-4 gap-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                             {relatedProducts.map((item) => (
                                 <Link
-                                    to={`/product/${item.id}`}
+                                    to={toProductSlug(item.name, item.id)}
                                     key={item.id}
                                     className="min-w-[180px] max-w-[180px] flex-shrink-0 border border-gray-100 hover:border-primary-dark rounded-lg overflow-hidden cursor-pointer block transition-all hover:shadow-md group bg-white snap-start"
                                 >
