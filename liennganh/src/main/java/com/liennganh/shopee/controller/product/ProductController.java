@@ -456,10 +456,8 @@ public class ProductController {
         List<Product> products = productPage.getContent();
         java.util.Random rand = new java.util.Random();
         for (Product p : products) {
-            String randomImg = files[rand.nextInt(files.length)];
-            String newUrl = "http://localhost:8080/api/files/" + randomImg;
-            p.setImageUrl(newUrl);
-            productService.updateProductImage(p.getId(), newUrl);
+            // Luu ten file thuan tuy, khong phai full URL
+            productService.updateProductImage(p.getId(), randomImg);
         }
         return ApiResponse.success("OK", "�� g�n API URL chu?n cho " + products.size() + " SP");
     }

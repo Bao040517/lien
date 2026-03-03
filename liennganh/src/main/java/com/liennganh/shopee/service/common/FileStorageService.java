@@ -77,6 +77,15 @@ public class FileStorageService {
      */
     public Resource loadFileAsResource(String fileName) {
         try {
+            // Nếu fileName là full URL (ví dụ: http://localhost:8080/api/files/abc.jpg)
+            // thì chỉ lấy phần tên file ở cuối
+            if (fileName != null && (fileName.startsWith("http://") || fileName.startsWith("https://"))) {
+                fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
+            }
+            // Nếu có path prefix như /api/files/ hoặc /uploads/
+            if (fileName != null && fileName.contains("/")) {
+                fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
+            }
             Path filePath = this.uploadPath.resolve(fileName).normalize();
             Resource resource = new UrlResource(filePath.toUri());
             if (resource.exists()) {

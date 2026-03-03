@@ -108,10 +108,6 @@ public class ProductService {
             product.setCategory(category);
         }
 
-        if (body.containsKey("name") || body.containsKey("description")) {
-            product.setProductStatus("PENDING");
-        }
-
         return productRepository.save(product);
     }
 

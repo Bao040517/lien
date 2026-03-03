@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Package, Plus, Search, Trash2, Edit3, Eye, AlertTriangle, CheckCircle, Clock, XCircle, ShieldAlert } from 'lucide-react';
 import Pagination from '../../components/Pagination';
@@ -25,6 +25,7 @@ const STATUS_STYLES = {
 
 const SellerProducts = () => {
     const { user } = useAuth();
+    const location = useLocation();
     const toast = useToast();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -35,7 +36,8 @@ const SellerProducts = () => {
     const productsPerPage = 10;
 
     useEffect(() => { setCurrentPage(1); }, [searchTerm, activeTab]);
-    useEffect(() => { if (user) fetchProducts(); }, [user]);
+    // Tự động refetch mỗi lần navigate về trang (kể cả sau khi edit xong)
+    useEffect(() => { if (user) fetchProducts(); }, [user, location.key]);
 
     const fetchProducts = async () => {
         try {
@@ -109,18 +111,16 @@ const SellerProducts = () => {
                     <button
                         key={tab.value}
                         onClick={() => setActiveTab(tab.value)}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
-                            activeTab === tab.value
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeTab === tab.value
                                 ? 'bg-orange-500 text-white shadow-sm'
                                 : 'text-gray-600 hover:bg-gray-50'
-                        }`}
+                            }`}
                     >
                         {tab.label}
-                        <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${
-                            activeTab === tab.value
+                        <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${activeTab === tab.value
                                 ? 'bg-white/25 text-white'
                                 : 'bg-gray-100 text-gray-500'
-                        }`}>
+                            }`}>
                             {tabCounts[tab.value]}
                         </span>
                     </button>
@@ -202,8 +202,8 @@ const SellerProducts = () => {
                                     const status = getStatus(product);
                                     const rowColor = status === 'BANNED' ? 'bg-red-50 border-l-4 border-red-500'
                                         : status === 'REJECTED' ? 'bg-orange-50/50 border-l-4 border-orange-400'
-                                        : status === 'PENDING' ? 'bg-amber-50/40 border-l-4 border-amber-400'
-                                        : '';
+                                            : status === 'PENDING' ? 'bg-amber-50/40 border-l-4 border-amber-400'
+                                                : '';
                                     return (
                                         <tr key={product.id} className={`transition hover:bg-gray-50/50 ${rowColor}`}>
                                             <td className="px-6 py-4">
