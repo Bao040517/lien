@@ -27,11 +27,12 @@ const AddProduct = () => {
     const [variants, setVariants] = useState([]);
 
     useEffect(() => {
+        if (!user?.id) return; // Đợi user load xong mới fetch
         const fetchData = async () => {
             try {
                 const [catRes, shopRes] = await Promise.all([
                     api.get('/categories', { params: { size: 1000 } }),
-                    api.get(`/shops/my-shop?userId=${user?.id}`)
+                    api.get(`/shops/my-shop?userId=${user.id}`)
                 ]);
                 setCategories(catRes.data.data?.content || catRes.data.data || catRes.data || []);
                 const shopData = shopRes.data.data || shopRes.data;
@@ -47,7 +48,7 @@ const AddProduct = () => {
             }
         };
         fetchData();
-    }, [user]);
+    }, [user?.id]); // Dùng user?.id thay vì user để tránh re-render thừa
 
     // --- Attribute management ---
     const addAttribute = () => {
@@ -149,6 +150,17 @@ const AddProduct = () => {
     // --- Submit ---
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Kiểm tra shopId hợp lệ trước khi gửi (tránh gửi "undefined" lên server)
+        if (!form.shopId || form.shopId === '' || form.shopId === undefined) {
+            toast.error('Không tìm thấy Shop. Vui lòng tải lại trang hoặc liên hệ Admin!');
+            return;
+        }
+        if (!form.categoryId || form.categoryId === '') {
+            toast.error('Vui lòng chọn danh mục sản phẩm!');
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -157,10 +169,10 @@ const AddProduct = () => {
             if (imageFiles.length > 0) {
                 // Create with images
                 const formData = new FormData();
-                formData.append('shopId', form.shopId);
-                formData.append('categoryId', form.categoryId);
+                formData.append('shopId', String(form.shopId));      // ép string để tránh undefined
+                formData.append('categoryId', String(form.categoryId));
                 formData.append('name', form.name);
-                formData.append('description', form.description);
+                formData.append('description', form.description || '');
                 formData.append('price', form.price);
                 formData.append('stockQuantity', form.stockQuantity || '0');
                 imageFiles.forEach(file => {

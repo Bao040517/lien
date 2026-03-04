@@ -34,6 +34,7 @@ public class Product {
     @Column(nullable = false)
     private String name; // Tên sản phẩm
 
+    @Column(columnDefinition = "TEXT")
     private String description; // Mô tả sản phẩm
 
     @Column(nullable = false)

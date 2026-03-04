@@ -6,6 +6,7 @@ import api from '../api';
 import { MapPin, CreditCard, Store, Truck, Tag, Coins, X, ChevronRight, Plus, Check } from 'lucide-react';
 import Breadcrumb from '../components/Breadcrumb';
 import { useToast } from '../context/ToastContext';
+import { getImageUrl } from '../utils';
 
 const Checkout = () => {
     const { state } = useLocation();
@@ -453,7 +454,7 @@ const Checkout = () => {
                                     return (
                                         <div key={index} className="grid grid-cols-12 items-center gap-4 mb-4 last:mb-0">
                                             <div className="col-span-6 flex gap-4">
-                                                <img src={image} alt={product.name} className="w-12 h-12 object-cover border" />
+                                                <img src={getImageUrl(image)} alt={product.name} className="w-12 h-12 object-cover border" />
                                                 <div>
                                                     <div className="line-clamp-1">{product.name}</div>
                                                     {item.variant && (
