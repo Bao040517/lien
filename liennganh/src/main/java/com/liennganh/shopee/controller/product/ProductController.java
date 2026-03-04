@@ -443,22 +443,4 @@ public class ProductController {
         productService.deleteVariant(variantId);
         return ApiResponse.success(null, "Xóa biến thể thành công");
     }
-
-    @GetMapping("/fix-images-final")
-    public ApiResponse<String> fixImagesFinal() {
-        java.io.File dir = new java.io.File("C:/Users/Admin/Desktop/liennganh/uploads");
-        String[] files = dir.list((d, name) -> name.endsWith(".jpg") || name.endsWith(".png"));
-        if (files == null || files.length == 0)
-            return ApiResponse.error(404, "No images");
-
-        org.springframework.data.domain.Page<Product> productPage = productService.getAllProductsIncludingBanned(0,
-                Integer.MAX_VALUE);
-        List<Product> products = productPage.getContent();
-        java.util.Random rand = new java.util.Random();
-        for (Product p : products) {
-            // Luu ten file thuan tuy, khong phai full URL
-            productService.updateProductImage(p.getId(), randomImg);
-        }
-        return ApiResponse.success("OK", "�� g�n API URL chu?n cho " + products.size() + " SP");
-    }
 }
