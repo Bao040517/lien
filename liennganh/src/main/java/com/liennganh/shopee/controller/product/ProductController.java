@@ -327,6 +327,7 @@ public class ProductController {
             @RequestParam(required = false) String description,
             @RequestParam(required = false) BigDecimal price,
             @RequestParam(required = false) Integer stockQuantity,
+            @RequestParam(required = false) Long categoryId,
             @RequestParam(value = "images", required = false) MultipartFile[] imageFiles) {
         try {
             Map<String, Object> updates = new java.util.HashMap<>();
@@ -338,6 +339,8 @@ public class ProductController {
                 updates.put("price", price);
             if (stockQuantity != null)
                 updates.put("stockQuantity", stockQuantity);
+            if (categoryId != null)
+                updates.put("categoryId", categoryId);
 
             Product product = productService.updateProduct(id, updates);
 
@@ -442,23 +445,5 @@ public class ProductController {
     public ApiResponse<Void> deleteVariant(@PathVariable Long variantId) {
         productService.deleteVariant(variantId);
         return ApiResponse.success(null, "Xóa biến thể thành công");
-    }
-
-    @GetMapping("/fix-images-final")
-    public ApiResponse<String> fixImagesFinal() {
-        java.io.File dir = new java.io.File("C:/Users/Admin/Desktop/liennganh/uploads");
-        String[] files = dir.list((d, name) -> name.endsWith(".jpg") || name.endsWith(".png"));
-        if (files == null || files.length == 0)
-            return ApiResponse.error(404, "No images");
-
-        org.springframework.data.domain.Page<Product> productPage = productService.getAllProductsIncludingBanned(0,
-                Integer.MAX_VALUE);
-        List<Product> products = productPage.getContent();
-        java.util.Random rand = new java.util.Random();
-        for (Product p : products) {
-            // Luu ten file thuan tuy, khong phai full URL
-            productService.updateProductImage(p.getId(), randomImg);
-        }
-        return ApiResponse.success("OK", "�� g�n API URL chu?n cho " + products.size() + " SP");
     }
 }
