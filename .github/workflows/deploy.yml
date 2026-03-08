@@ -29,7 +29,7 @@ jobs:
       - name: Build & Push Backend
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./liennganh
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/shopee-backend:${{ steps.vars.outputs.sha }}
@@ -40,7 +40,7 @@ jobs:
       - name: Build & Push Frontend
         uses: docker/build-push-action@v5
         with:
-          context: ./shopee-frontend
+          context: ./liennganh/shopee-frontend
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/shopee-frontend:${{ steps.vars.outputs.sha }}
