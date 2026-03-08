@@ -142,7 +142,7 @@ const Navbar = () => {
               <input
                 type="text"
                 className="flex-1 px-3 py-2 text-black outline-none"
-                placeholder="Test cicdShopee bao ship 0Đ - Đăng ký ngay!"
+                placeholder="Shopee bao ship 0Đ - Đăng ký ngay!"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
