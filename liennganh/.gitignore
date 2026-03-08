@@ -30,6 +30,9 @@ shopee-frontend/dist/
 shopee-frontend/.env
 shopee-frontend/.env.local
 
+# ==================== DOCKER ====================
+docker-compose*.yml
+
 # ==================== MISC ====================
 .gemini/
 *.class

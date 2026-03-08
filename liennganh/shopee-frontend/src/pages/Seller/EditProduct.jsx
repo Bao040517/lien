@@ -40,6 +40,7 @@ const EditProduct = ({ isAdmin = false }) => {
   // Existing attributes & variants from DB
   const [attributes, setAttributes] = useState([]);
   const [variants, setVariants] = useState([]);
+  const [variantsToDelete, setVariantsToDelete] = useState([]);
 
   // New attributes to add
   const [newAttributes, setNewAttributes] = useState([]);
@@ -166,15 +167,10 @@ const EditProduct = ({ isAdmin = false }) => {
     setNewAttributes(u);
   };
 
-  // --- Delete existing variant ---
-  const handleDeleteVariant = async (variantId) => {
-    if (!window.confirm("Xoá biến thể này?")) return;
-    try {
-      await api.delete(`/products/variants/${variantId}`);
-      setVariants((prev) => prev.filter((v) => v.id !== variantId));
-    } catch (error) {
-      toast.info("Xoá biến thể thất bại!");
-    }
+  // --- Delete existing variant (deferred until save) ---
+  const handleDeleteVariant = (variantId) => {
+    setVariants((prev) => prev.filter((v) => v.id !== variantId));
+    setVariantsToDelete((prev) => [...prev, variantId]);
   };
 
   // --- Save ---
@@ -199,6 +195,11 @@ const EditProduct = ({ isAdmin = false }) => {
       await api.put(`/products/${id}/with-image`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+
+      // Delete variants marked for deletion
+      for (const variantId of variantsToDelete) {
+        await api.delete(`/products/variants/${variantId}`);
+      }
 
       // Create new attributes + options
       for (const attr of newAttributes) {
