@@ -327,6 +327,7 @@ public class ProductController {
             @RequestParam(required = false) String description,
             @RequestParam(required = false) BigDecimal price,
             @RequestParam(required = false) Integer stockQuantity,
+            @RequestParam(required = false) Long categoryId,
             @RequestParam(value = "images", required = false) MultipartFile[] imageFiles) {
         try {
             Map<String, Object> updates = new java.util.HashMap<>();
@@ -338,6 +339,8 @@ public class ProductController {
                 updates.put("price", price);
             if (stockQuantity != null)
                 updates.put("stockQuantity", stockQuantity);
+            if (categoryId != null)
+                updates.put("categoryId", categoryId);
 
             Product product = productService.updateProduct(id, updates);
 

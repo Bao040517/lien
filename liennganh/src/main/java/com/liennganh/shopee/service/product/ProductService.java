@@ -108,6 +108,8 @@ public class ProductService {
             product.setCategory(category);
         }
 
+        product.setProductStatus("PENDING");
+
         return productRepository.save(product);
     }
 

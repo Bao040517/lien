@@ -61,12 +61,15 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
       - ./redo2.sql:/docker-entrypoint-initdb.d/init.sql
+<<<<<<< HEAD
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d liennganhmoi"]
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 30s
+=======
+>>>>>>> testing_thang
     networks:
       - shopee-network
 
