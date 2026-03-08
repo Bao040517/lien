@@ -108,7 +108,6 @@ public class ProductService {
             product.setCategory(category);
         }
 
-        // Reset về PENDING sau mỗi lần cập nhật để tránh lách luật
         product.setProductStatus("PENDING");
 
         return productRepository.save(product);

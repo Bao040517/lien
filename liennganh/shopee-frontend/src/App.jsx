@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import ScrollToTop from './components/ScrollToTop';
 import MainLayout from './layouts/MainLayout';
 import AdminLayout from './layouts/AdminLayout';
 import SellerLayout from './layouts/SellerLayout';
@@ -48,6 +49,7 @@ const App = () => {
 
   return (
     <CartProvider>
+      <ScrollToTop />
       <Routes>
         {/* User/Buyer Routes — Shopping Navbar */}
         <Route path="/" element={<MainLayout />}>
