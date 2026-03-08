@@ -33,6 +33,8 @@ shopee-frontend/.env.local
 # ==================== ENV ====================
 .env
 .env.local
+# ==================== DOCKER ====================
+docker-compose*.yml
 
 # ==================== MISC ====================
 .gemini/
