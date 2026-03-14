@@ -72,7 +72,6 @@ public class ReviewService {
 
     /**
      * Thêm đánh giá mới (Review)
-     * Y�u c?u: User ph?i mua s?n ph?m v� don h�ng d� giao th�nh c�ng
      * 
      * @throws AppException USER_NOT_FOUND, ORDER_NOT_FOUND, NOT_ORDER_OWNER,
      *                      ORDER_NOT_DELIVERED
@@ -107,7 +106,6 @@ public class ReviewService {
                 throw new AppException(ErrorCode.INVALID_PRODUCT_DATA);
             }
         } else {
-            // 2b. T? d?ng t�m don h�ng h?p l? g?n nh?t d� giao
             order = orderRepository.findFirstByUserIdAndOrderItemsProductIdAndStatusOrderByCreatedAtDesc(
                     userId, productId, Order.OrderStatus.DELIVERED)
                     .orElseThrow(() -> new AppException(ErrorCode.CANNOT_REVIEW_PRODUCT));

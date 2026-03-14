@@ -32,7 +32,6 @@ public class StatisticsService {
         private final OrderItemRepository orderItemRepository;
         private final ReviewRepository reviewRepository;
 
-        // Seller Statistics
         public SellerStatisticsDTO getSellerStatistics(Long sellerId) {
                 User seller = userRepository.findById(sellerId)
                                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -46,16 +45,13 @@ public class StatisticsService {
 
                 SellerStatisticsDTO stats = new SellerStatisticsDTO();
 
-                // Total products
                 Long totalProducts = productRepository.countByShop(shop);
                 stats.setTotalProducts(totalProducts);
 
-                // Get all orders containing products from this shop
                 List<Product> shopProducts = productRepository.findAllByShop(shop);
                 List<Long> productIds = shopProducts.stream().map(Product::getId).collect(Collectors.toList());
 
                 if (productIds.isEmpty()) {
-                        // No products, return empty stats
                         stats.setTotalRevenue(BigDecimal.ZERO);
                         stats.setTotalOrders(0L);
                         stats.setPendingOrders(0L);
@@ -70,16 +66,13 @@ public class StatisticsService {
                 }
 
                 List<OrderItem> orderItems = orderItemRepository.findByProductIdIn(productIds);
-                Set<Long> orderIds = orderItems.stream()
-                                .map(item -> item.getOrder().getId())
+                Set<Long> orderIds = orderItems.stream().map(item -> item.getOrder().getId())
                                 .collect(Collectors.toSet());
 
                 List<Order> orders = orderRepository.findAllById(orderIds);
 
-                // Total orders
                 stats.setTotalOrders((long) orders.size());
 
-                // Orders by status
                 long pending = orders.stream().filter(o -> o.getStatus() == Order.OrderStatus.PENDING).count();
                 long shipping = orders.stream().filter(o -> o.getStatus() == Order.OrderStatus.SHIPPING).count();
                 long delivering = orders.stream().filter(o -> o.getStatus() == Order.OrderStatus.DELIVERING).count();
@@ -92,14 +85,12 @@ public class StatisticsService {
                 stats.setDeliveredOrders(delivered);
                 stats.setCancelledOrders(cancelled);
 
-                // Total revenue (only from delivered orders)
                 BigDecimal totalRevenue = orderItems.stream()
                                 .filter(item -> item.getOrder().getStatus() == Order.OrderStatus.DELIVERED)
                                 .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                                 .reduce(BigDecimal.ZERO, BigDecimal::add);
                 stats.setTotalRevenue(totalRevenue);
 
-                // Top products
                 Map<Long, TopProductDTO> productStatsMap = new HashMap<>();
                 for (OrderItem item : orderItems) {
                         if (item.getOrder().getStatus() == Order.OrderStatus.DELIVERED) {
@@ -122,8 +113,6 @@ public class StatisticsService {
                                 .collect(Collectors.toList());
                 stats.setTopProducts(topProducts);
 
-                // --- Chi tiết từng sản phẩm (tính từ OrderItem + Review) ---
-                // Tạo map productId -> sold (từ OrderItem DELIVERED)
                 Map<Long, Long> soldMap = new HashMap<>();
                 for (OrderItem item : orderItems) {
                         if (item.getOrder().getStatus() == Order.OrderStatus.DELIVERED) {
@@ -132,10 +121,8 @@ public class StatisticsService {
                         }
                 }
 
-                // Lấy tất cả reviews của shop
                 List<Review> shopReviews = reviewRepository.findByProductShopId(shop.getId());
 
-                // Tạo map productId -> reviewCount
                 Map<Long, Long> reviewCountMap = new HashMap<>();
                 Map<Long, List<Integer>> reviewRatingsMap = new HashMap<>();
                 for (Review review : shopReviews) {
@@ -144,7 +131,6 @@ public class StatisticsService {
                         reviewRatingsMap.computeIfAbsent(pid, k -> new ArrayList<>()).add(review.getRating());
                 }
 
-                // Build productDetailStats cho TẤT CẢ sản phẩm của shop
                 List<ProductDetailStatsDTO> detailStats = new ArrayList<>();
                 for (Product p : shopProducts) {
                         long pSold = soldMap.getOrDefault(p.getId(), 0L);
@@ -164,27 +150,22 @@ public class StatisticsService {
                 }
                 stats.setProductDetailStats(detailStats);
 
-                // T?ng s? lu?ng d� b�n
                 long totalSold = orderItems.stream()
                                 .filter(item -> item.getOrder().getStatus() == Order.OrderStatus.DELIVERED)
                                 .mapToLong(OrderItem::getQuantity)
                                 .sum();
                 stats.setTotalSold(totalSold);
 
-                // Tổng số feedback (đánh giá)
                 long totalFeedback = shopReviews.size();
                 stats.setTotalFeedback(totalFeedback);
 
-                // Tỷ lệ hoàn hàng/hủy
                 double returnRate = orders.isEmpty() ? 0.0
                                 : (double) cancelled / orders.size() * 100;
                 stats.setReturnRate(Math.round(returnRate * 10.0) / 10.0);
 
-                // Điểm đánh giá trung bình của shop
                 Double avgRating = reviewRepository.getAverageRatingByShopId(shop.getId());
                 stats.setAverageRating(avgRating != null ? Math.round(avgRating * 10.0) / 10.0 : 0.0);
 
-                // --- Chart Data ---
                 List<Object[]> revenueData = orderRepository.getSellerRevenueByDate(shop.getId());
                 stats.setRevenueChart(mapToChartData(revenueData));
 
@@ -198,13 +179,11 @@ public class StatisticsService {
         public AdminStatisticsDTO getAdminStatistics() {
                 AdminStatisticsDTO stats = new AdminStatisticsDTO();
 
-                // Total counts
                 stats.setTotalUsers(userRepository.countByRole(User.Role.USER));
                 stats.setTotalSellers(userRepository.countByRole(User.Role.SELLER));
                 stats.setTotalProducts(productRepository.count());
                 stats.setTotalOrders(orderRepository.count());
 
-                // Seller status counts
                 stats.setPendingSellers(
                                 userRepository.countByRoleAndSellerStatus(User.Role.SELLER, User.SellerStatus.PENDING));
                 stats.setApprovedSellers(
@@ -217,14 +196,12 @@ public class StatisticsService {
                                 userRepository.countByRoleAndSellerStatus(User.Role.SELLER,
                                                 User.SellerStatus.SUSPENDED));
 
-                // Total revenue (delivered orders only)
                 List<Order> deliveredOrders = orderRepository.findByStatus(Order.OrderStatus.DELIVERED);
                 BigDecimal totalRevenue = deliveredOrders.stream()
                                 .map(Order::getFinalPrice)
                                 .reduce(BigDecimal.ZERO, BigDecimal::add);
                 stats.setTotalRevenue(totalRevenue);
 
-                // Orders by status
                 Map<String, Long> ordersByStatus = new HashMap<>();
                 for (Order.OrderStatus status : Order.OrderStatus.values()) {
                         long count = orderRepository.countByStatus(status);
@@ -232,7 +209,6 @@ public class StatisticsService {
                 }
                 stats.setOrdersByStatus(ordersByStatus);
 
-                // Top sellers
                 List<Shop> allShops = shopRepository.findAll();
                 List<TopSellerDTO> topSellers = new ArrayList<>();
 
@@ -245,10 +221,8 @@ public class StatisticsService {
                                 Set<Order> shopOrders = items.stream().map(OrderItem::getOrder)
                                                 .collect(Collectors.toSet());
 
-                                // Calculate metrics
                                 long shopDeliveredOrders = shopOrders.stream()
                                                 .filter(o -> o.getStatus() == Order.OrderStatus.DELIVERED).count();
-                                // OrderStatus.RETURNED does not exist yet, defaulting to 0
                                 long returnedOrders = 0;
                                 long totalShopOrders = shopOrders.size();
 
@@ -269,7 +243,7 @@ public class StatisticsService {
                                 topSellers.add(new TopSellerDTO(
                                                 shop.getId(),
                                                 shop.getName(),
-                                                null, // Logo URL not available
+                                                null,
                                                 revenue,
                                                 shopDeliveredOrders,
                                                 Math.round(avgRating * 10.0) / 10.0,
@@ -284,7 +258,6 @@ public class StatisticsService {
                                 .collect(Collectors.toList());
                 stats.setTopSellers(topSellers);
 
-                // Top products (system-wide)
                 List<OrderItem> allItems = orderItemRepository.findAll();
                 Map<Long, TopProductDTO> productStatsMap = new HashMap<>();
 
@@ -309,7 +282,6 @@ public class StatisticsService {
                                 .collect(Collectors.toList());
                 stats.setTopProducts(topProducts);
 
-                // --- Chart Data ---
                 List<Object[]> revenueData = orderRepository.getSystemRevenueByDate();
                 stats.setRevenueChart(mapToChartData(revenueData));
 
@@ -319,7 +291,6 @@ public class StatisticsService {
                 return stats;
         }
 
-        // Helper to convert Object[] from repository to ChartDataDTO
         private List<ChartDataDTO> mapToChartData(List<Object[]> data) {
                 return data.stream()
                                 .map(row -> {

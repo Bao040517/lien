@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0" version="22.0.0">
+  <diagram id="deployment" name="Deployment Diagram">
+    <mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- =================== CLIENT NODE (FRONTEND) =================== -->
+        <mxCell id="node_client" value="&lt;b&gt;&amp;lt;&amp;lt;Device&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;Client Device (PC / Mobile)" style="verticalAlign=top;align=center;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="80" y="240" width="260" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="env_browser" value="&lt;b&gt;&amp;lt;&amp;lt;Execution Environment&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;Web Browser" style="shape=module;align=center;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;" vertex="1" parent="node_client">
+          <mxGeometry x="20" y="50" width="220" height="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="comp_react" value="&lt;b&gt;&amp;lt;&amp;lt;Artifact&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;React JS Application&lt;br&gt;(Shopee Clone UI)" style="shape=component;align=left;spacingLeft=36;align=center;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="env_browser">
+          <mxGeometry x="20" y="50" width="180" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- =================== APPLICATION SERVER (BACKEND) =================== -->
+        <mxCell id="node_server" value="&lt;b&gt;&amp;lt;&amp;lt;Device&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;Application Server" style="verticalAlign=top;align=center;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=0;html=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="460" y="160" width="300" height="380" as="geometry"/>
+        </mxCell>
+        <mxCell id="env_tomcat" value="&lt;b&gt;&amp;lt;&amp;lt;Execution Environment&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;Tomcat Container (Embedded)" style="shape=module;align=center;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;" vertex="1" parent="node_server">
+          <mxGeometry x="30" y="60" width="240" height="290" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="comp_springboot" value="&lt;b&gt;&amp;lt;&amp;lt;Artifact&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;Spring Boot Application&lt;br&gt;(Shopee-Core.jar)" style="shape=component;align=left;spacingLeft=36;align=center;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="env_tomcat">
+          <mxGeometry x="20" y="50" width="200" height="60" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="comp_jwt" value="&lt;b&gt;&amp;lt;&amp;lt;Component&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;JWT SecurityFilter" style="shape=component;align=left;spacingLeft=36;align=center;whiteSpace=wrap;html=1;" vertex="1" parent="env_tomcat">
+          <mxGeometry x="20" y="130" width="200" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="comp_jpa" value="&lt;b&gt;&amp;lt;&amp;lt;Component&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;Hibernate / Spring Data JPA" style="shape=component;align=left;spacingLeft=36;align=center;whiteSpace=wrap;html=1;" vertex="1" parent="env_tomcat">
+          <mxGeometry x="20" y="200" width="200" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- =================== DATABASE SERVER NODE =================== -->
+        <mxCell id="node_db" value="&lt;b&gt;&amp;lt;&amp;lt;Device&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;Database Server" style="verticalAlign=top;align=center;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=0;html=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="840" y="240" width="240" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="env_pg" value="&lt;b&gt;&amp;lt;&amp;lt;Execution Environment&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;PostgreSQL RDBMS" style="shape=module;align=center;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;" vertex="1" parent="node_db">
+          <mxGeometry x="20" y="60" width="200" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="comp_schema" value="&lt;b&gt;&amp;lt;&amp;lt;Artifact&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;Database Schema&lt;br&gt;(ShopeeDB)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="env_pg">
+          <mxGeometry x="40" y="40" width="120" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- =================== EXTERNAL SERVICES =================== -->
+        <mxCell id="node_vnpay" value="&lt;b&gt;&amp;lt;&amp;lt;External Node&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;VNPay Gateway API" style="verticalAlign=top;align=center;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=0;html=1;whiteSpace=wrap;fillColor=#b0e3e6;strokeColor=#0e8088;" vertex="1" parent="1">
+          <mxGeometry x="510" y="40" width="200" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- =================== CONNECTIONS / PROTOCOLS =================== -->
+        <!-- Browser -> API -->
+        <mxCell id="link_http" value="HTTP/HTTPS&lt;br&gt;(RESTful JSON)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;" edge="1" parent="1" source="node_client" target="node_server">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- API -> DB -->
+        <mxCell id="link_jdbc" value="TCP/IP&lt;br&gt;(JDBC/Port 5432)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;" edge="1" parent="1" source="node_server" target="node_db">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- API -> VNPay -->
+        <mxCell id="link_vnpay" value="HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeWidth=2;dashed=1;" edge="1" parent="1" source="node_server" target="node_vnpay">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

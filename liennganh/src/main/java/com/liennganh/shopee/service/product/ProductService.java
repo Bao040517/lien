@@ -63,9 +63,6 @@ public class ProductService {
         return productRepository.findByCategoryIdAndProductStatus(categoryId, "APPROVED", pageable);
     }
 
-    /**
-     * Tạo sản phẩm — mặc định PENDING
-     */
     @org.springframework.transaction.annotation.Transactional
     public Product createProduct(Product product) {
         if (product.getShop() != null && product.getShop().getId() != null) {
@@ -81,14 +78,13 @@ public class ProductService {
 
         product.setAverageRating(0.0);
         product.setReviewCount(0L);
+        // Tạo sản phẩm — mặc định PENDING
         product.setProductStatus("PENDING");
 
         return productRepository.save(product);
     }
 
-    /**
-     * Cập nhật sản phẩm — seller sửa nội dung → quay về PENDING
-     */
+    // Cập nhật sản phẩm — seller sửa nội dung → quay về PENDING
     @org.springframework.transaction.annotation.Transactional
     public Product updateProduct(Long id, java.util.Map<String, Object> body) {
         Product product = getProductById(id);

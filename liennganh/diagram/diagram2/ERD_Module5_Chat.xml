@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" version="22.0.0">
+  <diagram id="erd_chat" name="Hình 3.x ERD Module Chat System">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="800">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+
+        <!-- User (ref) -->
+        <mxCell id="usr" value="User (ref)" style="shape=table;startSize=28;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1"><mxGeometry x="40" y="160" width="240" height="74" as="geometry"/></mxCell>
+        <mxCell id="usr1" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="usr"><mxGeometry y="28" width="240" height="23" as="geometry"/></mxCell>
+        <mxCell id="usr1a" value="PK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;fontSize=10;fontColor=#d6b656;" vertex="1" parent="usr1"><mxGeometry width="30" height="23" as="geometry"/></mxCell>
+        <mxCell id="usr1b" value="id : Long (→ xem ERD User Module)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontSize=10;fontStyle=4;" vertex="1" parent="usr1"><mxGeometry x="30" width="210" height="23" as="geometry"/></mxCell>
+
+        <!-- Conversation -->
+        <mxCell id="cv" value="Conversation" style="shape=table;startSize=28;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;" vertex="1" parent="1"><mxGeometry x="420" y="60" width="280" height="166" as="geometry"/></mxCell>
+        <mxCell id="cv1" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cv"><mxGeometry y="28" width="280" height="23" as="geometry"/></mxCell>
+        <mxCell id="cv1a" value="PK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;fontSize=10;fontColor=#d6b656;" vertex="1" parent="cv1"><mxGeometry width="30" height="23" as="geometry"/></mxCell>
+        <mxCell id="cv1b" value="id : Long" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontSize=10;fontStyle=4;" vertex="1" parent="cv1"><mxGeometry x="30" width="250" height="23" as="geometry"/></mxCell>
+        <mxCell id="cv2" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cv"><mxGeometry y="51" width="280" height="23" as="geometry"/></mxCell>
+        <mxCell id="cv2a" value="FK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;fontSize=10;fontColor=#b85450;" vertex="1" parent="cv2"><mxGeometry width="30" height="23" as="geometry"/></mxCell>
+        <mxCell id="cv2b" value="user1_id → users.id  @ManyToOne" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontSize=10;fontColor=#b85450;" vertex="1" parent="cv2"><mxGeometry x="30" width="250" height="23" as="geometry"/></mxCell>
+        <mxCell id="cv3" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cv"><mxGeometry y="74" width="280" height="23" as="geometry"/></mxCell>
+        <mxCell id="cv3a" value="FK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;fontSize=10;fontColor=#b85450;" vertex="1" parent="cv3"><mxGeometry width="30" height="23" as="geometry"/></mxCell>
+        <mxCell id="cv3b" value="user2_id → users.id  @ManyToOne" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontSize=10;fontColor=#b85450;" vertex="1" parent="cv3"><mxGeometry x="30" width="250" height="23" as="geometry"/></mxCell>
+        <mxCell id="cv4" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cv"><mxGeometry y="97" width="280" height="23" as="geometry"/></mxCell>
+        <mxCell id="cv4a" value="" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontSize=10;" vertex="1" parent="cv4"><mxGeometry width="30" height="23" as="geometry"/></mxCell>
+        <mxCell id="cv4b" value="createdAt | updatedAt : LocalDateTime" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontSize=10;" vertex="1" parent="cv4"><mxGeometry x="30" width="250" height="23" as="geometry"/></mxCell>
+        <mxCell id="cv5" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=#f0f0f0;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cv"><mxGeometry y="120" width="280" height="23" as="geometry"/></mxCell>
+        <mxCell id="cv5a" value="" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontSize=10;fontColor=#999;" vertex="1" parent="cv5"><mxGeometry width="30" height="23" as="geometry"/></mxCell>
+        <mxCell id="cv5b" value="deleted | deletedAt  @SoftDelete" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontSize=10;fontColor=#999;" vertex="1" parent="cv5"><mxGeometry x="30" width="250" height="23" as="geometry"/></mxCell>
+
+        <!-- Message -->
+        <mxCell id="mg" value="Message" style="shape=table;startSize=28;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;" vertex="1" parent="1"><mxGeometry x="420" y="300" width="280" height="166" as="geometry"/></mxCell>
+        <mxCell id="mg1" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="mg"><mxGeometry y="28" width="280" height="23" as="geometry"/></mxCell>
+        <mxCell id="mg1a" value="PK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;fontSize=10;fontColor=#d6b656;" vertex="1" parent="mg1"><mxGeometry width="30" height="23" as="geometry"/></mxCell>
+        <mxCell id="mg1b" value="id : Long" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontSize=10;fontStyle=4;" vertex="1" parent="mg1"><mxGeometry x="30" width="250" height="23" as="geometry"/></mxCell>
+        <mxCell id="mg2" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="mg"><mxGeometry y="51" width="280" height="23" as="geometry"/></mxCell>
+        <mxCell id="mg2a" value="FK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;fontSize=10;fontColor=#b85450;" vertex="1" parent="mg2"><mxGeometry width="30" height="23" as="geometry"/></mxCell>
+        <mxCell id="mg2b" value="conversation_id  @ManyToOne" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontSize=10;fontColor=#b85450;" vertex="1" parent="mg2"><mxGeometry x="30" width="250" height="23" as="geometry"/></mxCell>
+        <mxCell id="mg3" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="mg"><mxGeometry y="74" width="280" height="23" as="geometry"/></mxCell>
+        <mxCell id="mg3a" value="FK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;fontSize=10;fontColor=#b85450;" vertex="1" parent="mg3"><mxGeometry width="30" height="23" as="geometry"/></mxCell>
+        <mxCell id="mg3b" value="sender_id → users.id  @ManyToOne" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontSize=10;fontColor=#b85450;" vertex="1" parent="mg3"><mxGeometry x="30" width="250" height="23" as="geometry"/></mxCell>
+        <mxCell id="mg4" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="mg"><mxGeometry y="97" width="280" height="23" as="geometry"/></mxCell>
+        <mxCell id="mg4a" value="" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontSize=10;" vertex="1" parent="mg4"><mxGeometry width="30" height="23" as="geometry"/></mxCell>
+        <mxCell id="mg4b" value="content : TEXT | isRead : Boolean" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontSize=10;" vertex="1" parent="mg4"><mxGeometry x="30" width="250" height="23" as="geometry"/></mxCell>
+        <mxCell id="mg5" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="mg"><mxGeometry y="120" width="280" height="23" as="geometry"/></mxCell>
+        <mxCell id="mg5a" value="" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontSize=10;" vertex="1" parent="mg5"><mxGeometry width="30" height="23" as="geometry"/></mxCell>
+        <mxCell id="mg5b" value="createdAt | deleted @SoftDelete" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontSize=10;" vertex="1" parent="mg5"><mxGeometry x="30" width="250" height="23" as="geometry"/></mxCell>
+
+        <!-- RELATIONSHIPS -->
+        <mxCell id="r1" value="1:N" style="endArrow=ERmany;startArrow=ERone;endFill=0;startFill=0;edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;strokeColor=#9673a6;fontSize=11;fontStyle=1;fontColor=#9673a6;labelBackgroundColor=#fff;" edge="1" parent="1" source="cv1" target="mg2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="r2" value="1:N" style="endArrow=ERmany;startArrow=ERone;endFill=0;startFill=0;edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;fontColor=#6c8ebf;labelBackgroundColor=#fff;" edge="1" parent="1" source="usr1" target="mg3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="r3" value="N:1" style="endArrow=ERone;startArrow=ERmany;endFill=0;startFill=0;edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;fontColor=#6c8ebf;labelBackgroundColor=#fff;" edge="1" parent="1" source="cv2" target="usr1"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

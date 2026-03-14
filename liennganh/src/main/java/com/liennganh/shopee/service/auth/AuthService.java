@@ -43,12 +43,12 @@ public class AuthService {
             throw new AppException(ErrorCode.PASSWORD_TOO_SHORT);
         }
 
-        // Ki?m tra username d� t?n t?i chua
+        // Kiêm tra trùng chưa
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USERNAME_ALREADY_EXISTS);
         }
 
-        // Ki?m tra email d� t?n t?i chua
+        // Kiểm tra trung email
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
@@ -56,7 +56,7 @@ public class AuthService {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword())); // M� h�a m?t kh?u
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(User.Role.USER);
         user.setIsLocked(false);
 
@@ -115,7 +115,7 @@ public class AuthService {
         log.info("Yêu cầu đăng nhập từ user: {}", request.getUsername());
 
         User user = userRepository.findByUsernameOrEmail(request.getUsername(), request.getUsername())
-                .orElseThrow(() -> new AppException(ErrorCode.INVALID_CREDENTIALS));
+                                  .orElseThrow(() -> new AppException(ErrorCode.INVALID_CREDENTIALS));
 
         // Kiểm tra mật khẩu
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {

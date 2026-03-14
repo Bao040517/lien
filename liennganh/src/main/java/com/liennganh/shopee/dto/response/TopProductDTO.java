@@ -11,10 +11,10 @@ import java.math.BigDecimal;
  */
 @NoArgsConstructor
 public class TopProductDTO {
-    private Long productId; // ID sản phẩm
-    private String productName; // Tên sản phẩm
-    private Long totalSold; // T?ng s? lu?ng d� b�n
-    private BigDecimal revenue; // Tổng doanh thu từ sản phẩm này
+    private Long productId;
+    private String productName;
+    private Long totalSold;
+    private BigDecimal revenue;
 
     public TopProductDTO(Long productId, String productName, Long totalSold, BigDecimal revenue) {
         this.productId = productId;

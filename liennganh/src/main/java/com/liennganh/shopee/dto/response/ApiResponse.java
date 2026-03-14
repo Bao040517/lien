@@ -5,17 +5,15 @@ package com.liennganh.shopee.dto.response;
  * 
  */
 public class ApiResponse<T> {
-    private boolean success; // Trạng thái thành công hay thất bại
-    private int code = 1000; // M� l?i (1000 = success)
-    private String message; // Thông báo đi kèm
-    private T data; // Dữ liệu chính
+    private boolean success;
+    private int code = 1000;
+    private String message;
+    private T data;
 
-    // Helper method để tạo response thành công nhanh
     public static <T> ApiResponse<T> success(T data, String message) {
         return new ApiResponse<>(true, 1000, message, data);
     }
 
-    // Helper method để tạo response lỗi nhanh
     public static <T> ApiResponse<T> error(int code, String message) {
         return new ApiResponse<>(false, code, message, null);
     }

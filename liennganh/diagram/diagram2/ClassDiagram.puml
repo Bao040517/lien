@@ -1,0 +1,252 @@
+@startuml ClassDiagram
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 14
+skinparam classAttributeFontSize 11
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 50
+
+title Hình 3.3 Class Diagram của hệ thống
+
+' ========== USER & AUTH ==========
+class User {
+  - id : Long <<PK>>
+  - username : String
+  - email : String
+  - password : String
+  - role : Role
+  - sellerStatus : SellerStatus
+  - isLocked : Boolean
+  - createdAt : LocalDateTime
+  - deleted : Boolean
+}
+
+class Address {
+  - id : Long <<PK>>
+  - recipientName : String
+  - phone : String
+  - province : String
+  - district : String
+  - ward : String
+  - street : String
+  - isDefault : Boolean
+}
+
+class Shop {
+  - id : Long <<PK>>
+  - name : String
+  - description : String
+  - avatarUrl : String
+  - deleted : Boolean
+}
+
+class Notification {
+  - id : Long <<PK>>
+  - title : String
+  - message : String
+  - type : NotificationType
+  - referenceId : Long
+  - isRead : Boolean
+  - createdAt : LocalDateTime
+}
+
+' ========== PRODUCT ==========
+class Product {
+  - id : Long <<PK>>
+  - name : String
+  - description : String
+  - price : BigDecimal
+  - stockQuantity : Integer
+  - discountPercentage : Integer
+  - discountedPrice : BigDecimal
+  - imageUrl : String
+  - productStatus : ProductStatus
+  - sold : Long
+  - averageRating : Double
+  - reviewCount : Long
+}
+
+class Category {
+  - id : Long <<PK>>
+  - name : String
+  - description : String
+  - imageUrl : String
+}
+
+class ProductAttribute {
+  - id : Long <<PK>>
+  - name : String
+}
+
+class ProductAttributeOption {
+  - id : Long <<PK>>
+  - value : String
+  - imageUrl : String
+}
+
+class ProductVariant {
+  - id : Long <<PK>>
+  - attributes : String
+  - price : BigDecimal
+  - stockQuantity : Integer
+  - imageUrl : String
+}
+
+class Review {
+  - id : Long <<PK>>
+  - rating : int
+  - comment : String
+  - createdAt : LocalDateTime
+  - deleted : Boolean
+}
+
+' ========== CART & ORDER ==========
+class Cart {
+  - id : Long <<PK>>
+  - totalPrice : BigDecimal
+  - deleted : Boolean
+}
+
+class CartItem {
+  - id : Long <<PK>>
+  - quantity : Integer
+  - deleted : Boolean
+}
+
+class Order {
+  - id : Long <<PK>>
+  - paymentMethod : PaymentMethod
+  - status : OrderStatus
+  - totalPrice : BigDecimal
+  - finalPrice : BigDecimal
+  - createdAt : LocalDateTime
+  - deleted : Boolean
+}
+
+class OrderItem {
+  - id : Long <<PK>>
+  - quantity : Integer
+  - price : BigDecimal
+  - deleted : Boolean
+}
+
+' ========== PROMOTION ==========
+class Voucher {
+  - id : Long <<PK>>
+  - code : String
+  - discountType : DiscountType
+  - discountValue : BigDecimal
+  - minOrderValue : BigDecimal
+  - usageLimit : Integer
+  - startDate : LocalDateTime
+  - endDate : LocalDateTime
+}
+
+class FlashSale {
+  - id : Long <<PK>>
+  - name : String
+  - startTime : LocalDateTime
+  - endTime : LocalDateTime
+  - isActive : Boolean
+}
+
+class FlashSaleItem {
+  - id : Long <<PK>>
+  - discountedPrice : BigDecimal
+  - stockQuantity : int
+  - soldQuantity : int
+}
+
+' ========== CHAT ==========
+class Conversation {
+  - id : Long <<PK>>
+  - createdAt : LocalDateTime
+  - updatedAt : LocalDateTime
+  - deleted : Boolean
+}
+
+class Message {
+  - id : Long <<PK>>
+  - content : String
+  - isRead : Boolean
+  - createdAt : LocalDateTime
+  - deleted : Boolean
+}
+
+' ========== ENUMS ==========
+enum Role {
+  USER
+  SELLER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  SHIPPING
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  COD
+  BANKING
+  VNPAY
+}
+
+enum ProductStatus {
+  PENDING
+  APPROVED
+  BANNED
+}
+
+' ========== RELATIONSHIPS ==========
+
+' --- User ---
+User "1" -- "0..*" Address : has >
+User "1" -- "0..1" Shop : owns >
+User "1" -- "0..*" Notification : receives >
+User "1" -- "0..*" Order : places >
+User "1" -- "0..*" Review : writes >
+User "1" -- "1" Cart : has >
+
+' --- Product ---
+Shop "1" -- "0..*" Product : sells >
+Category "1" -- "0..*" Product : contains >
+Product "1" -- "0..*" ProductAttribute : has >
+Product "1" -- "0..*" ProductVariant : has >
+Product "1" -- "0..*" Review : reviewed >
+
+' --- ProductAttribute ---
+ProductAttribute "1" -- "0..*" ProductAttributeOption : has >
+
+' --- Cart ---
+Cart "1" -- "0..*" CartItem : contains >
+CartItem "0..*" -- "1" Product : references >
+
+' --- Order ---
+Order "1" -- "0..*" OrderItem : contains >
+OrderItem "0..*" -- "1" Product : references >
+Order "0..*" -- "0..1" Voucher : uses >
+
+' --- Review ---
+Review "0..*" -- "1" Order : for >
+
+' --- Promotion ---
+FlashSale "1" -- "0..*" FlashSaleItem : includes >
+FlashSaleItem "0..*" -- "1" Product : discounts >
+Shop "1" -- "0..*" Voucher : creates >
+
+' --- Chat ---
+User "1" -- "0..*" Conversation : user1 >
+User "1" -- "0..*" Conversation : user2 >
+Conversation "1" -- "0..*" Message : contains >
+User "1" -- "0..*" Message : sends >
+
+' --- Enum Usage ---
+User ..> Role
+Order ..> OrderStatus
+Order ..> PaymentMethod
+Product ..> ProductStatus
+
+@enduml

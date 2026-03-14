@@ -11,8 +11,8 @@ import java.math.BigDecimal;
  */
 @NoArgsConstructor
 public class ChartDataDTO {
-    private String label; // Nhãn trục hoành (Ví dụ: "2023-10-27" hoặc "Tháng 10")
-    private BigDecimal value; // Giá trị trục tung (Doanh thu hoặc Số lượng)
+    private String label;
+    private BigDecimal value;
 
     public ChartDataDTO(String label, BigDecimal value) {
         this.label = label;

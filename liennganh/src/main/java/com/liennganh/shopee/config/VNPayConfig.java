@@ -47,7 +47,12 @@ public class VNPayConfig {
             if (value != null && value.length() > 0) {
                 sb.append(key);
                 sb.append('=');
-                sb.append(value);
+                try {
+                	// VNPAY requirement: Value must be URL Encoded using UTF-8 before hashing
+                	sb.append(java.net.URLEncoder.encode(value, StandardCharsets.UTF_8.toString()));
+                } catch (Exception e) {
+                	sb.append(value);
+                }
                 if (itr.hasNext()) {
                     sb.append('&');
                 }

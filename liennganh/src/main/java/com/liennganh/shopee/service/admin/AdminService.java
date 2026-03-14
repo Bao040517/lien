@@ -158,7 +158,6 @@ public class AdminService {
     public User approveSeller(Long sellerId) {
         User seller = getUserById(sellerId);
 
-        // N?u d� duy?t r?i th� kh�ng l�m g�
         if (seller.getSellerStatus() == User.SellerStatus.APPROVED) {
             return seller;
         }
@@ -175,12 +174,12 @@ public class AdminService {
             shop.setName(approvedSeller.getUsername() + "'s Shop");
             shop.setDescription("Chào mừng đến với cửa hàng của " + approvedSeller.getUsername() + "!");
             shopRepository.save(shop);
-            log.info("�� t?o Shop cho user: {}", approvedSeller.getUsername());
+            log.info("Tạo Shop cho user: {}", approvedSeller.getUsername());
         } else {
-            log.info("Shop d� t?n t?i cho user: {}", approvedSeller.getUsername());
+            log.info("Shop đã tồn tại {}", approvedSeller.getUsername());
         }
 
-        log.info("�� duy?t seller: {}", seller.getUsername());
+        log.info("Duyệt seller: {}", seller.getUsername());
 
         return approvedSeller;
     }
@@ -200,7 +199,7 @@ public class AdminService {
 
         seller.setSellerStatus(User.SellerStatus.REJECTED);
         User rejectedSeller = userRepository.save(seller);
-        log.info("�� t? ch?i seller: {}", seller.getUsername());
+        log.info("Từ chối seller: {}", seller.getUsername());
 
         return rejectedSeller;
     }
@@ -225,7 +224,7 @@ public class AdminService {
 
         seller.setSellerStatus(User.SellerStatus.SUSPENDED);
         User suspendedSeller = userRepository.save(seller);
-        log.info("�� t?m kh�a seller: {}", seller.getUsername());
+        log.info("Tạm khoá seller: {}", seller.getUsername());
 
         return suspendedSeller;
     }

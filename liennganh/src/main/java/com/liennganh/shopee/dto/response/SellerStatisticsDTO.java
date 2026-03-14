@@ -13,27 +13,24 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SellerStatisticsDTO {
-    private BigDecimal totalRevenue; // Tổng doanh thu
-    private Long totalOrders; // Tổng số đơn hàng
-    private Long totalProducts; // Tổng số sản phẩm
-    private Long totalSold; // T?ng s? lu?ng d� b�n
-    private Long totalFeedback; // Tổng số lượt đánh giá
-    private Double returnRate; // Tỷ lệ hoàn hàng/hủy (%)
-    private Double averageRating; // Điểm đánh giá trung bình (sao)
+    private BigDecimal totalRevenue;
+    private Long totalOrders;
+    private Long totalProducts;
+    private Long totalSold;
+    private Long totalFeedback;
+    private Double returnRate;
+    private Double averageRating;
 
-    // Thống kê đơn hàng theo trạng thái
-    private Long pendingOrders; // Đơn chờ xác nhận
-    private Long shippingOrders; // Đơn đang vận chuyển
-    private Long deliveringOrders; // Đơn đang giao
-    private Long deliveredOrders; // �on d� giao th�nh c�ng
-    private Long cancelledOrders; // �on d� h?y
+    private Long pendingOrders;
+    private Long shippingOrders;
+    private Long deliveringOrders;
+    private Long deliveredOrders;
+    private Long cancelledOrders;
 
-    private List<TopProductDTO> topProducts; // Top sản phẩm bán chạy của shop
-    private List<ProductDetailStatsDTO> productDetailStats; // Thống kê chi tiết từng sản phẩm
-
-    // Dữ liệu biểu đồ
-    private List<ChartDataDTO> revenueChart; // Biểu đồ doanh thu
-    private List<ChartDataDTO> ordersChart; // Biểu đồ đơn hàng
+    private List<TopProductDTO> topProducts;
+    private List<ProductDetailStatsDTO> productDetailStats;
+    private List<ChartDataDTO> revenueChart;
+    private List<ChartDataDTO> ordersChart;
 
     public BigDecimal getTotalRevenue() {
         return totalRevenue;

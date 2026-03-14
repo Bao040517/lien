@@ -94,7 +94,7 @@ public class MessageService {
     }
 
     /**
-     * ��nh d?u t?t c? tin nh?n trong h?i tho?i l� d� d?c
+     * Đánh dấu tất cả tin nhắn trong hội thoại là đã đọc
      */
     @Transactional
     public void markAsRead(Long conversationId, Long userId) {

@@ -63,7 +63,7 @@ const PasswordModal = ({ isOpen, username, password, onClose }) => {
                         </div>
                         {copied && (
                             <p className="text-center text-green-600 text-sm font-medium mt-2 animate-bounce">
-                                ✅ Đã copy vào clipboard!
+                                Đã copy vào clipboard!
                             </p>
                         )}
                     </div>

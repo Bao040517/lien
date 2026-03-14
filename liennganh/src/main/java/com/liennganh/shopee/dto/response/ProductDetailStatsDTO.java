@@ -12,13 +12,13 @@ public class ProductDetailStatsDTO {
     private String imageUrl;
     private BigDecimal price;
     private Integer stockQuantity;
-    private Long sold; // Tính từ OrderItem (đơn DELIVERED)
-    private Long reviewCount; // Tính từ Review
-    private Double averageRating; // Tính từ Review
+    private Long sold;
+    private Long reviewCount;
+    private Double averageRating;
     private Integer discountPercentage;
     private BigDecimal discountedPrice;
-    private Boolean isBanned; // Sản phẩm có bị khóa không
-    private String violationReason; // Lý do vi phạm
+    private Boolean isBanned;
+    private String violationReason;
 
     public ProductDetailStatsDTO() {
     }

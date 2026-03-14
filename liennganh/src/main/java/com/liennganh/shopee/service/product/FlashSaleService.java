@@ -59,12 +59,6 @@ public class FlashSaleService {
         existingSale.setStartTime(flashSaleDetails.getStartTime());
         existingSale.setEndTime(flashSaleDetails.getEndTime());
         existingSale.setActive(flashSaleDetails.isActive());
-
-        // Update items logic
-        // Clear existing details and replace (simple approach as requested for editing
-        // "products")
-        // To do it properly we should remove orphans.
-        // For simplicity and effectiveness in this context:
         existingSale.getItems().clear();
         if (flashSaleDetails.getItems() != null) {
             for (FlashSaleItem newItem : flashSaleDetails.getItems()) {
@@ -76,4 +70,3 @@ public class FlashSaleService {
         return flashSaleRepository.save(existingSale);
     }
 }
-

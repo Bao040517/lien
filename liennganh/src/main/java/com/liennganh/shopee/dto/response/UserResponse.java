@@ -63,9 +63,6 @@ public class UserResponse {
         isLocked = locked;
     }
 
-    /**
-     * Chuyển đổi từ Entity User sang UserResponse
-     */
     public static UserResponse fromUser(User user) {
         UserResponse response = new UserResponse();
         response.setId(user.getId());
