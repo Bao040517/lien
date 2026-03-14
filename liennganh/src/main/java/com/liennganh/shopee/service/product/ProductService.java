@@ -314,10 +314,14 @@ public class ProductService {
             Integer stockQuantity, String imageUrl) {
         ProductVariant variant = variantRepository.findById(variantId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        if (attributesJson != null) variant.setAttributes(attributesJson);
-        if (price != null) variant.setPrice(price);
-        if (stockQuantity != null) variant.setStockQuantity(stockQuantity);
-        if (imageUrl != null) variant.setImageUrl(imageUrl);
+        if (attributesJson != null)
+            variant.setAttributes(attributesJson);
+        if (price != null)
+            variant.setPrice(price);
+        if (stockQuantity != null)
+            variant.setStockQuantity(stockQuantity);
+        if (imageUrl != null)
+            variant.setImageUrl(imageUrl);
         return variantRepository.save(variant);
     }
 

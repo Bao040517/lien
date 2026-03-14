@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
-import { ShoppingCart, Search, Clock, Package, Truck, CheckCircle, XCircle, ChevronDown } from 'lucide-react';
+import { ShoppingCart, Search, Clock, Package, Truck, CheckCircle, XCircle, ChevronDown, ChevronUp, Eye, MapPin } from 'lucide-react';
 import Pagination from '../../components/Pagination';
 import { useToast } from '../../context/ToastContext';
+import { getImageUrl } from '../../utils';
 
 const statusConfig = {
     PENDING: { label: 'Chờ xác nhận', icon: Clock, color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
@@ -23,6 +24,7 @@ const SellerOrders = () => {
     const [statusFilter, setStatusFilter] = useState('ALL');
     const [search, setSearch] = useState('');
     const [updating, setUpdating] = useState(null);
+    const [expandedOrder, setExpandedOrder] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const ordersPerPage = 10;
 
@@ -142,59 +144,150 @@ const SellerOrders = () => {
                                 {currentOrders.map(order => {
                                     const sc = statusConfig[order.status] || statusConfig.PENDING;
                                     const StatusIcon = sc.icon;
+                                    const isExpanded = expandedOrder === order.id;
                                     return (
-                                        <tr key={order.id} className={`hover:bg-primary-lighter/30 transition-colors`}>
-                                            <td className="px-6 py-4">
-                                                <span className="text-sm font-mono font-bold text-gray-800">
-                                                    #{order.id}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 bg-gradient-to-br from-primary-dark to-primary-darker rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm">
-                                                        {order.user?.username?.charAt(0).toUpperCase() || '?'}
+                                        <React.Fragment key={order.id}>
+                                            <tr className={`hover:bg-primary-lighter/30 transition-colors ${isExpanded ? 'bg-primary-lighter/20' : ''}`}>
+                                                <td className="px-6 py-4">
+                                                    <span className="text-sm font-mono font-bold text-gray-800">
+                                                        #{order.id}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 bg-gradient-to-br from-primary-dark to-primary-darker rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                                                            {order.user?.username?.charAt(0).toUpperCase() || '?'}
+                                                        </div>
+                                                        <span className="text-sm font-medium text-gray-700">{order.user?.username || 'N/A'}</span>
                                                     </div>
-                                                    <span className="text-sm font-medium text-gray-700">{order.user?.username || 'N/A'}</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-gray-600">
-                                                <div className="flex items-center gap-1.5">
-                                                    <Package className="w-4 h-4 text-gray-400" />
-                                                    {order.orderItems?.length || 0} sản phẩm
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div>
-                                                    <p className="text-sm font-bold text-primary-darker">{formatPrice(order.finalPrice)}</p>
-                                                    {order.totalPrice !== order.finalPrice && (
-                                                        <p className="text-xs text-gray-400 line-through mt-0.5">{formatPrice(order.totalPrice)}</p>
-                                                    )}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full border ${sc.color}`}>
-                                                    <StatusIcon className="w-3.5 h-3.5" />
-                                                    {sc.label}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-gray-500">
-                                                {order.createdAt ? new Date(order.createdAt).toLocaleDateString('vi-VN') : '—'}
-                                            </td>
-                                            <td className="px-6 py-4 text-center">
-                                                <div className="relative inline-block w-full max-w-[140px]">
-                                                    <select
-                                                        value={order.status}
-                                                        disabled={updating === order.id || order.status === 'DELIVERED' || order.status === 'CANCELLED'}
-                                                        onChange={e => handleUpdateStatus(order.id, e.target.value)}
-                                                        className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 pr-8 text-sm font-medium text-gray-700 hover:border-primary focus:border-primary-dark focus:ring-2 focus:ring-primary outline-none disabled:opacity-50 disabled:bg-gray-50 cursor-pointer shadow-sm transition-all duration-200">
-                                                        {allStatuses.map(s => (
-                                                            <option key={s} value={s}>{statusConfig[s].label}</option>
-                                                        ))}
-                                                    </select>
-                                                    <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                                                </div>
-                                            </td>
-                                        </tr>
+                                                </td>
+                                                <td className="px-6 py-4 text-sm text-gray-600">
+                                                    <button
+                                                        onClick={() => setExpandedOrder(isExpanded ? null : order.id)}
+                                                        className="flex items-center gap-1.5 hover:text-primary-dark transition-colors"
+                                                    >
+                                                        <Package className="w-4 h-4 text-gray-400" />
+                                                        {order.orderItems?.length || 0} sản phẩm
+                                                        {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                                                    </button>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div>
+                                                        <p className="text-sm font-bold text-primary-darker">{formatPrice(order.finalPrice)}</p>
+                                                        {order.totalPrice !== order.finalPrice && (
+                                                            <p className="text-xs text-gray-400 line-through mt-0.5">{formatPrice(order.totalPrice)}</p>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full border ${sc.color}`}>
+                                                        <StatusIcon className="w-3.5 h-3.5" />
+                                                        {sc.label}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 text-sm text-gray-500">
+                                                    {order.createdAt ? new Date(order.createdAt).toLocaleDateString('vi-VN') : '—'}
+                                                </td>
+                                                <td className="px-6 py-4 text-center">
+                                                    <div className="flex items-center justify-center gap-2">
+                                                        <button
+                                                            onClick={() => setExpandedOrder(isExpanded ? null : order.id)}
+                                                            className={`p-1.5 rounded-lg border transition-all ${isExpanded ? 'bg-primary-dark text-white border-primary-dark' : 'bg-white text-gray-500 border-gray-200 hover:border-primary-dark hover:text-primary-dark'}`}
+                                                            title="Xem chi tiết"
+                                                        >
+                                                            <Eye className="w-4 h-4" />
+                                                        </button>
+                                                        <div className="relative inline-block w-full max-w-[140px]">
+                                                            <select
+                                                                value={order.status}
+                                                                disabled={updating === order.id || order.status === 'DELIVERED' || order.status === 'CANCELLED'}
+                                                                onChange={e => handleUpdateStatus(order.id, e.target.value)}
+                                                                className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 pr-8 text-sm font-medium text-gray-700 hover:border-primary focus:border-primary-dark focus:ring-2 focus:ring-primary outline-none disabled:opacity-50 disabled:bg-gray-50 cursor-pointer shadow-sm transition-all duration-200">
+                                                                {allStatuses.map(s => (
+                                                                    <option key={s} value={s}>{statusConfig[s].label}</option>
+                                                                ))}
+                                                            </select>
+                                                            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {isExpanded && (
+                                                <tr>
+                                                    <td colSpan={7} className="px-0 py-0">
+                                                        <div className="bg-gray-50/80 border-t border-b border-gray-200">
+                                                            {/* Chi tiết sản phẩm */}
+                                                            <div className="px-6 py-4">
+                                                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Chi tiết sản phẩm đã mua</p>
+                                                                <div className="space-y-2">
+                                                                    {order.orderItems && order.orderItems.length > 0 ? (
+                                                                        order.orderItems.map((item, idx) => {
+                                                                            const productImg = item.variant?.imageUrl || item.product?.imageUrl;
+                                                                            return (
+                                                                                <div key={idx} className="flex items-center gap-3 bg-white rounded-lg p-3 border border-gray-100">
+                                                                                    <div className="w-14 h-14 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                                                                                        {productImg ? (
+                                                                                            <img src={getImageUrl(productImg)} alt={item.product?.name} className="w-full h-full object-cover" />
+                                                                                        ) : (
+                                                                                            <div className="w-full h-full flex items-center justify-center text-gray-300">
+                                                                                                <Package className="w-5 h-5" />
+                                                                                            </div>
+                                                                                        )}
+                                                                                    </div>
+                                                                                    <div className="flex-1 min-w-0">
+                                                                                        <p className="text-sm font-medium text-gray-800 truncate">{item.product?.name || 'Sản phẩm'}</p>
+                                                                                        {item.variant?.name && (
+                                                                                            <p className="text-xs text-gray-400 mt-0.5">Phân loại: {item.variant.name}</p>
+                                                                                        )}
+                                                                                        <p className="text-xs text-gray-500 mt-0.5">x{item.quantity}</p>
+                                                                                    </div>
+                                                                                    <div className="text-right flex-shrink-0">
+                                                                                        <p className="text-sm font-semibold text-primary-darker">{formatPrice(item.price * item.quantity)}</p>
+                                                                                        <p className="text-xs text-gray-400">{formatPrice(item.price)}/sp</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            );
+                                                                        })
+                                                                    ) : (
+                                                                        <p className="text-sm text-gray-400 italic">Không có dữ liệu sản phẩm</p>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                            {/* Thông tin thêm */}
+                                                            <div className="px-6 pb-4 grid grid-cols-2 lg:grid-cols-4 gap-3">
+                                                                <div className="bg-white rounded-lg p-3 border border-gray-100">
+                                                                    <p className="text-xs text-gray-400 mb-1">Phương thức TT</p>
+                                                                    <p className="text-sm font-medium text-gray-700">
+                                                                        {order.paymentMethod === 'COD' ? 'Thanh toán khi nhận' : order.paymentMethod === 'BANKING' ? 'Chuyển khoản' : order.paymentMethod || '—'}
+                                                                    </p>
+                                                                </div>
+                                                                <div className="bg-white rounded-lg p-3 border border-gray-100">
+                                                                    <p className="text-xs text-gray-400 mb-1">Địa chỉ giao hàng</p>
+                                                                    <p className="text-xs font-medium text-gray-700 line-clamp-2">
+                                                                        {order.shippingAddress
+                                                                            ? `${order.shippingAddress.street || ''}, ${order.shippingAddress.ward || ''}, ${order.shippingAddress.district || ''}, ${order.shippingAddress.city || ''}`
+                                                                            : '—'}
+                                                                    </p>
+                                                                </div>
+                                                                {order.voucher && (
+                                                                    <div className="bg-green-50 rounded-lg p-3 border border-green-100">
+                                                                        <p className="text-xs text-green-500 mb-1">Voucher áp dụng</p>
+                                                                        <p className="text-sm font-medium text-green-700">{order.voucher.code}</p>
+                                                                    </div>
+                                                                )}
+                                                                <div className="bg-white rounded-lg p-3 border border-gray-100">
+                                                                    <p className="text-xs text-gray-400 mb-1">Tổng thanh toán</p>
+                                                                    <p className="text-sm font-bold text-primary-darker">{formatPrice(order.finalPrice)}</p>
+                                                                    {order.totalPrice !== order.finalPrice && (
+                                                                        <p className="text-xs text-gray-400 line-through">{formatPrice(order.totalPrice)}</p>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </React.Fragment>
                                     );
                                 })}
                             </tbody>
