@@ -15,6 +15,13 @@ import {
 } from "lucide-react";
 import { useToast } from "../../context/ToastContext";
 
+const formatVND = (value) => {
+  const num = String(value).replace(/\D/g, '');
+  if (!num) return '';
+  return Number(num).toLocaleString('vi-VN');
+};
+const parseVND = (value) => String(value).replace(/\D/g, '');
+
 const EditProduct = ({ isAdmin = false }) => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -138,15 +145,43 @@ const EditProduct = ({ isAdmin = false }) => {
     setNewImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // --- New Attribute Management ---
+  // --- New Attribute Management (auto-generates new variants) ---
+  const autoGenerateNewVariants = (attrs) => {
+    const validAttrs = attrs.filter(a => a.name && a.options.some(o => o));
+    if (validAttrs.length === 0) { setNewVariants([]); return; }
+
+    const allAttrs = [...attributes.map(a => ({ name: a.name, options: a.options?.map(o => o.value) || [] })), ...validAttrs];
+    const combinations = allAttrs.reduce((acc, attr) => {
+      const validOptions = (attr.options || []).filter(o => o);
+      if (validOptions.length === 0) return acc;
+      if (acc.length === 0) return validOptions.map(opt => ({ [attr.name]: opt }));
+      const result = [];
+      acc.forEach(combo => { validOptions.forEach(opt => { result.push({ ...combo, [attr.name]: opt }); }); });
+      return result;
+    }, []);
+
+    const existingKeys = new Set(variants.map(v => JSON.stringify(v.parsedAttrs)));
+    const oldNewMap = {};
+    newVariants.forEach(v => { oldNewMap[JSON.stringify(v.attributes)] = v; });
+
+    const onlyNew = combinations.filter(c => !existingKeys.has(JSON.stringify(c)));
+    setNewVariants(onlyNew.map(combo => {
+      const key = JSON.stringify(combo);
+      if (oldNewMap[key]) return oldNewMap[key];
+      return { attributes: combo, price: form.price || '', stockQuantity: '10' };
+    }));
+  };
+
   const addNewAttribute = () => {
-    setNewAttributes([...newAttributes, { name: "", options: [""] }]);
+    const u = [...newAttributes, { name: "", options: [""] }];
+    setNewAttributes(u);
   };
 
   const updateNewAttrName = (i, name) => {
     const u = [...newAttributes];
     u[i].name = name;
     setNewAttributes(u);
+    autoGenerateNewVariants(u);
   };
 
   const addNewOption = (ai) => {
@@ -159,18 +194,21 @@ const EditProduct = ({ isAdmin = false }) => {
     const u = [...newAttributes];
     u[ai].options[oi] = val;
     setNewAttributes(u);
+    autoGenerateNewVariants(u);
   };
 
   const removeNewOption = (ai, oi) => {
     const u = [...newAttributes];
     u[ai].options.splice(oi, 1);
     setNewAttributes(u);
+    autoGenerateNewVariants(u);
   };
 
   const removeNewAttribute = (ai) => {
     const u = [...newAttributes];
     u.splice(ai, 1);
     setNewAttributes(u);
+    autoGenerateNewVariants(u);
   };
 
   // --- Delete existing variant (deferred until save) ---
@@ -387,10 +425,12 @@ const EditProduct = ({ isAdmin = false }) => {
                 Giá (₫)
               </label>
               <input
-                type="number"
+                type="text"
                 required
-                value={form.price}
-                onChange={(e) => setForm({ ...form, price: e.target.value })}
+                value={formatVND(form.price)}
+                onChange={(e) => setForm({ ...form, price: parseVND(e.target.value) })}
+                inputMode="numeric"
+                placeholder="250.000"
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none"
               />
             </div>
@@ -567,9 +607,10 @@ const EditProduct = ({ isAdmin = false }) => {
                         <td className="px-3 py-2">
                           {isEditing ? (
                             <input
-                              type="number"
-                              value={editVariantForm.price}
-                              onChange={(e) => setEditVariantForm({ ...editVariantForm, price: e.target.value })}
+                              type="text"
+                              value={formatVND(editVariantForm.price)}
+                              onChange={(e) => setEditVariantForm({ ...editVariantForm, price: parseVND(e.target.value) })}
+                              inputMode="numeric"
                               className="w-28 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-primary outline-none"
                             />
                           ) : (
@@ -716,6 +757,77 @@ const EditProduct = ({ isAdmin = false }) => {
             ))
           )}
         </div>
+
+        {/* New Variants Table (auto-generated from new attributes) */}
+        {newVariants.length > 0 && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h2 className="text-lg font-semibold mb-4 text-gray-700">
+              Biến thể mới ({newVariants.length})
+            </h2>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-gray-50 text-gray-600">
+                    <th className="px-3 py-2 text-left font-medium">Phân loại</th>
+                    <th className="px-3 py-2 text-left font-medium">Giá (₫)</th>
+                    <th className="px-3 py-2 text-left font-medium">Kho</th>
+                    <th className="px-3 py-2 w-10"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {newVariants.map((v, vi) => (
+                    <tr key={vi} className="border-t border-gray-100 hover:bg-gray-50">
+                      <td className="px-3 py-2">
+                        <div className="flex flex-wrap gap-1">
+                          {Object.entries(v.attributes).map(([k, val]) => (
+                            <span key={k} className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-xs">
+                              {k}: {val}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-3 py-2">
+                        <input
+                          type="text"
+                          value={formatVND(v.price)}
+                          onChange={(e) => {
+                            const u = [...newVariants];
+                            u[vi].price = parseVND(e.target.value);
+                            setNewVariants(u);
+                          }}
+                          inputMode="numeric"
+                          placeholder="189.000"
+                          className="w-28 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-primary outline-none"
+                        />
+                      </td>
+                      <td className="px-3 py-2">
+                        <input
+                          type="number"
+                          value={v.stockQuantity}
+                          onChange={(e) => {
+                            const u = [...newVariants];
+                            u[vi].stockQuantity = e.target.value;
+                            setNewVariants(u);
+                          }}
+                          className="w-20 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-primary outline-none"
+                        />
+                      </td>
+                      <td className="px-3 py-2">
+                        <button
+                          type="button"
+                          onClick={() => setNewVariants(prev => prev.filter((_, i) => i !== vi))}
+                          className="text-red-400 hover:text-red-600"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         {/* Submit */}
         <div className="flex gap-4">

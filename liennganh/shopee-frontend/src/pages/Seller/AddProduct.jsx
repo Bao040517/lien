@@ -5,6 +5,13 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { Plus, Trash2, Package, Image as ImageIcon, Save, X } from 'lucide-react';
 
+const formatVND = (value) => {
+    const num = String(value).replace(/\D/g, '');
+    if (!num) return '';
+    return Number(num).toLocaleString('vi-VN');
+};
+const parseVND = (value) => String(value).replace(/\D/g, '');
+
 const AddProduct = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -50,15 +57,17 @@ const AddProduct = () => {
         fetchData();
     }, [user?.id]); // Dùng user?.id thay vì user để tránh re-render thừa
 
-    // --- Attribute management ---
+    // --- Attribute management (auto-generates variants on change) ---
     const addAttribute = () => {
-        setAttributes([...attributes, { name: '', options: [''] }]);
+        const updated = [...attributes, { name: '', options: [''] }];
+        setAttributes(updated);
     };
 
     const updateAttributeName = (index, name) => {
         const updated = [...attributes];
         updated[index].name = name;
         setAttributes(updated);
+        triggerAutoGenerate(updated);
     };
 
     const addOption = (attrIndex) => {
@@ -71,28 +80,31 @@ const AddProduct = () => {
         const updated = [...attributes];
         updated[attrIndex].options[optIndex] = value;
         setAttributes(updated);
+        triggerAutoGenerate(updated);
     };
 
     const removeOption = (attrIndex, optIndex) => {
         const updated = [...attributes];
         updated[attrIndex].options.splice(optIndex, 1);
         setAttributes(updated);
+        triggerAutoGenerate(updated);
     };
 
     const removeAttribute = (attrIndex) => {
         const updated = [...attributes];
         updated.splice(attrIndex, 1);
         setAttributes(updated);
-        setVariants([]);
+        triggerAutoGenerate(updated);
     };
 
-    // --- Generate variants from attribute combinations ---
-    const generateVariants = () => {
-        const validAttrs = attributes.filter(a => a.name && a.options.some(o => o));
-        if (validAttrs.length === 0) return;
+    // --- Auto-generate variants from attribute combinations ---
+    const triggerAutoGenerate = (newAttrs) => {
+        const validAttrs = newAttrs.filter(a => a.name && a.options.some(o => o));
+        if (validAttrs.length === 0) { setVariants([]); return; }
 
         const combinations = validAttrs.reduce((acc, attr) => {
             const validOptions = attr.options.filter(o => o);
+            if (validOptions.length === 0) return acc;
             if (acc.length === 0) {
                 return validOptions.map(opt => ({ [attr.name]: opt }));
             }
@@ -105,11 +117,20 @@ const AddProduct = () => {
             return result;
         }, []);
 
-        setVariants(combinations.map(combo => ({
-            attributes: combo,
-            price: form.price || '',
-            stockQuantity: form.stockQuantity || '10',
-        })));
+        setVariants(prev => {
+            const oldMap = {};
+            prev.forEach(v => { oldMap[JSON.stringify(v.attributes)] = v; });
+
+            return combinations.map(combo => {
+                const key = JSON.stringify(combo);
+                if (oldMap[key]) return oldMap[key];
+                return {
+                    attributes: combo,
+                    price: form.price || '',
+                    stockQuantity: form.stockQuantity || '10',
+                };
+            });
+        });
     };
 
     const updateVariant = (index, field, value) => {
@@ -266,10 +287,11 @@ const AddProduct = () => {
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-600 mb-1">Giá gốc (₫) *</label>
-                            <input type="number" required value={form.price}
-                                onChange={e => setForm({ ...form, price: e.target.value })}
+                            <input type="text" required value={formatVND(form.price)}
+                                onChange={e => setForm({ ...form, price: parseVND(e.target.value) })}
+                                inputMode="numeric"
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none"
-                                placeholder="250000"
+                                placeholder="250.000"
                             />
                         </div>
                         <div>
@@ -377,11 +399,10 @@ const AddProduct = () => {
                         </div>
                     ))}
 
-                    {attributes.length > 0 && (
-                        <button type="button" onClick={generateVariants}
-                            className="w-full py-2 bg-primary-dark text-white rounded-lg hover:bg-primary-darker transition font-medium">
-                            Tạo danh sách phân loại ({attributes.reduce((acc, a) => acc * Math.max(1, a.options.filter(o => o).length), 1)} tổ hợp)
-                        </button>
+                    {attributes.length > 0 && variants.length > 0 && (
+                        <div className="text-sm text-gray-500 mt-2 text-center">
+                            Tự động tạo {variants.length} tổ hợp phân loại. Hãy nhập giá và số lượng cho từng biến thể bên dưới.
+                        </div>
                     )}
                 </div>
 
@@ -410,9 +431,11 @@ const AddProduct = () => {
                                                 </td>
                                             ))}
                                             <td className="px-3 py-2">
-                                                <input type="number" value={v.price}
-                                                    onChange={e => updateVariant(vi, 'price', e.target.value)}
+                                                <input type="text" value={formatVND(v.price)}
+                                                    onChange={e => updateVariant(vi, 'price', parseVND(e.target.value))}
+                                                    inputMode="numeric"
                                                     className="w-28 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-primary outline-none"
+                                                    placeholder="189.000"
                                                 />
                                             </td>
                                             <td className="px-3 py-2">
