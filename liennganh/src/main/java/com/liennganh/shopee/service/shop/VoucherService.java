@@ -98,6 +98,64 @@ public class VoucherService {
     }
 
     /**
+     * Xóa voucher hệ thống (Admin)
+     *
+     * @throws AppException VOUCHER_NOT_FOUND
+     */
+    public void deleteSystemVoucher(Long id) {
+        Voucher voucher = voucherRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
+        voucherRepository.delete(voucher);
+    }
+
+    /**
+     * Cập nhật voucher hệ thống (Admin)
+     *
+     * @throws AppException VOUCHER_NOT_FOUND, INVALID_INPUT
+     */
+    public Voucher updateVoucher(Long id, Voucher updated) {
+        Voucher existing = voucherRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
+        if (updated.getStartDate().isAfter(updated.getEndDate())
+                || updated.getStartDate().isEqual(updated.getEndDate())) {
+            throw new AppException(ErrorCode.INVALID_INPUT);
+        }
+        existing.setCode(updated.getCode());
+        existing.setDiscountType(updated.getDiscountType());
+        existing.setDiscountValue(updated.getDiscountValue());
+        existing.setMinOrderValue(updated.getMinOrderValue());
+        existing.setUsageLimit(updated.getUsageLimit());
+        existing.setStartDate(updated.getStartDate());
+        existing.setEndDate(updated.getEndDate());
+        return voucherRepository.save(existing);
+    }
+
+    /**
+     * Cập nhật voucher của Shop (Seller)
+     *
+     * @throws AppException VOUCHER_NOT_FOUND, NOT_SHOP_OWNER, INVALID_INPUT
+     */
+    public Voucher updateShopVoucher(Long id, Voucher updated, com.liennganh.shopee.entity.User owner) {
+        Voucher existing = voucherRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
+        if (owner.getShop() == null || !existing.getShop().getId().equals(owner.getShop().getId())) {
+            throw new AppException(ErrorCode.NOT_SHOP_OWNER);
+        }
+        if (updated.getStartDate().isAfter(updated.getEndDate())
+                || updated.getStartDate().isEqual(updated.getEndDate())) {
+            throw new AppException(ErrorCode.INVALID_INPUT);
+        }
+        existing.setCode(updated.getCode());
+        existing.setDiscountType(updated.getDiscountType());
+        existing.setDiscountValue(updated.getDiscountValue());
+        existing.setMinOrderValue(updated.getMinOrderValue());
+        existing.setUsageLimit(updated.getUsageLimit());
+        existing.setStartDate(updated.getStartDate());
+        existing.setEndDate(updated.getEndDate());
+        return voucherRepository.save(existing);
+    }
+
+    /**
      * Xóa voucher của Shop
      * Chỉ chủ shop mới được xóa voucher của mình
      * 

@@ -170,6 +170,7 @@ const MyAccount = () => {
     const handleSaveAddress = async () => {
         if (!addressForm.recipientName.trim()) { toast.warning('Vui lòng nhập tên người nhận.'); return; }
         if (!addressForm.phoneNumber.trim()) { toast.warning('Vui lòng nhập số điện thoại.'); return; }
+        if (!/^(0|\+84)[0-9]{9}$/.test(addressForm.phoneNumber.trim())) { toast.warning('Số điện thoại không hợp lệ. Vui lòng nhập đúng định dạng (VD: 0912345678).'); return; }
         if (!addressForm.city.trim()) { toast.warning('Vui lòng chọn Tỉnh/Thành phố.'); return; }
         if (!addressForm.district.trim()) { toast.warning('Vui lòng chọn Quận/Huyện.'); return; }
         if (!addressForm.ward.trim()) { toast.warning('Vui lòng chọn Phường/Xã.'); return; }

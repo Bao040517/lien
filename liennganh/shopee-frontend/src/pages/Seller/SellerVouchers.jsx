@@ -1,9 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
-import { Ticket, Plus, Trash2, Calendar, DollarSign, Percent } from 'lucide-react';
+import { Ticket, Plus, Trash2, Calendar, DollarSign, Percent, Pencil } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '../../context/ToastContext';
+
+const emptyForm = {
+    code: '',
+    discountType: 'PERCENTAGE',
+    discountValue: '',
+    minOrderValue: '',
+    usageLimit: '',
+    startDate: '',
+    endDate: ''
+};
 
 const SellerVouchers = () => {
     const [vouchers, setVouchers] = useState([]);
@@ -12,17 +22,10 @@ const SellerVouchers = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const vouchersPerPage = 6;
     const [showModal, setShowModal] = useState(false);
-    const [formData, setFormData] = useState({
-        code: '',
-        discountType: 'PERCENTAGE',
-        discountValue: '',
-        minOrderValue: '',
-        usageLimit: '',
-        startDate: '',
-        endDate: ''
-    });
+    const [editingId, setEditingId] = useState(null);
+    const [formData, setFormData] = useState(emptyForm);
 
-    const { user } = useAuth(); // Get user from context
+    const { user } = useAuth();
 
     const fetchVouchers = async () => {
         if (!user) return;
@@ -46,38 +49,56 @@ const SellerVouchers = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     const generateRandomCode = () => {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         let result = '';
-        const length = 15;
-        for (let i = 0; i < length; i++) {
+        for (let i = 0; i < 15; i++) {
             result += characters.charAt(Math.floor(Math.random() * characters.length));
         }
-        setFormData(prev => ({
-            ...prev,
-            code: result
-        }));
+        setFormData(prev => ({ ...prev, code: result }));
+    };
+
+    const toDatetimeLocal = (isoStr) => {
+        if (!isoStr) return '';
+        const d = new Date(isoStr);
+        const pad = (n) => n.toString().padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    };
+
+    const openCreateModal = () => {
+        setEditingId(null);
+        setFormData(emptyForm);
+        setShowModal(true);
+    };
+
+    const openEditModal = (voucher) => {
+        setEditingId(voucher.id);
+        setFormData({
+            code: voucher.code,
+            discountType: voucher.discountType,
+            discountValue: voucher.discountValue,
+            minOrderValue: voucher.minOrderValue ?? '',
+            usageLimit: voucher.usageLimit ?? '',
+            startDate: toDatetimeLocal(voucher.startDate),
+            endDate: toDatetimeLocal(voucher.endDate),
+        });
+        setShowModal(true);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!user) return;
 
-        // Validations
         if (!formData.code || !formData.discountValue || !formData.startDate || !formData.endDate) {
             toast.warning("Vui lòng điền đầy đủ thông tin bắt buộc");
             return;
         }
 
-        // Date Validation: Start must be BEFORE End
         if (new Date(formData.startDate) >= new Date(formData.endDate)) {
-            toast.info("Ngày kết thúc phải sau ngày bắt đầu. (Lưu ý: 12:00 PM là 12 giờ trưa, không phải đêm)");
+            toast.info("Ngày kết thúc phải sau ngày bắt đầu.");
             return;
         }
 
@@ -86,29 +107,29 @@ const SellerVouchers = () => {
             discountValue: parseFloat(formData.discountValue),
             minOrderValue: formData.minOrderValue ? parseFloat(formData.minOrderValue) : null,
             usageLimit: formData.usageLimit ? parseInt(formData.usageLimit) : null,
-            // Ensure we send the local time string as is (appending seconds), rather than converting to UTC
             startDate: formData.startDate.length === 16 ? formData.startDate + ':00' : formData.startDate,
             endDate: formData.endDate.length === 16 ? formData.endDate + ':00' : formData.endDate
         };
 
         try {
-            await api.post('/vouchers/my-shop', payload, {
-                params: { userId: user.id }
-            });
+            if (editingId) {
+                await api.put(`/vouchers/my-shop/${editingId}`, payload, {
+                    params: { userId: user.id }
+                });
+                toast.success('Cập nhật mã giảm giá thành công!');
+            } else {
+                await api.post('/vouchers/my-shop', payload, {
+                    params: { userId: user.id }
+                });
+                toast.success('Tạo mã giảm giá thành công!');
+            }
             setShowModal(false);
             fetchVouchers();
-            setFormData({
-                code: '',
-                discountType: 'PERCENTAGE',
-                discountValue: '',
-                minOrderValue: '',
-                usageLimit: '',
-                startDate: '',
-                endDate: ''
-            });
+            setFormData(emptyForm);
+            setEditingId(null);
         } catch (error) {
-            console.error('Failed to create voucher:', error);
-            toast.info(error.response?.data?.message || 'Tạo mã giảm giá thất bại. Kiểm tra lại thông tin.');
+            console.error('Failed to save voucher:', error);
+            toast.info(error.response?.data?.message || 'Lưu mã giảm giá thất bại. Kiểm tra lại thông tin.');
         }
     };
 
@@ -126,13 +147,17 @@ const SellerVouchers = () => {
         }
     };
 
-    // Calculate pagination
     const indexOfLastVoucher = currentPage * vouchersPerPage;
     const indexOfFirstVoucher = indexOfLastVoucher - vouchersPerPage;
     const currentVouchers = vouchers.slice(indexOfFirstVoucher, indexOfLastVoucher);
     const totalPages = Math.ceil(vouchers.length / vouchersPerPage);
 
+    const paginate = (page) => {
+        if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    };
 
+    const paginationRange = [];
+    for (let i = 1; i <= totalPages; i++) paginationRange.push(i);
 
     return (
         <div>
@@ -142,7 +167,7 @@ const SellerVouchers = () => {
                     Mã Giảm Giá Của Shop
                 </h1>
                 <button
-                    onClick={() => setShowModal(true)}
+                    onClick={openCreateModal}
                     className="flex items-center gap-2 bg-primary-dark text-white px-4 py-2 rounded-lg hover:bg-primary-darker transition"
                 >
                     <Plus className="w-5 h-5" /> Tạo Mã Mới
@@ -155,7 +180,6 @@ const SellerVouchers = () => {
                 ) : currentVouchers.length > 0 ? (
                     currentVouchers.map(voucher => (
                         <div key={voucher.id} className="bg-white border border-gray-100 rounded-xl shadow-sm p-4 hover:shadow-md transition relative group overflow-hidden">
-                            {/* Decorative Cutouts */}
                             <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-gray-50 rounded-full"></div>
                             <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-gray-50 rounded-full"></div>
 
@@ -163,12 +187,22 @@ const SellerVouchers = () => {
                                 <div className="bg-primary-light text-primary-darker font-bold px-3 py-1 rounded text-sm mb-1 inline-block">
                                     {voucher.code}
                                 </div>
-                                <button
-                                    onClick={() => handleDelete(voucher.id)}
-                                    className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition"
-                                >
-                                    <Trash2 className="w-4 h-4" />
-                                </button>
+                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition">
+                                    <button
+                                        onClick={() => openEditModal(voucher)}
+                                        className="text-gray-400 hover:text-primary-dark"
+                                        title="Chỉnh sửa"
+                                    >
+                                        <Pencil className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(voucher.id)}
+                                        className="text-gray-400 hover:text-red-500"
+                                        title="Xóa"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="flex items-center gap-2 mb-3">
@@ -192,10 +226,10 @@ const SellerVouchers = () => {
                             <div className="text-xs text-gray-500 space-y-1 border-t pt-3 mt-3 border-dashed">
                                 <div className="flex items-center gap-1">
                                     <Calendar className="w-3 h-3" />
-                                    <span>{format(new Date(voucher.startDate), 'dd/MM/yyyy')} - {format(new Date(voucher.endDate), 'dd/MM/yyyy')}</span>
+                                    <span>{format(new Date(voucher.startDate), 'dd/MM/yyyy HH:mm')} - {format(new Date(voucher.endDate), 'dd/MM/yyyy HH:mm')}</span>
                                 </div>
                                 <div className="text-xs">
-                                    Lượt dùng: <span className="font-medium text-gray-700">{voucher.usageLimit || 'Không giới hạn'}</span>
+                                    Lượt dùng: <span className="font-medium text-gray-700">{voucher.usageLimit ?? 'Không giới hạn'}</span>
                                 </div>
                             </div>
                         </div>
@@ -208,7 +242,6 @@ const SellerVouchers = () => {
                 )}
             </div>
 
-            {/* Pagination Controls */}
             {!loading && totalPages > 1 && (
                 <div className="flex items-center justify-between mt-6 bg-white p-4 rounded shadow-sm border border-gray-100">
                     <div className="text-sm text-gray-500">
@@ -230,13 +263,10 @@ const SellerVouchers = () => {
                         {paginationRange.map((page, index) => (
                             <button
                                 key={index}
-                                onClick={() => typeof page === 'number' ? paginate(page) : null}
-                                disabled={typeof page !== 'number'}
+                                onClick={() => paginate(page)}
                                 className={`px-3 py-1 border rounded transition ${currentPage === page
                                     ? 'bg-primary-dark text-white border-primary-dark'
-                                    : typeof page === 'number'
-                                        ? 'border-gray-300 text-gray-600 hover:bg-gray-50'
-                                        : 'border-transparent text-gray-400'
+                                    : 'border-gray-300 text-gray-600 hover:bg-gray-50'
                                     }`}
                             >
                                 {page}
@@ -254,11 +284,12 @@ const SellerVouchers = () => {
                 </div>
             )}
 
-            {/* Modal */}
             {showModal && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
-                        <h2 className="text-xl font-bold mb-4 text-gray-800">Tạo Mã Giảm Giá Mới</h2>
+                        <h2 className="text-xl font-bold mb-4 text-gray-800">
+                            {editingId ? 'Chỉnh Sửa Mã Giảm Giá' : 'Tạo Mã Giảm Giá Mới'}
+                        </h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Mã Voucher</label>
@@ -269,17 +300,19 @@ const SellerVouchers = () => {
                                         value={formData.code}
                                         onChange={handleChange}
                                         className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-dark outline-none uppercase"
-                                        placeholder="VD: SHOPKHAI TRUONG"
+                                        placeholder="VD: SHOPKHAIVOUCHER"
                                         required
                                     />
-                                    <button
-                                        type="button"
-                                        onClick={generateRandomCode}
-                                        className="px-3 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition whitespace-nowrap font-medium"
-                                        title="Tạo mã ngẫu nhiên 15 ký tự"
-                                    >
-                                        Random
-                                    </button>
+                                    {!editingId && (
+                                        <button
+                                            type="button"
+                                            onClick={generateRandomCode}
+                                            className="px-3 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition whitespace-nowrap font-medium"
+                                            title="Tạo mã ngẫu nhiên 15 ký tự"
+                                        >
+                                            Random
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
@@ -360,7 +393,7 @@ const SellerVouchers = () => {
                             <div className="flex justify-end gap-3 mt-6">
                                 <button
                                     type="button"
-                                    onClick={() => setShowModal(false)}
+                                    onClick={() => { setShowModal(false); setEditingId(null); }}
                                     className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
                                 >
                                     Hủy
@@ -369,7 +402,7 @@ const SellerVouchers = () => {
                                     type="submit"
                                     className="px-4 py-2 bg-primary-dark text-white rounded-lg hover:bg-primary-darker transition"
                                 >
-                                    Tạo Voucher
+                                    {editingId ? 'Lưu Thay Đổi' : 'Tạo Voucher'}
                                 </button>
                             </div>
                         </form>

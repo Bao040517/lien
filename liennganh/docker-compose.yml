@@ -30,6 +30,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=admin
       - JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
       - FILE_UPLOAD_DIR=/app/uploads
+      - TZ=Asia/Ho_Chi_Minh
     depends_on:
       db:
         condition: service_healthy
@@ -61,15 +62,12 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
       - ./redo2.sql:/docker-entrypoint-initdb.d/init.sql
-<<<<<<< HEAD
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d liennganhmoi"]
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 30s
-=======
->>>>>>> testing_thang
     networks:
       - shopee-network
 

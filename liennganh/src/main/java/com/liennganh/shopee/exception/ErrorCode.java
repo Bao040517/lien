@@ -82,6 +82,7 @@ public enum ErrorCode {
     // Nhóm lỗi Địa chỉ (Address) - 10xxx
     ADDRESS_NOT_FOUND(10001, "Không tìm thấy địa chỉ", HttpStatus.NOT_FOUND),
     NOT_ADDRESS_OWNER(10002, "Bạn không phải chủ địa chỉ này", HttpStatus.FORBIDDEN),
+    INVALID_PHONE_NUMBER(10003, "Số điện thoại không hợp lệ (VD: 0912345678)", HttpStatus.BAD_REQUEST),
 
     // Nhóm lỗi Flash Sale (11xxx)
     FLASH_SALE_NOT_FOUND(11001, "Không tìm thấy chương trình Flash Sale", HttpStatus.NOT_FOUND),

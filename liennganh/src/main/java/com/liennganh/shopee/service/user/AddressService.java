@@ -38,13 +38,23 @@ public class AddressService {
         return addressRepository.findAll();
     }
 
+    private static final java.util.regex.Pattern PHONE_PATTERN =
+            java.util.regex.Pattern.compile("^(0|\\+84)[0-9]{9}$");
+
+    private void validatePhoneNumber(String phoneNumber) {
+        if (phoneNumber == null || !PHONE_PATTERN.matcher(phoneNumber.trim()).matches()) {
+            throw new AppException(ErrorCode.INVALID_PHONE_NUMBER);
+        }
+    }
+
     /**
      * Thêm địa chỉ mới
      * 
-     * @throws AppException USER_NOT_FOUND
+     * @throws AppException USER_NOT_FOUND, INVALID_PHONE_NUMBER
      */
     @Transactional
     public Address addAddress(Long userId, Address address) {
+        validatePhoneNumber(address.getPhoneNumber());
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         address.setUser(user);
@@ -60,10 +70,11 @@ public class AddressService {
     /**
      * Cập nhật địa chỉ
      * 
-     * @throws AppException ADDRESS_NOT_FOUND, NOT_ADDRESS_OWNER
+     * @throws AppException ADDRESS_NOT_FOUND, NOT_ADDRESS_OWNER, INVALID_PHONE_NUMBER
      */
     @Transactional
     public Address updateAddress(Long userId, Long addressId, Address addressDetails) {
+        validatePhoneNumber(addressDetails.getPhoneNumber());
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new AppException(ErrorCode.ADDRESS_NOT_FOUND));
 

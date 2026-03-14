@@ -92,6 +92,29 @@ public class VoucherController {
     }
 
     /**
+     * Cập nhật voucher hệ thống
+     * Quyền hạn: ADMIN
+     *
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}")
+    public ApiResponse<Voucher> updateVoucher(@PathVariable Long id, @RequestBody Voucher voucher) {
+        return ApiResponse.success(voucherService.updateVoucher(id, voucher), "Cập nhật voucher thành công");
+    }
+
+    /**
+     * Xóa voucher hệ thống
+     * Quyền hạn: ADMIN
+     *
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deleteVoucher(@PathVariable Long id) {
+        voucherService.deleteSystemVoucher(id);
+        return ApiResponse.success(null, "Xóa voucher thành công");
+    }
+
+    /**
      * Tạo voucher mới cho shop
      * Quyền hạn: SELLER, ADMIN
      * 
@@ -103,6 +126,19 @@ public class VoucherController {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         return ApiResponse.success(voucherService.createShopVoucher(voucher, user),
                 "Tạo voucher cho shop thành công");
+    }
+
+    /**
+     * Cập nhật voucher của shop
+     * Quyền hạn: SELLER, ADMIN
+     *
+     */
+    @PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
+    @PutMapping("/my-shop/{id}")
+    public ApiResponse<Voucher> updateShopVoucher(@PathVariable Long id, @RequestBody Voucher voucher, @RequestParam Long userId) {
+        com.liennganh.shopee.entity.User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return ApiResponse.success(voucherService.updateShopVoucher(id, voucher, user), "Cập nhật voucher thành công");
     }
 
     /**

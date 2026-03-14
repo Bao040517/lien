@@ -403,12 +403,12 @@ const Home = () => {
                                         {/* Price & Progress */}
                                         <div className="px-2 py-2.5 text-center">
                                             <div className="text-red-500 font-bold text-lg leading-tight">
-                                                <span className="text-xs align-top">₫</span>
                                                 {salePrice.toLocaleString('vi-VN')}
+                                                <span className="text-xs align-top">₫</span>
                                             </div>
                                             {originalPrice > salePrice && (
                                                 <div className="text-gray-400 text-xs line-through mt-0.5">
-                                                    ₫{originalPrice.toLocaleString('vi-VN')}
+                                                    {originalPrice.toLocaleString('vi-VN')}₫
                                                 </div>
                                             )}
                                             {/* Sold progress bar */}
@@ -455,12 +455,12 @@ const Home = () => {
                                     <div className="flex justify-between items-end min-h-[44px]">
                                         <div className="flex flex-col justify-end">
                                             <div className="text-primary-dark font-medium leading-tight">
-                                                <span className="text-xs underline align-top">đ</span>
                                                 <span className="text-lg">{(product.discountedPrice || product.price || 0).toLocaleString('vi-VN')}</span>
+                                                <span className="text-xs underline align-top">đ</span>
                                             </div>
                                             {product.discountPercentage > 0 && (
                                                 <div className="text-gray-400 text-xs line-through mt-0.5">
-                                                    ₫{(product.price || 0).toLocaleString('vi-VN')}
+                                                    {(product.price || 0).toLocaleString('vi-VN')}₫
                                                 </div>
                                             )}
                                         </div>

@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../api';
-import { Tag, Plus, Trash2, Calendar, DollarSign, Percent } from 'lucide-react';
+import { Tag, Plus, Trash2, Pencil, Calendar, DollarSign, Percent } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
+
+const emptyForm = {
+    code: '',
+    discountType: 'FIXED',
+    discountValue: '',
+    minOrderValue: '',
+    usageLimit: 100,
+    startDate: '',
+    endDate: ''
+};
 
 const AdminVouchers = () => {
     const [vouchers, setVouchers] = useState([]);
     const toast = useToast();
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
-
-    // Form state
-    const [form, setForm] = useState({
-        code: '',
-        discountType: 'FIXED', // FIXED or PERCENTAGE
-        discountValue: '',
-        minOrderValue: '',
-        usageLimit: 100,
-        expiryDate: ''
-    });
+    const [editingId, setEditingId] = useState(null);
+    const [form, setForm] = useState(emptyForm);
 
     useEffect(() => {
         fetchVouchers();
@@ -35,40 +37,89 @@ const AdminVouchers = () => {
         }
     };
 
+    const toDatetimeLocal = (isoStr) => {
+        if (!isoStr) return '';
+        const d = new Date(isoStr);
+        const pad = (n) => n.toString().padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    };
+
+    const formatForApi = (datetimeLocalStr) => {
+        if (!datetimeLocalStr) return '';
+        return datetimeLocalStr.length === 16 ? datetimeLocalStr + ':00' : datetimeLocalStr;
+    };
+
+    const openCreateModal = () => {
+        setEditingId(null);
+        setForm(emptyForm);
+        setShowModal(true);
+    };
+
+    const openEditModal = (v) => {
+        setEditingId(v.id);
+        setForm({
+            code: v.code,
+            discountType: v.discountType,
+            discountValue: v.discountValue,
+            minOrderValue: v.minOrderValue ?? '',
+            usageLimit: v.usageLimit ?? '',
+            startDate: toDatetimeLocal(v.startDate),
+            endDate: toDatetimeLocal(v.endDate),
+        });
+        setShowModal(true);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Validate
-            if (!form.code || !form.discountValue || !form.expiryDate) {
+            if (!form.code || !form.discountValue || !form.startDate || !form.endDate) {
                 toast.warning('Vui lòng điền đầy đủ thông tin bắt buộc');
                 return;
             }
-
-            const formatForApi = (date) => {
-                const pad = (n) => n.toString().padStart(2, '0');
-                return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
-            };
+            if (new Date(form.startDate) >= new Date(form.endDate)) {
+                toast.warning('Ngày kết thúc phải sau ngày bắt đầu');
+                return;
+            }
 
             const payload = {
                 code: form.code,
                 discountType: form.discountType,
                 discountValue: Number(form.discountValue),
                 minOrderValue: Number(form.minOrderValue || 0),
-                usageLimit: Number(form.usageLimit),
-                startDate: formatForApi(new Date()),
-                endDate: formatForApi(new Date(form.expiryDate))
+                usageLimit: form.usageLimit !== '' ? Number(form.usageLimit) : null,
+                startDate: formatForApi(form.startDate),
+                endDate: formatForApi(form.endDate),
             };
 
-            const res = await api.post('/vouchers', payload);
-            toast.info('Tạo voucher thành công!');
-            setVouchers([...vouchers, res.data.data || res.data]);
+            if (editingId) {
+                const res = await api.put(`/vouchers/${editingId}`, payload);
+                const updated = res.data.data || res.data;
+                setVouchers(prev => prev.map(v => v.id === editingId ? updated : v));
+                toast.success('Cập nhật voucher thành công!');
+            } else {
+                const res = await api.post('/vouchers', payload);
+                setVouchers(prev => [...prev, res.data.data || res.data]);
+                toast.success('Tạo voucher thành công!');
+            }
+
             setShowModal(false);
-            setForm({
-                code: '', discountType: 'FIXED', discountValue: '', minOrderValue: '', usageLimit: 100, expiryDate: ''
-            });
+            setEditingId(null);
+            setForm(emptyForm);
         } catch (error) {
             console.error(error);
-            toast.info('Tạo voucher thất bại: ' + (error.response?.data?.message || error.message));
+            toast.info((editingId ? 'Cập nhật' : 'Tạo') + ' voucher thất bại: ' + (error.response?.data?.message || error.message));
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm('Bạn có chắc chắn muốn xóa voucher này?')) return;
+        try {
+            await api.delete(`/vouchers/${id}`);
+            setVouchers(prev => prev.filter(v => v.id !== id));
+            toast.success('Xóa voucher thành công!');
+        } catch (error) {
+            console.error(error);
+            toast.info('Xóa voucher thất bại: ' + (error.response?.data?.message || error.message));
         }
     };
 
@@ -79,14 +130,13 @@ const AdminVouchers = () => {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-800">Quản lý Voucher</h1>
                 <button
-                    onClick={() => setShowModal(true)}
+                    onClick={openCreateModal}
                     className="bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary-darker transition"
                 >
                     <Plus className="w-4 h-4" /> Tạo Voucher
                 </button>
             </div>
 
-            {/* Vouchers List */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 {loading ? (
                     <div className="p-8 text-center text-gray-500">Đang tải...</div>
@@ -101,13 +151,17 @@ const AdminVouchers = () => {
                                     <th className="px-6 py-3">Giảm giá</th>
                                     <th className="px-6 py-3">Đơn tối thiểu</th>
                                     <th className="px-6 py-3">Lượt còn lại</th>
+                                    <th className="px-6 py-3">Bắt đầu</th>
                                     <th className="px-6 py-3">Hết hạn</th>
                                     <th className="px-6 py-3">Trạng thái</th>
+                                    <th className="px-6 py-3">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
                                 {vouchers.map(v => {
-                                    const isExpired = new Date(v.endDate) < new Date();
+                                    const now = new Date();
+                                    const isExpired = new Date(v.endDate) < now;
+                                    const notStarted = new Date(v.startDate) > now;
                                     return (
                                         <tr key={v.id} className="hover:bg-gray-50">
                                             <td className="px-6 py-4 font-medium text-primary-darker">{v.code}</td>
@@ -118,18 +172,39 @@ const AdminVouchers = () => {
                                                 }
                                             </td>
                                             <td className="px-6 py-4 text-gray-600">{formatPrice(v.minOrderValue)}</td>
-                                            <td className="px-6 py-4 text-gray-600">
-                                                {v.usageLimit}
+                                            <td className="px-6 py-4 text-gray-600">{v.usageLimit ?? 'Không giới hạn'}</td>
+                                            <td className="px-6 py-4 text-gray-500 text-sm">
+                                                {new Date(v.startDate).toLocaleString('vi-VN')}
                                             </td>
                                             <td className="px-6 py-4 text-gray-500 text-sm">
-                                                {new Date(v.endDate).toLocaleDateString('vi-VN')}
+                                                {new Date(v.endDate).toLocaleString('vi-VN')}
                                             </td>
                                             <td className="px-6 py-4">
                                                 {isExpired ? (
                                                     <span className="bg-red-50 text-red-600 px-2 py-1 rounded-full text-xs">Hết hạn</span>
+                                                ) : notStarted ? (
+                                                    <span className="bg-yellow-50 text-yellow-600 px-2 py-1 rounded-full text-xs">Chưa bắt đầu</span>
                                                 ) : (
                                                     <span className="bg-green-50 text-green-600 px-2 py-1 rounded-full text-xs">Hoạt động</span>
                                                 )}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-2">
+                                                    <button
+                                                        onClick={() => openEditModal(v)}
+                                                        className="text-gray-400 hover:text-primary-dark transition"
+                                                        title="Chỉnh sửa"
+                                                    >
+                                                        <Pencil className="w-4 h-4" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(v.id)}
+                                                        className="text-gray-400 hover:text-red-500 transition"
+                                                        title="Xóa"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     );
@@ -140,12 +215,12 @@ const AdminVouchers = () => {
                 )}
             </div>
 
-            {/* Create Modal */}
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                    <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 p-6 animate-[fadeIn_0.2s_ease-out]">
+                    <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 p-6">
                         <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                            <Tag className="w-5 h-5 text-primary-dark" /> Tạo Voucher Mới
+                            <Tag className="w-5 h-5 text-primary-dark" />
+                            {editingId ? 'Chỉnh Sửa Voucher' : 'Tạo Voucher Mới'}
                         </h2>
 
                         <form onSubmit={handleSubmit} className="space-y-4">
@@ -207,34 +282,52 @@ const AdminVouchers = () => {
                                         value={form.usageLimit}
                                         onChange={e => setForm({ ...form, usageLimit: e.target.value })}
                                         className="w-full border border-gray-300 rounded p-2"
+                                        placeholder="Để trống = không giới hạn"
                                     />
                                 </div>
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Ngày hết hạn</label>
-                                <div className="relative">
-                                    <input
-                                        type="datetime-local"
-                                        value={form.expiryDate}
-                                        onChange={e => setForm({ ...form, expiryDate: e.target.value })}
-                                        className="w-full border border-gray-300 rounded p-2 pl-9"
-                                        required
-                                    />
-                                    <Calendar className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400" />
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Ngày bắt đầu</label>
+                                    <div className="relative">
+                                        <input
+                                            type="datetime-local"
+                                            value={form.startDate}
+                                            onChange={e => setForm({ ...form, startDate: e.target.value })}
+                                            className="w-full border border-gray-300 rounded p-2 pl-9"
+                                            required
+                                        />
+                                        <Calendar className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Ngày kết thúc</label>
+                                    <div className="relative">
+                                        <input
+                                            type="datetime-local"
+                                            value={form.endDate}
+                                            onChange={e => setForm({ ...form, endDate: e.target.value })}
+                                            className="w-full border border-gray-300 rounded p-2 pl-9"
+                                            required
+                                        />
+                                        <Calendar className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400" />
+                                    </div>
                                 </div>
                             </div>
 
                             <div className="flex justify-end gap-3 pt-4">
                                 <button
                                     type="button"
-                                    onClick={() => setShowModal(false)}
+                                    onClick={() => { setShowModal(false); setEditingId(null); }}
                                     className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded"
                                 >Hủy</button>
                                 <button
                                     type="submit"
                                     className="px-6 py-2 bg-primary-dark text-white rounded hover:bg-primary-darker"
-                                >Tạo Voucher</button>
+                                >
+                                    {editingId ? 'Lưu Thay Đổi' : 'Tạo Voucher'}
+                                </button>
                             </div>
                         </form>
                     </div>
