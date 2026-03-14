@@ -58,16 +58,19 @@ public class OrderService {
 
         Order order = new Order();
         order.setUser(user);
-        order.setStatus(Order.OrderStatus.PENDING); // Mặc định trạng thái chờ xử lý
-        order.setOrderItems(items);
-
-        // Xử lý phương thức thanh toán
         try {
             order.setPaymentMethod(
                     paymentMethod != null ? Order.PaymentMethod.valueOf(paymentMethod) : Order.PaymentMethod.COD);
         } catch (IllegalArgumentException e) {
             order.setPaymentMethod(Order.PaymentMethod.COD);
         }
+
+        if (order.getPaymentMethod() == Order.PaymentMethod.VNPAY) {
+            order.setStatus(Order.OrderStatus.UNPAID); // Cho VNPay, trạng thái ban đầu là UNPAID
+        } else {
+            order.setStatus(Order.OrderStatus.PENDING); // Mặc định trạng thái chờ xác nhận
+        }
+        order.setOrderItems(items);
 
         // Kiểm tra địa chỉ giao hàng
         if (addressId != null) {

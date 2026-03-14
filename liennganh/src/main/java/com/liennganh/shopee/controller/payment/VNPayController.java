@@ -109,6 +109,13 @@ public class VNPayController {
                     response.put("RspCode", "00");
                     response.put("Message", "Confirm Success");
                 } else {
+                    try {
+                        Long oid = Long.parseLong(txnRef);
+                        orderService.updateStatus(oid, Order.OrderStatus.CANCELLED);
+                        System.out.println("[VNPay IPN] Order " + oid + " payment failed, cancelled");
+                    } catch (Exception e) {
+                        System.out.println("[VNPay IPN] Error cancelling order: " + e.getMessage());
+                    }
                     response.put("RspCode", "00");
                     response.put("Message", "Confirm Success");
                 }
@@ -136,8 +143,20 @@ public class VNPayController {
 
         if (signValue.equals(vnpSecureHash)) {
             String responseCode = params.get("vnp_ResponseCode");
-            response.put("code", responseCode);
-            response.put("message", "00".equals(responseCode) ? "Thanh toan thanh cong" : "Thanh toan that bai");
+            String txnRef = params.get("vnp_TxnRef");
+            
+            if ("00".equals(responseCode)) {
+                response.put("code", responseCode);
+                response.put("message", "Thanh toan thanh cong");
+            } else {
+                try {
+                    Long oid = Long.parseLong(txnRef);
+                    // Thực tế IPN mới là luồng chuẩn để update DB, nhưng update Return để dự phòng
+                    orderService.updateStatus(oid, Order.OrderStatus.CANCELLED);
+                } catch (Exception e) { }
+                response.put("code", responseCode);
+                response.put("message", "Thanh toan that bai");
+            }
             response.put("orderId", params.get("vnp_TxnRef"));
             response.put("amount", params.get("vnp_Amount"));
             response.put("transactionNo", params.get("vnp_TransactionNo"));

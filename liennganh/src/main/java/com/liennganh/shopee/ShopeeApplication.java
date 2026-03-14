@@ -25,6 +25,15 @@ public class ShopeeApplication {
 				System.out.println(
 						"⚠️ Bỏ qua ALTER TABLE: Cột description có thể đã được đổi sang TEXT hoặc database không support.");
 			}
+
+            try {
+                jdbcTemplate.execute("ALTER TABLE orders DROP CONSTRAINT IF EXISTS orders_status_check");
+                System.out.println("✅ Đã DROP CONSTRAINT orders_status_check thành công để hỗ trợ trạng thái UNPAID.");
+                // Tùy chọn: Thêm lại constraint mới nếu cần, hoặc để Hibernate / JPA tự quản lý ở mức code
+                // jdbcTemplate.execute("ALTER TABLE orders ADD CONSTRAINT orders_status_check CHECK (status::text = ANY (ARRAY['UNPAID'::character varying, 'PENDING'::character varying, 'SHIPPING'::character varying, 'DELIVERING'::character varying, 'DELIVERED'::character varying, 'CANCELLED'::character varying]::text[]))");
+            } catch (Exception e) {
+                System.out.println("⚠️ Lỗi khi bỏ constraint orders_status_check: " + e.getMessage());
+            }
 		};
 	}
 }
