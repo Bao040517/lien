@@ -145,14 +145,25 @@ const EditProduct = ({ isAdmin = false }) => {
     setNewImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // --- New Attribute Management (auto-generates new variants) ---
-  const autoGenerateNewVariants = (attrs) => {
-    const validAttrs = attrs.filter(a => a.name && a.options.some(o => o));
-    if (validAttrs.length === 0) { setNewVariants([]); return; }
+  // --- New Attribute Management (each option has { value, price, stockQuantity }) ---
+  const hasNewMultipleGroups = () => {
+    const totalGroups = attributes.length + newAttributes.filter(a => a.name && a.options.some(o => o.value)).length;
+    return totalGroups > 1;
+  };
 
-    const allAttrs = [...attributes.map(a => ({ name: a.name, options: a.options?.map(o => o.value) || [] })), ...validAttrs];
+  const autoGenerateNewVariants = (attrs) => {
+    const validNew = attrs.filter(a => a.name && a.options.some(o => o.value));
+    if (validNew.length === 0 && attributes.length === 0) { setNewVariants([]); return; }
+
+    const totalGroups = attributes.length + validNew.length;
+    if (totalGroups <= 1) { setNewVariants([]); return; }
+
+    const existingAttrGroups = attributes.map(a => ({ name: a.name, options: a.options?.map(o => o.value) || [] }));
+    const newAttrGroups = validNew.map(a => ({ name: a.name, options: a.options.filter(o => o.value).map(o => o.value) }));
+    const allAttrs = [...existingAttrGroups, ...newAttrGroups];
+
     const combinations = allAttrs.reduce((acc, attr) => {
-      const validOptions = (attr.options || []).filter(o => o);
+      const validOptions = attr.options.filter(o => o);
       if (validOptions.length === 0) return acc;
       if (acc.length === 0) return validOptions.map(opt => ({ [attr.name]: opt }));
       const result = [];
@@ -173,8 +184,7 @@ const EditProduct = ({ isAdmin = false }) => {
   };
 
   const addNewAttribute = () => {
-    const u = [...newAttributes, { name: "", options: [""] }];
-    setNewAttributes(u);
+    setNewAttributes([...newAttributes, { name: "", options: [{ value: "", price: "", stockQuantity: "10" }] }]);
   };
 
   const updateNewAttrName = (i, name) => {
@@ -186,15 +196,15 @@ const EditProduct = ({ isAdmin = false }) => {
 
   const addNewOption = (ai) => {
     const u = [...newAttributes];
-    u[ai].options.push("");
+    u[ai].options.push({ value: "", price: "", stockQuantity: "10" });
     setNewAttributes(u);
   };
 
-  const updateNewOption = (ai, oi, val) => {
+  const updateNewOption = (ai, oi, field, val) => {
     const u = [...newAttributes];
-    u[ai].options[oi] = val;
+    u[ai].options[oi][field] = val;
     setNewAttributes(u);
-    autoGenerateNewVariants(u);
+    if (field === 'value') autoGenerateNewVariants(u);
   };
 
   const removeNewOption = (ai, oi) => {
@@ -284,20 +294,35 @@ const EditProduct = ({ isAdmin = false }) => {
         });
         const savedAttr = attrRes.data.data || attrRes.data;
         for (const opt of attr.options) {
-          if (!opt) continue;
+          if (!opt.value) continue;
           await api.post(`/products/attributes/${savedAttr.id}/options`, {
-            value: opt,
+            value: opt.value,
           });
         }
       }
 
       // Create new variants
-      for (const v of newVariants) {
-        await api.post(`/products/${id}/variants`, {
-          attributes: JSON.stringify(v.attributes),
-          price: parseFloat(v.price),
-          stockQuantity: parseInt(v.stockQuantity) || 0,
-        });
+      if (!hasNewMultipleGroups() && newAttributes.length > 0) {
+        // Single group: each option = one variant
+        for (const attr of newAttributes) {
+          if (!attr.name) continue;
+          for (const opt of attr.options) {
+            if (!opt.value) continue;
+            await api.post(`/products/${id}/variants`, {
+              attributes: JSON.stringify({ [attr.name]: opt.value }),
+              price: parseFloat(opt.price) || parseFloat(form.price) || 0,
+              stockQuantity: parseInt(opt.stockQuantity) || 0,
+            });
+          }
+        }
+      } else {
+        for (const v of newVariants) {
+          await api.post(`/products/${id}/variants`, {
+            attributes: JSON.stringify(v.attributes),
+            price: parseFloat(v.price) || parseFloat(form.price) || 0,
+            stockQuantity: parseInt(v.stockQuantity) || 0,
+          });
+        }
       }
 
       toast.info("Cập nhật sản phẩm thành công!");
@@ -701,60 +726,78 @@ const EditProduct = ({ isAdmin = false }) => {
               Nhấn "Thêm nhóm" để thêm phân loại mới
             </p>
           ) : (
-            newAttributes.map((attr, ai) => (
-              <div
-                key={ai}
-                className="border border-gray-200 rounded-lg p-4 mb-3"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <input
-                    type="text"
-                    value={attr.name}
-                    onChange={(e) => updateNewAttrName(ai, e.target.value)}
-                    className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none"
-                    placeholder="Tên (VD: Kích cỡ, Màu sắc)"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeNewAttribute(ai)}
-                    className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition"
-                  >
-                    <Trash2 className="w-4 h-4" />
+            newAttributes.map((attr, ai) => {
+              const showInlinePrice = !hasNewMultipleGroups();
+              return (
+                <div key={ai} className="border border-gray-200 rounded-lg p-4 mb-3">
+                  <div className="flex items-center gap-3 mb-3">
+                    <input
+                      type="text"
+                      value={attr.name}
+                      onChange={(e) => updateNewAttrName(ai, e.target.value)}
+                      className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none"
+                      placeholder="Tên (VD: Kích cỡ, Màu sắc)"
+                    />
+                    <button type="button" onClick={() => removeNewAttribute(ai)}
+                      className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="space-y-2 mb-3">
+                    {showInlinePrice && attr.options.length > 0 && (
+                      <div className="grid grid-cols-12 gap-2 text-xs text-gray-500 px-1">
+                        <div className="col-span-4">Giá trị</div>
+                        <div className="col-span-4">Giá (₫)</div>
+                        <div className="col-span-3">Kho</div>
+                        <div className="col-span-1"></div>
+                      </div>
+                    )}
+                    {attr.options.map((opt, oi) => (
+                      <div key={oi} className="grid grid-cols-12 gap-2 items-center">
+                        <div className={showInlinePrice ? "col-span-4" : "col-span-10"}>
+                          <input type="text" value={opt.value}
+                            onChange={(e) => updateNewOption(ai, oi, 'value', e.target.value)}
+                            className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:ring-2 focus:ring-primary outline-none"
+                            placeholder={`Giá trị ${oi + 1}`}
+                          />
+                        </div>
+                        {showInlinePrice && (
+                          <>
+                            <div className="col-span-4">
+                              <input type="text" value={formatVND(opt.price)}
+                                onChange={(e) => updateNewOption(ai, oi, 'price', parseVND(e.target.value))}
+                                inputMode="numeric"
+                                className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:ring-2 focus:ring-primary outline-none"
+                                placeholder="189.000"
+                              />
+                            </div>
+                            <div className="col-span-3">
+                              <input type="number" value={opt.stockQuantity}
+                                onChange={(e) => updateNewOption(ai, oi, 'stockQuantity', e.target.value)}
+                                className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:ring-2 focus:ring-primary outline-none"
+                                placeholder="10"
+                              />
+                            </div>
+                          </>
+                        )}
+                        <div className={showInlinePrice ? "col-span-1 flex justify-end" : "col-span-2 flex justify-end"}>
+                          {attr.options.length > 1 && (
+                            <button type="button" onClick={() => removeNewOption(ai, oi)}
+                              className="text-gray-400 hover:text-red-500 p-1">
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <button type="button" onClick={() => addNewOption(ai)}
+                    className="px-3 py-1.5 border border-dashed border-gray-300 rounded text-sm text-gray-500 hover:border-primary-dark hover:text-primary-dark transition">
+                    + Thêm giá trị
                   </button>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {attr.options.map((opt, oi) => (
-                    <div key={oi} className="flex items-center gap-1">
-                      <input
-                        type="text"
-                        value={opt}
-                        onChange={(e) =>
-                          updateNewOption(ai, oi, e.target.value)
-                        }
-                        className="border border-gray-300 rounded px-3 py-1.5 text-sm w-28 focus:ring-2 focus:ring-primary outline-none"
-                        placeholder={`Giá trị ${oi + 1}`}
-                      />
-                      {attr.options.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeNewOption(ai, oi)}
-                          className="text-gray-400 hover:text-red-500"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() => addNewOption(ai)}
-                    className="px-3 py-1.5 border border-dashed border-gray-300 rounded text-sm text-gray-500 hover:border-primary-dark hover:text-primary-dark transition"
-                  >
-                    + Thêm
-                  </button>
-                </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
 

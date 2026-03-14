@@ -28,9 +28,9 @@ const AddProduct = () => {
         name: '', description: '', price: '', stockQuantity: '', categoryId: '', shopId: ''
     });
 
-    // Attributes (seller-defined)
+    // Attributes: each option has { value, price, stockQuantity }
     const [attributes, setAttributes] = useState([]);
-    // Variants
+    // Variants (only used when 2+ attribute groups → combo table)
     const [variants, setVariants] = useState([]);
 
     useEffect(() => {
@@ -57,78 +57,71 @@ const AddProduct = () => {
         fetchData();
     }, [user?.id]); // Dùng user?.id thay vì user để tránh re-render thừa
 
-    // --- Attribute management (auto-generates variants on change) ---
+    const hasMultipleGroups = attributes.filter(a => a.name && a.options.some(o => o.value)).length > 1;
+
+    // --- Attribute management ---
     const addAttribute = () => {
-        const updated = [...attributes, { name: '', options: [''] }];
-        setAttributes(updated);
+        setAttributes([...attributes, { name: '', options: [{ value: '', price: '', stockQuantity: '10' }] }]);
     };
 
     const updateAttributeName = (index, name) => {
         const updated = [...attributes];
         updated[index].name = name;
         setAttributes(updated);
-        triggerAutoGenerate(updated);
+        if (hasMultipleGroupsCheck(updated)) rebuildCombos(updated);
     };
 
     const addOption = (attrIndex) => {
         const updated = [...attributes];
-        updated[attrIndex].options.push('');
+        updated[attrIndex].options.push({ value: '', price: '', stockQuantity: '10' });
         setAttributes(updated);
     };
 
-    const updateOption = (attrIndex, optIndex, value) => {
+    const updateOption = (attrIndex, optIndex, field, val) => {
         const updated = [...attributes];
-        updated[attrIndex].options[optIndex] = value;
+        updated[attrIndex].options[optIndex][field] = val;
         setAttributes(updated);
-        triggerAutoGenerate(updated);
+        if (field === 'value' && hasMultipleGroupsCheck(updated)) rebuildCombos(updated);
     };
 
     const removeOption = (attrIndex, optIndex) => {
         const updated = [...attributes];
         updated[attrIndex].options.splice(optIndex, 1);
         setAttributes(updated);
-        triggerAutoGenerate(updated);
+        if (hasMultipleGroupsCheck(updated)) rebuildCombos(updated);
     };
 
     const removeAttribute = (attrIndex) => {
         const updated = [...attributes];
         updated.splice(attrIndex, 1);
         setAttributes(updated);
-        triggerAutoGenerate(updated);
+        if (hasMultipleGroupsCheck(updated)) rebuildCombos(updated);
+        else setVariants([]);
     };
 
-    // --- Auto-generate variants from attribute combinations ---
-    const triggerAutoGenerate = (newAttrs) => {
-        const validAttrs = newAttrs.filter(a => a.name && a.options.some(o => o));
-        if (validAttrs.length === 0) { setVariants([]); return; }
+    const hasMultipleGroupsCheck = (attrs) => attrs.filter(a => a.name && a.options.some(o => o.value)).length > 1;
+
+    // --- Combo variants (only for 2+ attribute groups) ---
+    const rebuildCombos = (attrs) => {
+        const validAttrs = attrs.filter(a => a.name && a.options.some(o => o.value));
+        if (validAttrs.length < 2) { setVariants([]); return; }
 
         const combinations = validAttrs.reduce((acc, attr) => {
-            const validOptions = attr.options.filter(o => o);
-            if (validOptions.length === 0) return acc;
-            if (acc.length === 0) {
-                return validOptions.map(opt => ({ [attr.name]: opt }));
-            }
+            const validOpts = attr.options.filter(o => o.value);
+            if (validOpts.length === 0) return acc;
+            if (acc.length === 0) return validOpts.map(o => ({ [attr.name]: o.value }));
             const result = [];
-            acc.forEach(combo => {
-                validOptions.forEach(opt => {
-                    result.push({ ...combo, [attr.name]: opt });
-                });
-            });
+            acc.forEach(combo => { validOpts.forEach(o => { result.push({ ...combo, [attr.name]: o.value }); }); });
             return result;
         }, []);
 
         setVariants(prev => {
             const oldMap = {};
             prev.forEach(v => { oldMap[JSON.stringify(v.attributes)] = v; });
-
             return combinations.map(combo => {
                 const key = JSON.stringify(combo);
                 if (oldMap[key]) return oldMap[key];
-                return {
-                    attributes: combo,
-                    price: form.price || '',
-                    stockQuantity: form.stockQuantity || '10',
-                };
+                return { attributes: combo, price: form.price || '', stockQuantity: '10' };
             });
         });
     };
@@ -223,19 +216,36 @@ const AddProduct = () => {
                 const attrRes = await api.post(`/products/${product.id}/attributes`, { name: attr.name });
                 const savedAttr = attrRes.data.data || attrRes.data;
 
-                for (const optValue of attr.options) {
-                    if (!optValue) continue;
-                    await api.post(`/products/attributes/${savedAttr.id}/options`, { value: optValue });
+                for (const opt of attr.options) {
+                    if (!opt.value) continue;
+                    await api.post(`/products/attributes/${savedAttr.id}/options`, { value: opt.value });
                 }
             }
 
             // Create variants
-            for (const variant of variants) {
-                await api.post(`/products/${product.id}/variants`, {
-                    attributes: JSON.stringify(variant.attributes),
-                    price: parseFloat(variant.price),
-                    stockQuantity: parseInt(variant.stockQuantity) || 0
-                });
+            const validAttrsCount = attributes.filter(a => a.name && a.options.some(o => o.value)).length;
+            if (validAttrsCount === 1) {
+                // Single group: each option = one variant
+                const attr = attributes.find(a => a.name && a.options.some(o => o.value));
+                if (attr) {
+                    for (const opt of attr.options) {
+                        if (!opt.value) continue;
+                        await api.post(`/products/${product.id}/variants`, {
+                            attributes: JSON.stringify({ [attr.name]: opt.value }),
+                            price: parseFloat(opt.price) || parseFloat(form.price) || 0,
+                            stockQuantity: parseInt(opt.stockQuantity) || 0
+                        });
+                    }
+                }
+            } else if (validAttrsCount > 1) {
+                // Multiple groups: use combo table
+                for (const variant of variants) {
+                    await api.post(`/products/${product.id}/variants`, {
+                        attributes: JSON.stringify(variant.attributes),
+                        price: parseFloat(variant.price) || parseFloat(form.price) || 0,
+                        stockQuantity: parseInt(variant.stockQuantity) || 0
+                    });
+                }
             }
 
             toast.success('Tạo sản phẩm thành công!');
@@ -356,7 +366,7 @@ const AddProduct = () => {
                         <div className="text-center py-8 text-gray-400">
                             <Package className="w-12 h-12 mx-auto mb-2 opacity-40" />
                             <p>Chưa có phân loại nào. Nhấn "Thêm nhóm phân loại" để bắt đầu.</p>
-                            <p className="text-xs mt-1">VD: Size (S, M, L, XL) • Màu sắc (Đen, Trắng, Xanh)</p>
+                            <p className="text-xs mt-1">VD: Màu sắc (Đen 189.000₫, Trắng 199.000₫) • Size (S, M, L)</p>
                         </div>
                     )}
 
@@ -374,42 +384,72 @@ const AddProduct = () => {
                                     <Trash2 className="w-4 h-4" />
                                 </button>
                             </div>
-                            <div className="flex flex-wrap gap-2 mb-2">
+
+                            {/* Option rows — each with value + price + stock */}
+                            <div className="space-y-2 mb-3">
+                                {!hasMultipleGroups && attr.options.length > 0 && (
+                                    <div className="grid grid-cols-12 gap-2 text-xs text-gray-500 px-1">
+                                        <div className="col-span-4">Giá trị</div>
+                                        <div className="col-span-4">Giá (₫)</div>
+                                        <div className="col-span-3">Kho</div>
+                                        <div className="col-span-1"></div>
+                                    </div>
+                                )}
                                 {attr.options.map((opt, oi) => (
-                                    <div key={oi} className="flex items-center gap-1">
-                                        <input
-                                            type="text" value={opt}
-                                            onChange={e => updateOption(ai, oi, e.target.value)}
-                                            className="border border-gray-300 rounded px-3 py-1.5 text-sm w-28 focus:ring-2 focus:ring-primary outline-none"
-                                            placeholder={`Giá trị ${oi + 1}`}
-                                        />
-                                        {attr.options.length > 1 && (
-                                            <button type="button" onClick={() => removeOption(ai, oi)}
-                                                className="text-gray-400 hover:text-red-500">
-                                                <Trash2 className="w-3 h-3" />
-                                            </button>
+                                    <div key={oi} className="grid grid-cols-12 gap-2 items-center">
+                                        <div className={hasMultipleGroups ? "col-span-10" : "col-span-4"}>
+                                            <input
+                                                type="text" value={opt.value}
+                                                onChange={e => updateOption(ai, oi, 'value', e.target.value)}
+                                                className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:ring-2 focus:ring-primary outline-none"
+                                                placeholder={`Giá trị ${oi + 1}`}
+                                            />
+                                        </div>
+                                        {!hasMultipleGroups && (
+                                            <>
+                                                <div className="col-span-4">
+                                                    <input
+                                                        type="text" value={formatVND(opt.price)}
+                                                        onChange={e => updateOption(ai, oi, 'price', parseVND(e.target.value))}
+                                                        inputMode="numeric"
+                                                        className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:ring-2 focus:ring-primary outline-none"
+                                                        placeholder="189.000"
+                                                    />
+                                                </div>
+                                                <div className="col-span-3">
+                                                    <input
+                                                        type="number" value={opt.stockQuantity}
+                                                        onChange={e => updateOption(ai, oi, 'stockQuantity', e.target.value)}
+                                                        className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:ring-2 focus:ring-primary outline-none"
+                                                        placeholder="10"
+                                                    />
+                                                </div>
+                                            </>
                                         )}
+                                        <div className={hasMultipleGroups ? "col-span-2 flex justify-end" : "col-span-1 flex justify-end"}>
+                                            {attr.options.length > 1 && (
+                                                <button type="button" onClick={() => removeOption(ai, oi)}
+                                                    className="text-gray-400 hover:text-red-500 p-1">
+                                                    <Trash2 className="w-3.5 h-3.5" />
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 ))}
-                                <button type="button" onClick={() => addOption(ai)}
-                                    className="px-3 py-1.5 border border-dashed border-gray-300 rounded text-sm text-gray-500 hover:border-primary-dark hover:text-primary-dark transition">
-                                    + Thêm
-                                </button>
                             </div>
+                            <button type="button" onClick={() => addOption(ai)}
+                                className="px-3 py-1.5 border border-dashed border-gray-300 rounded text-sm text-gray-500 hover:border-primary-dark hover:text-primary-dark transition">
+                                + Thêm giá trị
+                            </button>
                         </div>
                     ))}
-
-                    {attributes.length > 0 && variants.length > 0 && (
-                        <div className="text-sm text-gray-500 mt-2 text-center">
-                            Tự động tạo {variants.length} tổ hợp phân loại. Hãy nhập giá và số lượng cho từng biến thể bên dưới.
-                        </div>
-                    )}
                 </div>
 
-                {/* Variants Table */}
-                {variants.length > 0 && (
+                {/* Combo Variants Table (only if 2+ attribute groups) */}
+                {hasMultipleGroups && variants.length > 0 && (
                     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                        <h2 className="text-lg font-semibold text-gray-700 mb-4">Danh sách phân loại ({variants.length})</h2>
+                        <h2 className="text-lg font-semibold text-gray-700 mb-1">Danh sách tổ hợp ({variants.length})</h2>
+                        <p className="text-xs text-gray-400 mb-4">Khi có nhiều nhóm phân loại, giá được set theo từng tổ hợp.</p>
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm">
                                 <thead>
