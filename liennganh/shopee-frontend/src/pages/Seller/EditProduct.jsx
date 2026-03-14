@@ -24,17 +24,28 @@ const EditProduct = ({ isAdmin = false }) => {
     const [newImageFiles, setNewImageFiles] = useState([]);
     const [newImagePreviews, setNewImagePreviews] = useState([]);
 
-    // Existing attributes & variants from DB
+    // Existing attributes and variants
     const [attributes, setAttributes] = useState([]);
     const [variants, setVariants] = useState([]);
-
-    // New attributes to add
-    const [newAttributes, setNewAttributes] = useState([]);
-    const [newVariants, setNewVariants] = useState([]);
 
     // Edit variant state
     const [editingVariantId, setEditingVariantId] = useState(null);
     const [editVariantForm, setEditVariantForm] = useState({ price: '', stockQuantity: '' });
+    
+    // Edit attribute & option state
+    const [editingAttrId, setEditingAttrId] = useState(null);
+    const [editAttrNameForm, setEditAttrNameForm] = useState('');
+    
+    // Add attribute state
+    const [addingAttr, setAddingAttr] = useState(false);
+    const [newAttrName, setNewAttrName] = useState('');
+
+    const [editingOptionId, setEditingOptionId] = useState(null);
+    const [editOptionForm, setEditOptionForm] = useState('');
+
+    // Add option state
+    const [addingOptionToAttrId, setAddingOptionToAttrId] = useState(null);
+    const [newOptionValue, setNewOptionValue] = useState('');
 
     useEffect(() => {
         fetchProduct();
@@ -101,30 +112,6 @@ const EditProduct = ({ isAdmin = false }) => {
         setNewImagePreviews(prev => prev.filter((_, i) => i !== index));
     };
 
-    // --- New Attribute Management ---
-    const addNewAttribute = () => {
-        setNewAttributes([...newAttributes, { name: '', options: [''] }]);
-    };
-
-    const updateNewAttrName = (i, name) => {
-        const u = [...newAttributes]; u[i].name = name; setNewAttributes(u);
-    };
-
-    const addNewOption = (ai) => {
-        const u = [...newAttributes]; u[ai].options.push(''); setNewAttributes(u);
-    };
-
-    const updateNewOption = (ai, oi, val) => {
-        const u = [...newAttributes]; u[ai].options[oi] = val; setNewAttributes(u);
-    };
-
-    const removeNewOption = (ai, oi) => {
-        const u = [...newAttributes]; u[ai].options.splice(oi, 1); setNewAttributes(u);
-    };
-
-    const removeNewAttribute = (ai) => {
-        const u = [...newAttributes]; u.splice(ai, 1); setNewAttributes(u);
-    };
 
     // --- Delete existing variant ---
     const handleDeleteVariant = async (variantId) => {
@@ -182,6 +169,145 @@ const EditProduct = ({ isAdmin = false }) => {
         }
     };
 
+    // --- Inline edit existing attribute & option ---
+    const handleEditAttr = (attr) => {
+        setEditingAttrId(attr.id);
+        setEditAttrNameForm(attr.name);
+    };
+
+    const handleSaveAttr = async (attrId) => {
+        if (!editAttrNameForm.trim()) {
+            toast.info('Tên phân loại không được để trống');
+            return;
+        }
+        try {
+            await api.put(`/products/attributes/${attrId}`, {
+                name: editAttrNameForm
+            });
+            toast.success('Đổi tên phân loại thành công!');
+            
+            // Update local state by mapping over attributes array
+            setAttributes(prev => prev.map(a => 
+                a.id === attrId ? { ...a, name: editAttrNameForm } : a
+            ));
+            
+            // Update variants state as variant.parsedAttrs might use the old name (optional, only affects UI until refresh)
+            setEditingAttrId(null);
+        } catch (error) {
+            console.error("Lỗi đổi tên phân loại:", error);
+            toast.info('Cập nhật thất bại!');
+        }
+    };
+
+    const handleEditOption = (opt) => {
+        setEditingOptionId(opt.id);
+        setEditOptionForm(opt.value);
+    };
+
+    const handleSaveOption = async (optionId, attrId) => {
+        if (!editOptionForm.trim()) {
+            toast.info('Giá trị không được để trống');
+            return;
+        }
+        try {
+            await api.put(`/products/attributes/options/${optionId}`, {
+                value: editOptionForm
+            });
+            toast.success('Đổi giá trị thành công!');
+            
+            // Update local state by mapping over the nested array
+            setAttributes(prev => prev.map(a => {
+                if (a.id === attrId) {
+                    return {
+                        ...a,
+                        options: a.options.map(o => o.id === optionId ? { ...o, value: editOptionForm } : o)
+                    };
+                }
+                return a;
+            }));
+            
+            setEditingOptionId(null);
+        } catch (error) {
+            console.error("Lỗi đổi giá trị:", error);
+            toast.info('Cập nhật thất bại!');
+        }
+    };
+
+    const handleDeleteAttr = async (attrId) => {
+        if (!window.confirm('Bạn có chắc muốn xoá phân loại này không? Tất cả tuỳ chọn bên trong sẽ bị xoá.')) return;
+        try {
+            await api.delete(`/products/attributes/${attrId}`);
+            toast.success('Xoá phân loại thành công!');
+            setAttributes(prev => prev.filter(a => a.id !== attrId));
+        } catch (error) {
+            console.error("Lỗi xoá phân loại:", error);
+            toast.info('Xoá thất bại!');
+        }
+    };
+
+    const handleDeleteOption = async (optionId, attrId) => {
+        if (!window.confirm('Bạn có chắc muốn xoá tuỳ chọn này không?')) return;
+        try {
+            await api.delete(`/products/attributes/options/${optionId}`);
+            toast.success('Xoá tuỳ chọn thành công!');
+            setAttributes(prev => prev.map(a => {
+                if (a.id === attrId) {
+                    return { ...a, options: a.options.filter(o => o.id !== optionId) };
+                }
+                return a;
+            }));
+        } catch (error) {
+            console.error("Lỗi xoá tuỳ chọn:", error);
+            toast.info('Xoá thất bại!');
+        }
+    };
+
+    const handleAddOption = async (attrId) => {
+        if (!newOptionValue.trim()) {
+            toast.info('Giá trị không được để trống');
+            return;
+        }
+        try {
+            const response = await api.post(`/products/attributes/${attrId}/options`, {
+                value: newOptionValue,
+                imageUrl: ''
+            });
+            toast.success('Thêm tuỳ chọn thành công!');
+            setAttributes(prev => prev.map(a => {
+                if (a.id === attrId) {
+                    return { ...a, options: [...a.options, response.data.data] };
+                }
+                return a;
+            }));
+            setAddingOptionToAttrId(null);
+            setNewOptionValue('');
+        } catch (error) {
+            console.error("Lỗi thêm tuỳ chọn:", error);
+            toast.info('Thêm thất bại!');
+        }
+    };
+
+    const handleAddAttr = async () => {
+        if (!newAttrName.trim()) {
+            toast.info('Tên phân loại không được để trống');
+            return;
+        }
+        try {
+            const response = await api.post(`/products/${id}/attributes`, {
+                name: newAttrName
+            });
+            toast.success('Thêm phân loại thành công!');
+            // Attribute returns without options array initially
+            const newAttr = { ...response.data.data, options: [] };
+            setAttributes(prev => [...prev, newAttr]);
+            setAddingAttr(false);
+            setNewAttrName('');
+        } catch (error) {
+            console.error("Lỗi thêm phân loại:", error);
+            toast.info('Thêm thất bại!');
+        }
+    };
+
     // --- Save ---
     const handleSave = async (e) => {
         e.preventDefault();
@@ -203,26 +329,6 @@ const EditProduct = ({ isAdmin = false }) => {
             await api.put(`/products/${id}/with-image`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
-
-            // Create new attributes + options
-            for (const attr of newAttributes) {
-                if (!attr.name) continue;
-                const attrRes = await api.post(`/products/${id}/attributes`, { name: attr.name });
-                const savedAttr = attrRes.data.data || attrRes.data;
-                for (const opt of attr.options) {
-                    if (!opt) continue;
-                    await api.post(`/products/attributes/${savedAttr.id}/options`, { value: opt });
-                }
-            }
-
-            // Create new variants
-            for (const v of newVariants) {
-                await api.post(`/products/${id}/variants`, {
-                    attributes: JSON.stringify(v.attributes),
-                    price: parseFloat(v.price),
-                    stockQuantity: parseInt(v.stockQuantity) || 0
-                });
-            }
 
             toast.info('Cập nhật sản phẩm thành công!');
             navigate(backPath);
@@ -355,16 +461,139 @@ const EditProduct = ({ isAdmin = false }) => {
                         <div className="space-y-3">
                             {attributes.map(attr => (
                                 <div key={attr.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                    <span className="font-medium text-gray-700 w-24">{attr.name}:</span>
+                                    <div className="font-medium text-gray-700 w-32 flex items-center gap-2">
+                                        {editingAttrId === attr.id ? (
+                                            <div className="flex bg-white border border-gray-300 rounded overflow-hidden">
+                                                <input 
+                                                    type="text" 
+                                                    className="w-20 px-2 py-1 text-sm focus:outline-none"
+                                                    value={editAttrNameForm}
+                                                    onChange={(e) => setEditAttrNameForm(e.target.value)}
+                                                />
+                                                <button type="button" onClick={() => handleSaveAttr(attr.id)}
+                                                    className="bg-green-100 text-green-700 px-2 hover:bg-green-200" title="Lưu">
+                                                    <Save className="w-3 h-3" />
+                                                </button>
+                                                <button type="button" onClick={() => setEditingAttrId(null)}
+                                                    className="bg-gray-100 text-gray-600 px-2 hover:bg-gray-200" title="Hủy">
+                                                    <X className="w-3 h-3" />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <span className="truncate">{attr.name}:</span>
+                                                <button type="button" onClick={() => handleEditAttr(attr)}
+                                                    className="text-blue-400 hover:text-blue-600 p-1" title="Sửa tên">
+                                                    <Edit2 className="w-3 h-3" />
+                                                </button>
+                                                <button type="button" onClick={() => handleDeleteAttr(attr.id)}
+                                                    className="text-red-400 hover:text-red-600 p-1" title="Xoá">
+                                                    <Trash2 className="w-3 h-3" />
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
                                     <div className="flex flex-wrap gap-2">
                                         {attr.options?.map(opt => (
-                                            <span key={opt.id} className="px-3 py-1 bg-white border border-gray-200 rounded text-sm text-gray-600">
-                                                {opt.value}
-                                            </span>
+                                            <div key={opt.id} className="flex items-center group relative">
+                                                {editingOptionId === opt.id ? (
+                                                    <div className="flex bg-white border border-primary-dark rounded shadow-sm overflow-hidden z-10">
+                                                        <input 
+                                                            type="text" 
+                                                            className="w-20 px-2 py-1 text-sm focus:outline-none"
+                                                            value={editOptionForm}
+                                                            onChange={(e) => setEditOptionForm(e.target.value)}
+                                                        />
+                                                        <button type="button" onClick={() => handleSaveOption(opt.id, attr.id)}
+                                                            className="bg-green-100 text-green-700 px-2 hover:bg-green-200" title="Lưu">
+                                                            <Save className="w-3 h-3" />
+                                                        </button>
+                                                        <button type="button" onClick={() => setEditingOptionId(null)}
+                                                            className="bg-gray-100 text-gray-600 px-2 hover:bg-gray-200" title="Hủy">
+                                                            <X className="w-3 h-3" />
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex items-center px-3 py-1 bg-white border border-gray-200 rounded text-sm text-gray-600">
+                                                        <span>{opt.value}</span>
+                                                        <button type="button" onClick={() => handleEditOption(opt)}
+                                                            className="ml-2 text-blue-400 opacity-0 group-hover:opacity-100 hover:text-blue-600 transition-opacity" title="Sửa">
+                                                            <Edit2 className="w-3 h-3" />
+                                                        </button>
+                                                        <button type="button" onClick={() => handleDeleteOption(opt.id, attr.id)}
+                                                            className="ml-1 text-red-400 opacity-0 group-hover:opacity-100 hover:text-red-600 transition-opacity" title="Xoá">
+                                                            <Trash2 className="w-3 h-3" />
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
                                         ))}
+                                        {/* Add Option Button */}
+                                        {addingOptionToAttrId === attr.id ? (
+                                            <div className="flex bg-white border border-primary-dark rounded shadow-sm overflow-hidden z-10 h-7 items-center">
+                                                <input 
+                                                    type="text" 
+                                                    className="w-20 px-2 py-0.5 text-sm focus:outline-none"
+                                                    placeholder="Giá trị..."
+                                                    value={newOptionValue}
+                                                    onChange={(e) => setNewOptionValue(e.target.value)}
+                                                    autoFocus
+                                                />
+                                                <button type="button" onClick={() => handleAddOption(attr.id)}
+                                                    className="bg-green-100 text-green-700 h-full px-2 hover:bg-green-200" title="Thêm">
+                                                    <Plus className="w-3 h-3" />
+                                                </button>
+                                                <button type="button" onClick={() => setAddingOptionToAttrId(null)}
+                                                    className="bg-gray-100 text-gray-600 h-full px-2 hover:bg-gray-200" title="Hủy">
+                                                    <X className="w-3 h-3" />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <button 
+                                                type="button" 
+                                                onClick={() => { setAddingOptionToAttrId(attr.id); setNewOptionValue(''); }}
+                                                className="flex items-center gap-1 px-2 py-1 border border-dashed border-primary text-primary hover:bg-primary-50 rounded text-xs transition-colors"
+                                            >
+                                                <Plus className="w-3 h-3" /> Thêm tuỳ chọn
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             ))}
+                            
+                            {/* Add Attribute Button */}
+                            <div className="pt-2">
+                                {addingAttr ? (
+                                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-primary-dark">
+                                        <div className="flex bg-white border border-gray-300 rounded overflow-hidden">
+                                            <input 
+                                                type="text" 
+                                                className="w-32 px-2 py-1 text-sm focus:outline-none"
+                                                placeholder="Tên nhóm phân loại..."
+                                                value={newAttrName}
+                                                onChange={(e) => setNewAttrName(e.target.value)}
+                                                autoFocus
+                                            />
+                                            <button type="button" onClick={handleAddAttr}
+                                                className="bg-green-100 text-green-700 px-3 py-1 hover:bg-green-200" title="Thêm">
+                                                Lưu
+                                            </button>
+                                            <button type="button" onClick={() => setAddingAttr(false)}
+                                                className="bg-gray-100 text-gray-600 px-3 py-1 hover:bg-gray-200" title="Hủy">
+                                                Hủy
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <button 
+                                        type="button" 
+                                        onClick={() => { setAddingAttr(true); setNewAttrName(''); }}
+                                        className="flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-dark hover:bg-primary-100 rounded-lg border border-dashed border-primary transition-colors text-sm font-medium"
+                                    >
+                                        <Plus className="w-4 h-4" /> Thêm phân loại mới
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     </div>
                 )}
@@ -453,55 +682,6 @@ const EditProduct = ({ isAdmin = false }) => {
                     </div>
                 )}
 
-                {/* Add New Attributes */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-lg font-semibold text-gray-700">Thêm phân loại mới</h2>
-                        <button type="button" onClick={addNewAttribute}
-                            className="flex items-center gap-1 px-3 py-1.5 bg-primary-lighter text-primary-dark border border-primary rounded-lg text-sm hover:bg-primary-light transition">
-                            <Plus className="w-4 h-4" /> Thêm nhóm
-                        </button>
-                    </div>
-
-                    {newAttributes.length === 0 ? (
-                        <p className="text-center text-gray-400 py-4 text-sm">Nhấn "Thêm nhóm" để thêm phân loại mới</p>
-                    ) : (
-                        newAttributes.map((attr, ai) => (
-                            <div key={ai} className="border border-gray-200 rounded-lg p-4 mb-3">
-                                <div className="flex items-center gap-3 mb-3">
-                                    <input type="text" value={attr.name}
-                                        onChange={e => updateNewAttrName(ai, e.target.value)}
-                                        className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none"
-                                        placeholder="Tên (VD: Kích cỡ, Màu sắc)" />
-                                    <button type="button" onClick={() => removeNewAttribute(ai)}
-                                        className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition">
-                                        <Trash2 className="w-4 h-4" />
-                                    </button>
-                                </div>
-                                <div className="flex flex-wrap gap-2">
-                                    {attr.options.map((opt, oi) => (
-                                        <div key={oi} className="flex items-center gap-1">
-                                            <input type="text" value={opt}
-                                                onChange={e => updateNewOption(ai, oi, e.target.value)}
-                                                className="border border-gray-300 rounded px-3 py-1.5 text-sm w-28 focus:ring-2 focus:ring-primary outline-none"
-                                                placeholder={`Giá trị ${oi + 1}`} />
-                                            {attr.options.length > 1 && (
-                                                <button type="button" onClick={() => removeNewOption(ai, oi)}
-                                                    className="text-gray-400 hover:text-red-500">
-                                                    <Trash2 className="w-3 h-3" />
-                                                </button>
-                                            )}
-                                        </div>
-                                    ))}
-                                    <button type="button" onClick={() => addNewOption(ai)}
-                                        className="px-3 py-1.5 border border-dashed border-gray-300 rounded text-sm text-gray-500 hover:border-primary-dark hover:text-primary-dark transition">
-                                        + Thêm
-                                    </button>
-                                </div>
-                            </div>
-                        ))
-                    )}
-                </div>
 
                 {/* Submit */}
                 <div className="flex gap-4">

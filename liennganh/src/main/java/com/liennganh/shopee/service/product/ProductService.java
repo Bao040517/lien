@@ -286,6 +286,32 @@ public class ProductService {
         return optionRepository.save(option);
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    public ProductAttribute updateAttribute(Long attributeId, String newName) {
+        ProductAttribute attr = attributeRepository.findById(attributeId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        attr.setName(newName);
+        return attributeRepository.save(attr);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public ProductAttributeOption updateOption(Long optionId, String newValue) {
+        ProductAttributeOption option = optionRepository.findById(optionId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        option.setValue(newValue);
+        return optionRepository.save(option);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void deleteAttribute(Long attributeId) {
+        attributeRepository.deleteById(attributeId);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void deleteOption(Long optionId) {
+        optionRepository.deleteById(optionId);
+    }
+
     public List<ProductVariant> getVariants(Long productId) {
         return variantRepository.findByProductId(productId);
     }

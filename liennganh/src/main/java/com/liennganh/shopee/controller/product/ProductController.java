@@ -403,6 +403,54 @@ public class ProductController {
                 "Thêm tùy chọn thành công");
     }
 
+    /**
+     * Cập nhật tên thuộc tính
+     * Quyền hạn: SELLER, ADMIN
+     *
+     */
+    @PutMapping("/attributes/{attributeId}")
+    public ApiResponse<ProductAttribute> updateAttribute(
+            @PathVariable Long attributeId,
+            @RequestBody Map<String, Object> body) {
+        return ApiResponse.success(productService.updateAttribute(attributeId, (String) body.get("name")),
+                "Cập nhật thuộc tính thành công");
+    }
+
+    /**
+     * Cập nhật giá trị tùy chọn (option)
+     * Quyền hạn: SELLER, ADMIN
+     *
+     */
+    @PutMapping("/attributes/options/{optionId}")
+    public ApiResponse<ProductAttributeOption> updateOption(
+            @PathVariable Long optionId,
+            @RequestBody Map<String, Object> body) {
+        return ApiResponse.success(productService.updateOption(optionId, (String) body.get("value")),
+                "Cập nhật tùy chọn thành công");
+    }
+
+    /**
+     * Xóa thuộc tính
+     * Quyền hạn: SELLER, ADMIN
+     *
+     */
+    @DeleteMapping("/attributes/{attributeId}")
+    public ApiResponse<Void> deleteAttribute(@PathVariable Long attributeId) {
+        productService.deleteAttribute(attributeId);
+        return ApiResponse.success(null, "Xóa thuộc tính thành công");
+    }
+
+    /**
+     * Xóa tùy chọn (option)
+     * Quyền hạn: SELLER, ADMIN
+     *
+     */
+    @DeleteMapping("/attributes/options/{optionId}")
+    public ApiResponse<Void> deleteOption(@PathVariable Long optionId) {
+        productService.deleteOption(optionId);
+        return ApiResponse.success(null, "Xóa tùy chọn thành công");
+    }
+
     // ========== BIẾN THỂ SẢN PHẨM (VARIANTS) ==========
 
     /**
