@@ -437,8 +437,25 @@ public class ProductController {
     }
 
     /**
+     * Cập nhật biến thể
+     * Quyền hạn: SELLER, ADMIN
+     *
+     */
+    @PutMapping("/variants/{variantId}")
+    public ApiResponse<ProductVariant> updateVariant(
+            @PathVariable Long variantId,
+            @RequestBody Map<String, Object> body) {
+        String attributes = body.get("attributes") != null ? body.get("attributes").toString() : null;
+        BigDecimal price = body.get("price") != null ? new BigDecimal(body.get("price").toString()) : null;
+        Integer stockQuantity = body.get("stockQuantity") != null ? Integer.parseInt(body.get("stockQuantity").toString()) : null;
+        String imageUrl = body.containsKey("imageUrl") ? (String) body.get("imageUrl") : null;
+        return ApiResponse.success(productService.updateVariant(variantId, attributes, price, stockQuantity, imageUrl),
+                "Cập nhật biến thể thành công");
+    }
+
+    /**
      * Xóa biến thể
-     * Quyền hạn: SELLER, ADMIN (Cần bổ sung Authorization sau)
+     * Quyền hạn: SELLER, ADMIN
      * 
      */
     @DeleteMapping("/variants/{variantId}")

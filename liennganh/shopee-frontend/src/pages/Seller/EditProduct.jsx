@@ -10,6 +10,8 @@ import {
   Trash2,
   X,
   ShieldCheck,
+  Pencil,
+  Check,
 } from "lucide-react";
 import { useToast } from "../../context/ToastContext";
 
@@ -41,6 +43,10 @@ const EditProduct = ({ isAdmin = false }) => {
   const [attributes, setAttributes] = useState([]);
   const [variants, setVariants] = useState([]);
   const [variantsToDelete, setVariantsToDelete] = useState([]);
+
+  // Editing variant state
+  const [editingVariantId, setEditingVariantId] = useState(null);
+  const [editVariantForm, setEditVariantForm] = useState({ price: '', stockQuantity: '' });
 
   // New attributes to add
   const [newAttributes, setNewAttributes] = useState([]);
@@ -171,6 +177,37 @@ const EditProduct = ({ isAdmin = false }) => {
   const handleDeleteVariant = (variantId) => {
     setVariants((prev) => prev.filter((v) => v.id !== variantId));
     setVariantsToDelete((prev) => [...prev, variantId]);
+  };
+
+  // --- Edit existing variant ---
+  const startEditVariant = (v) => {
+    setEditingVariantId(v.id);
+    setEditVariantForm({ price: v.price?.toString() || '', stockQuantity: v.stockQuantity?.toString() || '' });
+  };
+
+  const cancelEditVariant = () => {
+    setEditingVariantId(null);
+    setEditVariantForm({ price: '', stockQuantity: '' });
+  };
+
+  const saveEditVariant = async (variantId) => {
+    try {
+      const payload = {
+        price: parseFloat(editVariantForm.price),
+        stockQuantity: parseInt(editVariantForm.stockQuantity) || 0,
+      };
+      await api.put(`/products/variants/${variantId}`, payload);
+      setVariants((prev) =>
+        prev.map((v) =>
+          v.id === variantId ? { ...v, price: payload.price, stockQuantity: payload.stockQuantity } : v
+        )
+      );
+      setEditingVariantId(null);
+      toast.success("Cập nhật biến thể thành công!");
+    } catch (error) {
+      console.error("Error updating variant:", error);
+      toast.info("Cập nhật biến thể thất bại!");
+    }
   };
 
   // --- Save ---
@@ -511,35 +548,92 @@ const EditProduct = ({ isAdmin = false }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {variants.map((v) => (
-                    <tr key={v.id} className="border-t border-gray-100">
-                      <td className="px-3 py-2">
-                        <div className="flex flex-wrap gap-1">
-                          {Object.entries(v.parsedAttrs).map(([k, val]) => (
-                            <span
-                              key={k}
-                              className="px-2 py-0.5 bg-primary-lighter text-primary-darker rounded text-xs"
-                            >
-                              {k}: {val}
-                            </span>
-                          ))}
-                        </div>
-                      </td>
-                      <td className="px-3 py-2 font-medium text-primary-darker">
-                        {formatPrice(v.price)}
-                      </td>
-                      <td className="px-3 py-2">{v.stockQuantity}</td>
-                      <td className="px-3 py-2">
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteVariant(v.id)}
-                          className="text-red-400 hover:text-red-600 p-1"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {variants.map((v) => {
+                    const isEditing = editingVariantId === v.id;
+                    return (
+                      <tr key={v.id} className="border-t border-gray-100">
+                        <td className="px-3 py-2">
+                          <div className="flex flex-wrap gap-1">
+                            {Object.entries(v.parsedAttrs).map(([k, val]) => (
+                              <span
+                                key={k}
+                                className="px-2 py-0.5 bg-primary-lighter text-primary-darker rounded text-xs"
+                              >
+                                {k}: {val}
+                              </span>
+                            ))}
+                          </div>
+                        </td>
+                        <td className="px-3 py-2">
+                          {isEditing ? (
+                            <input
+                              type="number"
+                              value={editVariantForm.price}
+                              onChange={(e) => setEditVariantForm({ ...editVariantForm, price: e.target.value })}
+                              className="w-28 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-primary outline-none"
+                            />
+                          ) : (
+                            <span className="font-medium text-primary-darker">{formatPrice(v.price)}</span>
+                          )}
+                        </td>
+                        <td className="px-3 py-2">
+                          {isEditing ? (
+                            <input
+                              type="number"
+                              value={editVariantForm.stockQuantity}
+                              onChange={(e) => setEditVariantForm({ ...editVariantForm, stockQuantity: e.target.value })}
+                              className="w-20 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-primary outline-none"
+                            />
+                          ) : (
+                            v.stockQuantity
+                          )}
+                        </td>
+                        <td className="px-3 py-2">
+                          <div className="flex items-center gap-1">
+                            {isEditing ? (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => saveEditVariant(v.id)}
+                                  className="text-green-500 hover:text-green-700 p-1"
+                                  title="Lưu"
+                                >
+                                  <Check className="w-4 h-4" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={cancelEditVariant}
+                                  className="text-gray-400 hover:text-gray-600 p-1"
+                                  title="Hủy"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => startEditVariant(v)}
+                                  className="text-gray-400 hover:text-primary-dark p-1"
+                                  title="Sửa"
+                                >
+                                  <Pencil className="w-4 h-4" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteVariant(v.id)}
+                                  className="text-red-400 hover:text-red-600 p-1"
+                                  title="Xóa"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
