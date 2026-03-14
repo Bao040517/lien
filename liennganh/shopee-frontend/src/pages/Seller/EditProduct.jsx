@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api';
 import { getImageUrl } from '../../utils';
-import { Save, ArrowLeft, Package, Plus, Trash2, X, ShieldCheck } from 'lucide-react';
+import { Save, ArrowLeft, Package, Plus, Trash2, X, ShieldCheck, Edit2 } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 
 const EditProduct = ({ isAdmin = false }) => {
@@ -31,6 +31,10 @@ const EditProduct = ({ isAdmin = false }) => {
     // New attributes to add
     const [newAttributes, setNewAttributes] = useState([]);
     const [newVariants, setNewVariants] = useState([]);
+
+    // Edit variant state
+    const [editingVariantId, setEditingVariantId] = useState(null);
+    const [editVariantForm, setEditVariantForm] = useState({ price: '', stockQuantity: '' });
 
     useEffect(() => {
         fetchProduct();
@@ -130,6 +134,51 @@ const EditProduct = ({ isAdmin = false }) => {
             setVariants(prev => prev.filter(v => v.id !== variantId));
         } catch (error) {
             toast.info('Xoá biến thể thất bại!');
+        }
+    };
+
+    // --- Inline edit existing variant ---
+    const handleEditVariant = (variant) => {
+        setEditingVariantId(variant.id);
+        setEditVariantForm({
+            price: variant.price.toString(),
+            stockQuantity: variant.stockQuantity.toString()
+        });
+    };
+
+    const handleCancelEditVariant = () => {
+        setEditingVariantId(null);
+        setEditVariantForm({ price: '', stockQuantity: '' });
+    };
+
+    const handleSaveVariant = async (variantId) => {
+        try {
+            const price = parseFloat(editVariantForm.price);
+            const stockQuantity = parseInt(editVariantForm.stockQuantity);
+            
+            if (isNaN(price) || isNaN(stockQuantity) || price < 0 || stockQuantity < 0) {
+                toast.info('Giá và số lượng phải là số hợp lệ');
+                return;
+            }
+
+            await api.put(`/products/variants/${variantId}`, {
+                price,
+                stockQuantity
+            });
+            
+            toast.success('Cập nhật biến thể thành công!');
+            
+            // Update local state
+            setVariants(prev => prev.map(v => 
+                v.id === variantId 
+                    ? { ...v, price: price, stockQuantity: stockQuantity }
+                    : v
+            ));
+            
+            setEditingVariantId(null);
+        } catch (error) {
+            console.error("Lỗi cập nhật biến thể:", error);
+            toast.info('Cập nhật biến thể thất bại!');
         }
     };
 
@@ -346,14 +395,56 @@ const EditProduct = ({ isAdmin = false }) => {
                                                     ))}
                                                 </div>
                                             </td>
-                                            <td className="px-3 py-2 font-medium text-primary-darker">{formatPrice(v.price)}</td>
-                                            <td className="px-3 py-2">{v.stockQuantity}</td>
-                                            <td className="px-3 py-2">
-                                                <button type="button" onClick={() => handleDeleteVariant(v.id)}
-                                                    className="text-red-400 hover:text-red-600 p-1">
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
-                                            </td>
+                                            
+                                            {editingVariantId === v.id ? (
+                                                <>
+                                                    <td className="px-3 py-2">
+                                                        <input 
+                                                            type="number" 
+                                                            className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-primary-dark"
+                                                            value={editVariantForm.price}
+                                                            onChange={(e) => setEditVariantForm({...editVariantForm, price: e.target.value})}
+                                                        />
+                                                    </td>
+                                                    <td className="px-3 py-2">
+                                                        <input 
+                                                            type="number" 
+                                                            className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-primary-dark"
+                                                            value={editVariantForm.stockQuantity}
+                                                            onChange={(e) => setEditVariantForm({...editVariantForm, stockQuantity: e.target.value})}
+                                                        />
+                                                    </td>
+                                                    <td className="px-3 py-2">
+                                                        <div className="flex gap-1">
+                                                            <button type="button" onClick={() => handleSaveVariant(v.id)}
+                                                                className="text-green-600 hover:text-green-800 p-1 bg-green-50 rounded" title="Lưu">
+                                                                <Save className="w-4 h-4" />
+                                                            </button>
+                                                            <button type="button" onClick={handleCancelEditVariant}
+                                                                className="text-gray-500 hover:text-gray-700 p-1 bg-gray-100 rounded" title="Huỷ">
+                                                                <X className="w-4 h-4" />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <td className="px-3 py-2 font-medium text-primary-darker">{formatPrice(v.price)}</td>
+                                                    <td className="px-3 py-2">{v.stockQuantity}</td>
+                                                    <td className="px-3 py-2">
+                                                        <div className="flex gap-1 justify-end">
+                                                            <button type="button" onClick={() => handleEditVariant(v)}
+                                                                className="text-blue-500 hover:text-blue-700 p-1" title="Sửa">
+                                                                <Edit2 className="w-4 h-4" />
+                                                            </button>
+                                                            <button type="button" onClick={() => handleDeleteVariant(v.id)}
+                                                                className="text-red-400 hover:text-red-600 p-1" title="Xoá">
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </>
+                                            )}
                                         </tr>
                                     ))}
                                 </tbody>

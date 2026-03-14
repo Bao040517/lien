@@ -304,6 +304,19 @@ public class ProductService {
     }
 
     @org.springframework.transaction.annotation.Transactional
+    public ProductVariant updateVariant(Long variantId, java.math.BigDecimal price, Integer stockQuantity) {
+        ProductVariant variant = variantRepository.findById(variantId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        if (price != null) {
+            variant.setPrice(price);
+        }
+        if (stockQuantity != null) {
+            variant.setStockQuantity(stockQuantity);
+        }
+        return variantRepository.save(variant);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
     public void deleteVariant(Long variantId) {
         variantRepository.deleteById(variantId);
     }

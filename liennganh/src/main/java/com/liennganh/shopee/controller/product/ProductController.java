@@ -434,6 +434,29 @@ public class ProductController {
     }
 
     /**
+     * Cập nhật giá và trạng thái kho của biến thể
+     * Quyền hạn: SELLER, ADMIN
+     *
+     */
+    @PutMapping("/variants/{variantId}")
+    public ApiResponse<ProductVariant> updateVariant(
+            @PathVariable Long variantId,
+            @RequestBody Map<String, Object> body) {
+        BigDecimal price = null;
+        Integer stockQuantity = null;
+
+        if (body.containsKey("price")) {
+            price = new BigDecimal(body.get("price").toString());
+        }
+        if (body.containsKey("stockQuantity")) {
+            stockQuantity = Integer.parseInt(body.get("stockQuantity").toString());
+        }
+
+        return ApiResponse.success(productService.updateVariant(variantId, price, stockQuantity),
+                "Cập nhật biến thể thành công");
+    }
+
+    /**
      * Xóa biến thể
      * Quyền hạn: SELLER, ADMIN (Cần bổ sung Authorization sau)
      * 
