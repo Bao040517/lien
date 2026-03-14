@@ -7,6 +7,7 @@ import com.liennganh.shopee.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 import java.math.BigDecimal;
 
@@ -43,12 +44,18 @@ public class VoucherService {
         return voucherRepository.findByCode(code);
     }
 
+    private static final ZoneId VN_ZONE = ZoneId.of("Asia/Ho_Chi_Minh");
+
+    private LocalDateTime nowVN() {
+        return LocalDateTime.now(VN_ZONE);
+    }
+
     /**
      * Kiểm tra voucher có hợp lệ không (thời gian, số lượt dùng)
      * 
      */
     public boolean isValid(Voucher voucher) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = nowVN();
         if (voucher.getStartDate().isAfter(now) || voucher.getEndDate().isBefore(now)) {
             return false;
         }
@@ -185,7 +192,7 @@ public class VoucherService {
         }
         Voucher voucher = voucherOpt.get();
 
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = nowVN();
         if (voucher.getStartDate().isAfter(now)) {
             throw new AppException(ErrorCode.VOUCHER_NOT_STARTED);
         }
