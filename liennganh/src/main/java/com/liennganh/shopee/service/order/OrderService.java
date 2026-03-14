@@ -9,6 +9,7 @@ import com.liennganh.shopee.repository.user.AddressRepository;
 import com.liennganh.shopee.repository.user.UserRepository;
 import com.liennganh.shopee.repository.product.ReviewRepository;
 import com.liennganh.shopee.service.shop.VoucherService;
+import com.liennganh.shopee.service.product.FlashSaleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,8 @@ public class OrderService {
     private CartService cartService;
     @Autowired
     private ReviewRepository reviewRepository;
+    @Autowired
+    private FlashSaleService flashSaleService;
 
     /**
      * Lấy danh sách tất cả đơn hàng (Admin/Internal use)
@@ -104,8 +107,18 @@ public class OrderService {
             product.setSold(product.getSold() + item.getQuantity());
             productRepository.save(product);
 
-            // Set giá và thông tin cho order item
-            item.setPrice(product.getPrice());
+            // Check flash sale price
+            BigDecimal unitPrice = product.getPrice();
+            FlashSaleItem fsItem = flashSaleService.getActiveFlashSaleItem(product.getId());
+            if (fsItem != null && fsItem.getDiscountedPrice() != null) {
+                int fsRemaining = fsItem.getStockQuantity() - fsItem.getSoldQuantity();
+                if (fsRemaining >= item.getQuantity()) {
+                    unitPrice = fsItem.getDiscountedPrice();
+                    fsItem.setSoldQuantity(fsItem.getSoldQuantity() + item.getQuantity());
+                }
+            }
+
+            item.setPrice(unitPrice);
             item.setOrder(order);
             item.setProduct(product);
 

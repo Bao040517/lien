@@ -13,6 +13,7 @@ import {
   Store,
   ChevronLeft,
   ChevronRight,
+  Zap,
 } from "lucide-react";
 import { getImageUrl, getProductIdFromSlug, toProductSlug } from "../utils";
 import { useToast } from "../context/ToastContext";
@@ -33,6 +34,7 @@ const ProductDetail = () => {
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [selectedOptions, setSelectedOptions] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
+  const [flashSaleItem, setFlashSaleItem] = useState(null);
 
   // States cho sản phẩm liên quan
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -41,13 +43,17 @@ const ProductDetail = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [productRes, reviewsRes] = await Promise.all([
+        const [productRes, reviewsRes, flashSaleRes] = await Promise.all([
           api.get(`/products/${id}`),
           api.get(`/reviews/product/${id}`),
+          api.get(`/flash-sales/product/${id}`).catch(() => null),
         ]);
         const productData = productRes.data.data || productRes.data;
         setProduct(productData);
         setReviews(reviewsRes.data.data || reviewsRes.data || []);
+
+        const fsItem = flashSaleRes?.data?.data || null;
+        setFlashSaleItem(fsItem);
         // Set initial selected image
         setSelectedImage(
           productData.imageUrl ||
@@ -182,11 +188,11 @@ const ProductDetail = () => {
       return;
     }
 
-    // Prepare items for checkout
     const itemToBuy = {
       product: product,
       quantity: quantity,
       variant: selectedVariant,
+      flashSalePrice: hasFlashSale ? flashSaleItem.discountedPrice : null,
     };
 
     navigate("/checkout", { state: { items: [itemToBuy] } });
@@ -235,13 +241,20 @@ const ProductDetail = () => {
       currency: "VND",
     }).format(price);
   const attributeGroups = getAttributeGroups();
-  const isDiscounted = !selectedVariant && product.discountPercentage > 0;
+
+  const hasFlashSale = flashSaleItem && flashSaleItem.discountedPrice;
+  const isDiscounted = hasFlashSale || (!selectedVariant && product.discountPercentage > 0);
   const baseDisplayPrice = selectedVariant
     ? selectedVariant.price
     : product.price;
-  const displayPrice = isDiscounted
-    ? product.discountedPrice
-    : baseDisplayPrice;
+  const displayPrice = hasFlashSale
+    ? flashSaleItem.discountedPrice
+    : (!selectedVariant && product.discountPercentage > 0)
+      ? product.discountedPrice
+      : baseDisplayPrice;
+  const flashDiscountPercent = hasFlashSale && baseDisplayPrice > 0
+    ? Math.round((1 - flashSaleItem.discountedPrice / baseDisplayPrice) * 100)
+    : 0;
   const displayStock = selectedVariant
     ? selectedVariant.stockQuantity
     : product.stockQuantity;
@@ -366,24 +379,30 @@ const ProductDetail = () => {
             </div>
 
             {/* Price Section */}
-            <div className="bg-gray-50 p-4 mb-6 flex items-center gap-4">
-              {priceRange && !selectedVariant ? (
+            <div className={`p-4 mb-6 flex items-center gap-4 ${hasFlashSale ? 'bg-gradient-to-r from-primary-dark to-primary' : 'bg-gray-50'}`}>
+              {hasFlashSale && (
+                <div className="flex items-center gap-1 mr-2">
+                  <Zap className="w-5 h-5 fill-yellow-300 text-yellow-300" />
+                  <span className="text-white font-bold text-sm uppercase">Flash Sale</span>
+                </div>
+              )}
+              {priceRange && !selectedVariant && !hasFlashSale ? (
                 <div className="text-3xl font-medium text-primary-dark">
                   {formatPrice(priceRange.min)} - {formatPrice(priceRange.max)}
                 </div>
               ) : (
                 <div className="flex items-center gap-3">
                   {isDiscounted && (
-                    <div className="text-gray-400 line-through text-lg">
+                    <div className={`line-through text-lg ${hasFlashSale ? 'text-white/60' : 'text-gray-400'}`}>
                       {formatPrice(baseDisplayPrice)}
                     </div>
                   )}
-                  <div className="text-3xl font-medium text-primary-dark">
+                  <div className={`text-3xl font-medium ${hasFlashSale ? 'text-white' : 'text-primary-dark'}`}>
                     {formatPrice(displayPrice)}
                   </div>
                   {isDiscounted && (
-                    <div className="bg-primary-dark text-white text-sm font-bold px-2 py-0.5 rounded-sm uppercase inline-block">
-                      Giảm {product.discountPercentage}%
+                    <div className={`text-sm font-bold px-2 py-0.5 rounded-sm uppercase inline-block ${hasFlashSale ? 'bg-yellow-400 text-primary-darker' : 'bg-primary-dark text-white'}`}>
+                      Giảm {hasFlashSale ? flashDiscountPercent : product.discountPercentage}%
                     </div>
                   )}
                 </div>

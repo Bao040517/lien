@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { Trash2, Minus, Plus, ShoppingBag, Store } from 'lucide-react';
+import { Trash2, Minus, Plus, ShoppingBag, Store, Zap } from 'lucide-react';
 import Breadcrumb from '../components/Breadcrumb';
 import { getImageUrl, toProductSlug } from '../utils';
 import { useToast } from '../context/ToastContext';
@@ -20,6 +20,7 @@ const Cart = () => {
     const [voucherCode, setVoucherCode] = useState('');
     const [discountAmount, setDiscountAmount] = useState(0);
     const [appliedVoucher, setAppliedVoucher] = useState(null);
+    const [flashSalePrices, setFlashSalePrices] = useState({});
 
     useEffect(() => {
         if (!user) {
@@ -35,6 +36,18 @@ const Cart = () => {
             const cart = response.data.data || response.data;
             const items = cart.items || [];
             setCartItems(items);
+
+            const fsPrices = {};
+            await Promise.all(items.map(async (item) => {
+                try {
+                    const res = await api.get(`/flash-sales/product/${item.product.id}`);
+                    const fsItem = res.data?.data;
+                    if (fsItem && fsItem.discountedPrice) {
+                        fsPrices[item.product.id] = fsItem.discountedPrice;
+                    }
+                } catch { /* no flash sale */ }
+            }));
+            setFlashSalePrices(fsPrices);
         } catch (error) {
             console.error('Error fetching cart:', error);
         } finally {
@@ -90,10 +103,12 @@ const Cart = () => {
         }
     };
 
+    const getItemPrice = (item) => flashSalePrices[item.product.id] || item.product.price;
+
     const getSelectedTotal = () => {
         return cartItems
             .filter(item => selectedItems.has(item.product.id))
-            .reduce((total, item) => total + (item.product.price * item.quantity), 0);
+            .reduce((total, item) => total + (getItemPrice(item) * item.quantity), 0);
     };
 
     const getSelectedCount = () => {
@@ -198,12 +213,24 @@ const Cart = () => {
                                             <Link to={toProductSlug(item.product.name, item.product.id)} className="text-sm text-gray-800 line-clamp-2 hover:text-primary-dark">
                                                 {item.product.name}
                                             </Link>
+                                            {flashSalePrices[item.product.id] && (
+                                                <span className="inline-flex items-center gap-0.5 text-[10px] text-primary-dark bg-primary-lighter px-1.5 py-0.5 rounded mt-1 font-medium">
+                                                    <Zap className="w-3 h-3 fill-primary-dark" /> Flash Sale
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
 
                                     {/* Unit Price */}
-                                    <div className="col-span-2 text-center text-sm text-gray-600">
-                                        {formatPrice(item.product.price)}
+                                    <div className="col-span-2 text-center text-sm">
+                                        {flashSalePrices[item.product.id] ? (
+                                            <>
+                                                <div className="text-gray-400 line-through text-xs">{formatPrice(item.product.price)}</div>
+                                                <div className="text-primary-dark font-medium">{formatPrice(flashSalePrices[item.product.id])}</div>
+                                            </>
+                                        ) : (
+                                            <span className="text-gray-600">{formatPrice(item.product.price)}</span>
+                                        )}
                                     </div>
 
                                     {/* Quantity Controls */}
@@ -228,7 +255,7 @@ const Cart = () => {
 
                                     {/* Subtotal */}
                                     <div className="col-span-2 text-center text-primary-dark font-medium text-sm">
-                                        {formatPrice(item.product.price * item.quantity)}
+                                        {formatPrice(getItemPrice(item) * item.quantity)}
                                     </div>
 
                                     {/* Delete */}
@@ -320,7 +347,12 @@ const Cart = () => {
                                     disabled={selectedItems.size === 0}
                                     className="bg-primary-dark text-white px-12 py-3 rounded-sm hover:bg-primary-darker disabled:bg-gray-300 disabled:cursor-not-allowed transition text-sm font-medium uppercase shadow-md"
                                     onClick={() => {
-                                        const itemsToCheckout = cartItems.filter(item => selectedItems.has(item.product.id));
+                                        const itemsToCheckout = cartItems
+                                            .filter(item => selectedItems.has(item.product.id))
+                                            .map(item => ({
+                                                ...item,
+                                                flashSalePrice: flashSalePrices[item.product.id] || null,
+                                            }));
                                         navigate('/checkout', { state: { items: itemsToCheckout } });
                                     }}
                                 >

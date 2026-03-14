@@ -2,6 +2,7 @@ package com.liennganh.shopee.controller.flashsale;
 
 import com.liennganh.shopee.dto.response.ApiResponse;
 import com.liennganh.shopee.entity.FlashSale;
+import com.liennganh.shopee.entity.FlashSaleItem;
 import com.liennganh.shopee.service.product.FlashSaleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +38,15 @@ public class FlashSaleController {
     public ApiResponse<List<FlashSale>> getCurrentFlashSales() {
         return ApiResponse.success(flashSaleService.getActiveFlashSales(),
                 "Lấy danh sách Flash Sale đang diễn ra thành công");
+    }
+
+    @GetMapping("/product/{productId}")
+    public ApiResponse<FlashSaleItem> getFlashSaleForProduct(@PathVariable Long productId) {
+        FlashSaleItem item = flashSaleService.getActiveFlashSaleItem(productId);
+        if (item == null) {
+            return ApiResponse.success(null, "Sản phẩm không có Flash Sale đang diễn ra");
+        }
+        return ApiResponse.success(item, "Lấy thông tin Flash Sale thành công");
     }
 
     /**

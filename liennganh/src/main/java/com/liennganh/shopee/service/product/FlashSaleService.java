@@ -23,6 +23,20 @@ public class FlashSaleService {
         return flashSaleRepository.findActiveFlashSales(LocalDateTime.now());
     }
 
+    public FlashSaleItem getActiveFlashSaleItem(Long productId) {
+        List<FlashSale> activeSales = flashSaleRepository.findActiveFlashSales(LocalDateTime.now());
+        for (FlashSale sale : activeSales) {
+            if (sale.getItems() != null) {
+                for (FlashSaleItem item : sale.getItems()) {
+                    if (item.getProduct() != null && item.getProduct().getId().equals(productId)) {
+                        return item;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public List<FlashSale> getAllFlashSales() {
         return flashSaleRepository.findAll(org.springframework.data.domain.Sort
                 .by(org.springframework.data.domain.Sort.Direction.DESC, "startTime"));

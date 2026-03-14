@@ -217,12 +217,16 @@ const Checkout = () => {
         setAddressModalView('add');
     };
 
+    const getItemPrice = (item) => {
+        if (item.flashSalePrice) return item.flashSalePrice;
+        return item.variant ? item.variant.price : (item.product?.price || item.price);
+    };
+
     const getShopSubtotal = (shopId) => {
         const group = groupedItems[shopId];
         if (!group) return 0;
         return group.items.reduce((total, item) => {
-            const price = item.variant ? item.variant.price : (item.product.price || item.price);
-            return total + (price * item.quantity);
+            return total + (getItemPrice(item) * item.quantity);
         }, 0);
     };
 
@@ -448,8 +452,10 @@ const Checkout = () => {
                             <div className="p-6">
                                 {group.items.map((item, index) => {
                                     const product = item.product || item;
-                                    const price = item.variant ? item.variant.price : (product.price || item.price);
+                                    const price = getItemPrice(item);
+                                    const originalPrice = item.variant ? item.variant.price : (product.price || item.price);
                                     const image = item.variant?.imageUrl || product.imageUrl;
+                                    const isFlashSale = item.flashSalePrice && item.flashSalePrice < originalPrice;
 
                                     return (
                                         <div key={index} className="grid grid-cols-12 items-center gap-4 mb-4 last:mb-0">
@@ -460,9 +466,15 @@ const Checkout = () => {
                                                     {item.variant && (
                                                         <div className="text-xs text-gray-500">Phân loại: {Object.values(JSON.parse(item.variant.attributes || '{}')).join(', ')}</div>
                                                     )}
+                                                    {isFlashSale && (
+                                                        <div className="text-xs text-primary-dark font-medium">Flash Sale</div>
+                                                    )}
                                                 </div>
                                             </div>
-                                            <div className="col-span-2 text-center">{formatPrice(price)}</div>
+                                            <div className="col-span-2 text-center">
+                                                {isFlashSale && <div className="text-xs text-gray-400 line-through">{formatPrice(originalPrice)}</div>}
+                                                <div>{formatPrice(price)}</div>
+                                            </div>
                                             <div className="col-span-2 text-center">{item.quantity}</div>
                                             <div className="col-span-2 text-right font-medium text-primary-dark">{formatPrice(price * item.quantity)}</div>
                                         </div>
