@@ -78,8 +78,9 @@ const OrderHistory = () => {
                 rating,
                 comment
             });
-            toast.info('Cảm ơn bạn đã đánh giá sản phẩm!');
+            toast.success('Cảm ơn bạn đã đánh giá sản phẩm!');
             setIsReviewOpen(false);
+            fetchOrders();
         } catch (error) {
             console.error(error);
             toast.info('Gửi đánh giá thất bại: ' + (error.response?.data?.message || 'Lỗi không xác định'));
@@ -182,15 +183,13 @@ const OrderHistory = () => {
                                 <div className="px-5 py-3">
                                     {order.orderItems && order.orderItems.map((item, idx) => {
                                         const productImg = item.variant?.imageUrl || item.product?.imageUrl;
-                                        const imageUrl = productImg
-                                            ? (productImg.startsWith('http') ? productImg : `/api${productImg}`)
-                                            : null;
+                                        const imageUrl = productImg || null;
 
                                         return (
                                             <div key={idx} className="flex items-center gap-3 py-3 border-b border-gray-50 last:border-0">
                                                 <div className="w-16 h-16 bg-gray-100 rounded overflow-hidden flex-shrink-0">
                                                     {imageUrl ? (
-                                                        <img src={getImageUrl(imageUrl)} alt={item.product?.name} className="w-full h-full object-cover" />
+                                                        <img src={getImageUrl(productImg)} alt={item.product?.name} className="w-full h-full object-cover" />
                                                     ) : (
                                                         <div className="w-full h-full flex items-center justify-center text-gray-300">
                                                             <Package size={20} />

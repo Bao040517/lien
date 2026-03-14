@@ -116,6 +116,11 @@ public class ReviewService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
+        boolean alreadyReviewed = reviewRepository.existsByOrderIdAndProductId(order.getId(), productId);
+        if (alreadyReviewed) {
+            throw new AppException(ErrorCode.ALREADY_REVIEWED);
+        }
+
         Review review = new Review();
         review.setUser(user);
         review.setOrder(order);

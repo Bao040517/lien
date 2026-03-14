@@ -39,6 +39,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
      */
     List<Review> findByUserId(Long userId);
 
+    boolean existsByOrderIdAndProductId(Long orderId, Long productId);
+
     /**
      * Xóa tất cả review của sản phẩm (dùng khi xóa sản phẩm)
      */

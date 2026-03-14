@@ -37,6 +37,7 @@ import OrderHistory from './pages/OrderHistory';
 import ShopProfile from './pages/ShopProfile';
 import ChatPage from './pages/ChatPage';
 import MyAccount from './pages/MyAccount';
+import FlashSalePage from './pages/FlashSalePage';
 import ErrorPage from './pages/ErrorPage';
 import { useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
@@ -64,6 +65,7 @@ const App = () => {
           <Route path="payment/result" element={<PaymentResult />} />
           <Route path="search" element={<SearchResults />} />
           <Route path="category/:id" element={<CategoryProducts />} />
+          <Route path="flash-sale" element={<FlashSalePage />} />
           <Route path="purchase" element={<PrivateRoute><OrderHistory /></PrivateRoute>} />
           <Route path="profile" element={<PrivateRoute><MyAccount /></PrivateRoute>} />
           <Route path="messages" element={<PrivateRoute><ChatPage /></PrivateRoute>} />

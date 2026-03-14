@@ -71,7 +71,7 @@ const Home = () => {
 
     const [sliderImages, setSliderImages] = useState([]);
 
-    const ITEMS_PER_PAGE = 40;
+    const ITEMS_PER_PAGE = 30;
     const flashSaleRef = useRef(null);
 
     const categoryRef = useRef(null);

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Star, X } from 'lucide-react';
+import { getImageUrl } from '../utils';
 
 const ReviewModal = ({ isOpen, onClose, onSubmit, productName, productImage }) => {
     const [rating, setRating] = useState(5);
@@ -31,7 +32,7 @@ const ReviewModal = ({ isOpen, onClose, onSubmit, productName, productImage }) =
                     {/* Product Info */}
                     <div className="flex items-center gap-4 mb-6">
                         <div className="w-12 h-12 border border-gray-200 rounded overflow-hidden flex-shrink-0">
-                            <img src={productImage} alt={productName} className="w-full h-full object-cover" />
+                            <img src={getImageUrl(productImage)} alt={productName} className="w-full h-full object-cover" />
                         </div>
                         <div className="text-sm text-gray-700 font-medium line-clamp-2">{productName}</div>
                     </div>

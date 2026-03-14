@@ -49,8 +49,9 @@ const SellerOrders = () => {
     const handleUpdateStatus = async (orderId, newStatus) => {
         setUpdating(orderId);
         try {
-            await api.put(`/admin/orders/${orderId}/status?status=${newStatus}`);
+            await api.put(`/orders/${orderId}/status`, { status: newStatus });
             setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+            toast.success('Cập nhật trạng thái thành công!');
         } catch { toast.info('Cập nhật trạng thái thất bại!'); }
         finally { setUpdating(null); }
     };
