@@ -5,13 +5,6 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { Plus, Trash2, Package, Image as ImageIcon, Save, X } from 'lucide-react';
 
-const formatVND = (value) => {
-    const num = String(value).replace(/\D/g, '');
-    if (!num) return '';
-    return Number(num).toLocaleString('vi-VN');
-};
-const parseVND = (value) => String(value).replace(/\D/g, '');
-
 const AddProduct = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -297,11 +290,10 @@ const AddProduct = () => {
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-600 mb-1">Giá gốc (₫) *</label>
-                            <input type="text" required value={formatVND(form.price)}
-                                onChange={e => setForm({ ...form, price: parseVND(e.target.value) })}
-                                inputMode="numeric"
+                            <input type="number" required value={form.price}
+                                onChange={e => setForm({ ...form, price: e.target.value })}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none"
-                                placeholder="250.000"
+                                placeholder="250000"
                             />
                         </div>
                         <div>
@@ -409,11 +401,10 @@ const AddProduct = () => {
                                             <>
                                                 <div className="col-span-4">
                                                     <input
-                                                        type="text" value={formatVND(opt.price)}
-                                                        onChange={e => updateOption(ai, oi, 'price', parseVND(e.target.value))}
-                                                        inputMode="numeric"
+                                                        type="number" value={opt.price}
+                                                        onChange={e => updateOption(ai, oi, 'price', e.target.value)}
                                                         className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:ring-2 focus:ring-primary outline-none"
-                                                        placeholder="189.000"
+                                                        placeholder="189000"
                                                     />
                                                 </div>
                                                 <div className="col-span-3">
@@ -471,11 +462,10 @@ const AddProduct = () => {
                                                 </td>
                                             ))}
                                             <td className="px-3 py-2">
-                                                <input type="text" value={formatVND(v.price)}
-                                                    onChange={e => updateVariant(vi, 'price', parseVND(e.target.value))}
-                                                    inputMode="numeric"
+                                                <input type="number" value={v.price}
+                                                    onChange={e => updateVariant(vi, 'price', e.target.value)}
                                                     className="w-28 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-primary outline-none"
-                                                    placeholder="189.000"
+                                                    placeholder="189000"
                                                 />
                                             </td>
                                             <td className="px-3 py-2">

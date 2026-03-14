@@ -15,13 +15,6 @@ import {
 } from "lucide-react";
 import { useToast } from "../../context/ToastContext";
 
-const formatVND = (value) => {
-  const num = String(value).replace(/\D/g, '');
-  if (!num) return '';
-  return Number(num).toLocaleString('vi-VN');
-};
-const parseVND = (value) => String(value).replace(/\D/g, '');
-
 const EditProduct = ({ isAdmin = false }) => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -450,12 +443,11 @@ const EditProduct = ({ isAdmin = false }) => {
                 Giá (₫)
               </label>
               <input
-                type="text"
+                type="number"
                 required
-                value={formatVND(form.price)}
-                onChange={(e) => setForm({ ...form, price: parseVND(e.target.value) })}
-                inputMode="numeric"
-                placeholder="250.000"
+                value={form.price}
+                onChange={(e) => setForm({ ...form, price: e.target.value })}
+                placeholder="250000"
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none"
               />
             </div>
@@ -632,10 +624,9 @@ const EditProduct = ({ isAdmin = false }) => {
                         <td className="px-3 py-2">
                           {isEditing ? (
                             <input
-                              type="text"
-                              value={formatVND(editVariantForm.price)}
-                              onChange={(e) => setEditVariantForm({ ...editVariantForm, price: parseVND(e.target.value) })}
-                              inputMode="numeric"
+                              type="number"
+                              value={editVariantForm.price}
+                              onChange={(e) => setEditVariantForm({ ...editVariantForm, price: e.target.value })}
                               className="w-28 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-primary outline-none"
                             />
                           ) : (
@@ -764,11 +755,10 @@ const EditProduct = ({ isAdmin = false }) => {
                         {showInlinePrice && (
                           <>
                             <div className="col-span-4">
-                              <input type="text" value={formatVND(opt.price)}
-                                onChange={(e) => updateNewOption(ai, oi, 'price', parseVND(e.target.value))}
-                                inputMode="numeric"
+                              <input type="number" value={opt.price}
+                                onChange={(e) => updateNewOption(ai, oi, 'price', e.target.value)}
                                 className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:ring-2 focus:ring-primary outline-none"
-                                placeholder="189.000"
+                                placeholder="189000"
                               />
                             </div>
                             <div className="col-span-3">
@@ -831,15 +821,14 @@ const EditProduct = ({ isAdmin = false }) => {
                       </td>
                       <td className="px-3 py-2">
                         <input
-                          type="text"
-                          value={formatVND(v.price)}
+                          type="number"
+                          value={v.price}
                           onChange={(e) => {
                             const u = [...newVariants];
-                            u[vi].price = parseVND(e.target.value);
+                            u[vi].price = e.target.value;
                             setNewVariants(u);
                           }}
-                          inputMode="numeric"
-                          placeholder="189.000"
+                          placeholder="189000"
                           className="w-28 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-primary outline-none"
                         />
                       </td>
