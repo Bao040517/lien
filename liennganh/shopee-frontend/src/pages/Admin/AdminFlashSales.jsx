@@ -45,7 +45,9 @@ const AdminFlashSales = () => {
         }
     };
 
-    const filteredProducts = products.filter(p =>
+    const approvedProducts = products.filter(p => p.productStatus === 'APPROVED');
+
+    const filteredProducts = approvedProducts.filter(p =>
         p.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -130,8 +132,8 @@ const AdminFlashSales = () => {
     };
 
     const handleRandomSelect = () => {
-        if (products.length === 0) return;
-        const shuffled = [...products].sort(() => 0.5 - Math.random());
+        if (approvedProducts.length === 0) return;
+        const shuffled = [...approvedProducts].sort(() => 0.5 - Math.random());
         const selected = shuffled.slice(0, 20).map(p => p.id);
         setForm(prev => ({ ...prev, productIds: selected }));
     };
